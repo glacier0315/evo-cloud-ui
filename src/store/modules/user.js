@@ -1,9 +1,11 @@
-import { login, logout, getInfo } from '@/api/user'
-import { getToken, setToken, removeToken } from '@/utils/auth'
+import { getInfo, login, logout } from '@/api/login'
+import { getToken, removeToken, setToken } from '@/utils/auth'
 import router, { resetRouter } from '@/router'
 
 const state = {
   token: getToken(),
+  refresh_token: '',
+  expires_in: 5,
   name: '',
   avatar: '',
   introduction: '',
@@ -13,6 +15,12 @@ const state = {
 const mutations = {
   SET_TOKEN: (state, token) => {
     state.token = token
+  },
+  SET_REFRESH_TOKEN: (state, refresh_token) => {
+    state.refresh_token = refresh_token
+  },
+  SET_EXPIRES_IN: (state, expires_in) => {
+    state.expires_in = expires_in
   },
   SET_INTRODUCTION: (state, introduction) => {
     state.introduction = introduction
@@ -32,13 +40,27 @@ const actions = {
   // user login
   login({ commit }, userInfo) {
     const { username, password } = userInfo
+    const randomStr = Math.random()
+    const form = {
+      username: username,
+      password: password,
+      randomStr: randomStr
+    }
     return new Promise((resolve, reject) => {
-      login({ username: username.trim(), password: password }).then(response => {
-        const { data } = response
-        commit('SET_TOKEN', data.token)
-        setToken(data.token)
+      login(form).then(response => {
+        console.log('##########################')
+        console.log(response)
+        const { access_token, refresh_token, expires_in } = response
+        console.log(access_token)
+        console.log(refresh_token)
+        console.log(expires_in)
+        commit('SET_TOKEN', access_token)
+        commit('SET_REFRESH_TOKEN', refresh_token)
+        commit('SET_EXPIRES_IN', expires_in)
+        setToken(access_token)
         resolve()
       }).catch(error => {
+        console.log('##########################' + error)
         reject(error)
       })
     })
@@ -47,7 +69,7 @@ const actions = {
   // get user info
   getInfo({ commit, state }) {
     return new Promise((resolve, reject) => {
-      getInfo(state.token).then(response => {
+      getInfo().then(response => {
         const { data } = response
 
         if (!data) {

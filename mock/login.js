@@ -1,10 +1,16 @@
 
 const tokens = {
   admin: {
-    token: 'admin-token'
+    code: '20000',
+    access_token: 'admin-token',
+    refresh_token: 'admin-token',
+    expires_in: 5
   },
   editor: {
-    token: 'editor-token'
+    code: '20000',
+    access_token: 'editor-token',
+    refresh_token: 'admin-token',
+    expires_in: 5
   }
 }
 
@@ -26,45 +32,41 @@ const users = {
 module.exports = [
   // user login
   {
-    url: '/vue-element-admin/user/login',
+    url: '/uas/oauth/token',
     type: 'post',
     response: config => {
-      const { username } = config.body
+      const { username } = config.query
       const token = tokens[username]
-
       // mock error
       if (!token) {
         return {
-          code: 60204,
+          code: '60204',
           message: 'Account and password are incorrect.'
         }
       }
-
-      return {
-        code: 20000,
-        data: token
-      }
+      return token
     }
   },
 
   // get user info
   {
-    url: '/vue-element-admin/user/info\.*',
+    url: '/sys/oauth/userInfo\.*',
     type: 'get',
     response: config => {
-      const { token } = config.query
+      const { authorization } = config.headers
+      const token = authorization.substring('Bearer '.length, authorization.length)
       const info = users[token]
 
       // mock error
       if (!info) {
         return {
-          code: 50008,
+          code: '50008',
           message: 'Login failed, unable to get user details.'
         }
       }
 
       return {
-        code: 20000,
+        code: '20000',
         data: info
       }
     }
@@ -72,11 +74,11 @@ module.exports = [
 
   // user logout
   {
-    url: '/vue-element-admin/user/logout',
+    url: '/uas/logout',
     type: 'post',
     response: _ => {
       return {
-        code: 20000,
+        code: '20000',
         data: 'success'
       }
     }
