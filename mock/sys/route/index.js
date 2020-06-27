@@ -74,6 +74,42 @@ const constantRoutes = [
 
 const asyncRoutes = [
   {
+    path: '/sys',
+    component: 'Layout',
+    redirect: 'noRedirect',
+    name: '系统设置',
+    meta: {
+      title: 'sysConfig',
+      icon: 'el-icon-setting'
+    },
+    children: [
+      {
+        path: '/sys/user',
+        component: 'sys/user',
+        name: '用户列表',
+        meta: { title: 'sysUserList', noCache: true, icon: 'user' }
+      },
+      {
+        path: '/sys/role',
+        component: 'sys/role',
+        name: '角色列表',
+        meta: { title: 'sysRoleList', noCache: true, icon: 'people' }
+      },
+      {
+        path: '/sys/menu',
+        component: 'sys/menu',
+        name: '菜单列表',
+        meta: { title: 'sysMenuList', noCache: true, icon: 'tree' }
+      },
+      {
+        path: '/sys/dept',
+        component: 'sys/dept',
+        name: '组织机构',
+        meta: { title: 'sysDeptList', noCache: true, icon: 'tree' }
+      }
+    ]
+  },
+  {
     path: '/permission',
     component: 'Layout',
     redirect: '/permission/index',

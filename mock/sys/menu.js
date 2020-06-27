@@ -1,7 +1,4 @@
-const { deepClone } = require('../utils')
-const { asyncRoutes, constantRoutes } = require('./route')
-
-const routes = deepClone([...constantRoutes, ...asyncRoutes])
+const { asyncRoutes } = require('./route')
 
 module.exports = [
   // mock get all routes form server
@@ -11,7 +8,7 @@ module.exports = [
     response: _ => {
       return {
         code: '20000',
-        data: routes
+        data: asyncRoutes
       }
     }
   },
