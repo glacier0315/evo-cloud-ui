@@ -1,77 +1,4 @@
 // Just a mock data
-
-const constantRoutes = [
-  {
-    path: '/redirect',
-    component: 'Layout',
-    hidden: true,
-    children: [
-      {
-        path: '/redirect/:path*',
-        component: 'redirect/index'
-      }
-    ]
-  },
-  {
-    path: '/login',
-    component: 'login/index',
-    hidden: true
-  },
-  {
-    path: '/auth-redirect',
-    component: 'login/auth-redirect',
-    hidden: true
-  },
-  {
-    path: '/404',
-    component: 'error-page/404',
-    hidden: true
-  },
-  {
-    path: '/401',
-    component: 'error-page/401',
-    hidden: true
-  },
-  {
-    path: '',
-    component: 'Layout',
-    redirect: 'dashboard',
-    children: [
-      {
-        path: 'dashboard',
-        component: 'dashboard/index',
-        name: 'Dashboard',
-        meta: { title: 'dashboard', icon: 'dashboard', affix: true }
-      }
-    ]
-  },
-  {
-    path: '/documentation',
-    component: 'Layout',
-    children: [
-      {
-        path: 'index',
-        component: 'documentation/index',
-        name: 'Documentation',
-        meta: { title: 'documentation', icon: 'documentation', affix: true }
-      }
-    ]
-  },
-  {
-    path: '/guide',
-    component: 'Layout',
-    redirect: '/guide/index',
-    children: [
-      {
-        path: 'index',
-        component: 'guide/index',
-        name: 'Guide',
-        meta: { title: 'guide', icon: 'guide', noCache: true }
-      }
-    ]
-  }
-]
-
 const asyncRoutes = [
   {
     path: '/sys',
@@ -561,6 +488,5 @@ const asyncRoutes = [
 ]
 
 module.exports = {
-  constantRoutes,
   asyncRoutes
 }

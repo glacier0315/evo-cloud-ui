@@ -1,5 +1,5 @@
 const Mock = require('mockjs')
-const { asyncRoutes } = require('../route')
+const { asyncRoutes } = require('./route')
 
 const routes = asyncRoutes
 
