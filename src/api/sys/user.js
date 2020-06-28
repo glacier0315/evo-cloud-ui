@@ -4,7 +4,7 @@ export function getList(data) {
   return request({
     url: '/sys/user/list',
     method: 'get',
-    data
+    params: data
   })
 }
 
@@ -16,9 +16,9 @@ export function add(data) {
   })
 }
 
-export function update(id, data) {
+export function update(data) {
   return request({
-    url: `/sys/user/update/${id}`,
+    url: `/sys/user/update`,
     method: 'put',
     data
   })
@@ -26,7 +26,8 @@ export function update(id, data) {
 
 export function del(id) {
   return request({
-    url: `/sys/user/delete/${id}`,
-    method: 'delete'
+    url: `/sys/user/delete`,
+    method: 'delete',
+    params: { 'id': id }
   })
 }

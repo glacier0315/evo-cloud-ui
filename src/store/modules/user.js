@@ -48,19 +48,16 @@ const actions = {
     }
     return new Promise((resolve, reject) => {
       login(form).then(response => {
-        console.log('##########################')
-        console.log(response)
         const { access_token, refresh_token, expires_in } = response
-        console.log(access_token)
-        console.log(refresh_token)
-        console.log(expires_in)
         commit('SET_TOKEN', access_token)
         commit('SET_REFRESH_TOKEN', refresh_token)
         commit('SET_EXPIRES_IN', expires_in)
         setToken(access_token)
         resolve()
       }).catch(error => {
-        console.log('##########################' + error)
+        console.log('########################## error start')
+        console.log(error)
+        console.log('########################## error end')
         reject(error)
       })
     })
