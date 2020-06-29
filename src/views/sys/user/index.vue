@@ -1,9 +1,17 @@
 <template>
   <div class="app-container">
     <div>
-      <el-button type="primary" @click="handleAddUser">
-        {{ $t('table.add') }}
-      </el-button>
+      <el-input v-model="pageRequest.params.username" placeholder="用户名" style="width:100px;margin-left:1em;" />
+      <el-input v-model="pageRequest.params.nickname" placeholder="昵称" style="width:100px;margin-left:1em;" />
+      <el-input v-model="pageRequest.params.idCard" placeholder="身份证号" style="width:200px;margin-left:1em;" />
+      <div class="btn-group">
+        <el-button type="primary" @click="getPageList">
+          {{ $t('table.search') }}
+        </el-button>
+        <el-button type="primary" @click="handleAddUser">
+          {{ $t('table.add') }}
+        </el-button>
+      </div>
     </div>
 
     <div class="table-container">
@@ -18,18 +26,19 @@
         style="width: 100%"
       >
         <el-table-column align="center" label="序号" type="index" width="80px" />
-        <el-table-column align="center" label="id" prop="id" />
-        <el-table-column align="center" label="username" prop="username" />
-        <el-table-column align="center" label="nickname" prop="nickname" />
-        <el-table-column align="center" label="idCard" prop="idCard" />
-        <el-table-column align="center" label="status" prop="status" :formatter="statusFormatter" />
-
-        <el-table-column align="center" label="birthday">
+        <el-table-column align="center" label="主键" prop="id" />
+        <el-table-column align="center" label="用户名" prop="username" />
+        <el-table-column align="center" label="昵称" prop="nickname" />
+        <el-table-column align="center" label="性别" prop="sex" :formatter="sexFormat" />
+        <el-table-column align="center" label="身份证号" prop="idCard" />
+        <el-table-column align="center" label="出生日期">
           <template slot-scope="scope">
             <span>{{ scope.row.birthday | parseTime('{y}-{m}-{d}') }}</span>
           </template>
         </el-table-column>
-        <el-table-column align="center" label="Operations">
+        <el-table-column align="center" label="单位" prop="deptId" />
+        <el-table-column align="center" label="状态" prop="status" :formatter="statusFormat" />
+        <el-table-column align="center" label="操作">
           <template slot-scope="scope">
             <el-button type="primary" size="small" @click="handleEditUser(scope)">
               {{ $t('table.edit') }}
@@ -61,6 +70,13 @@
         <el-form-item label="昵称" prop="nickname">
           <el-input v-model="user.nickname" placeholder="昵称" />
         </el-form-item>
+        <el-form-item label="性别" prop="sex">
+          <el-radio-group v-model="user.sex">
+            <el-radio :label="1">男</el-radio>
+            <el-radio :label="2">女</el-radio>
+            <el-radio :label="3">其他</el-radio>
+          </el-radio-group>
+        </el-form-item>
         <el-form-item label="身份证号" prop="idCard">
           <el-input v-model="user.idCard" placeholder="身份证号" />
         </el-form-item>
@@ -72,6 +88,21 @@
             placeholder="出生日期"
             :picker-options="pickerOptions"
           />
+        </el-form-item>
+        <el-form-item label="邮箱" prop="email">
+          <el-input v-model="user.email" placeholder="邮箱" />
+        </el-form-item>
+        <el-form-item label="手机号" prop="mobile">
+          <el-input v-model="user.mobile" placeholder="手机号" />
+        </el-form-item>
+        <el-form-item label="单位id" prop="deptId">
+          <el-input v-model="user.deptId" placeholder="单位id" />
+        </el-form-item>
+        <el-form-item label="状态" prop="status">
+          <el-radio-group v-model="user.status">
+            <el-radio :label="'1'">正常</el-radio>
+            <el-radio :label="'0'">禁用</el-radio>
+          </el-radio-group>
         </el-form-item>
       </el-form>
       <div style="text-align:right;">
@@ -94,8 +125,13 @@ const defaultUser = {
   id: null,
   username: '',
   nickname: '',
+  sex: 1,
   idCard: '',
-  birthday: null
+  birthday: null,
+  status: '1',
+  email: null,
+  mobile: null,
+  deptId: null
 }
 
 export default {
@@ -106,7 +142,13 @@ export default {
       listLoading: true,
       dialogVisible: false,
       dialogType: 'new',
-      pageRequest: { current: 1, size: 10 },
+      pageRequest: {
+        current: 1,
+        size: 10,
+        params: {
+          username: null
+        }
+      },
       list: [],
       total: 0,
       user: Object.assign({}, defaultUser),
@@ -185,7 +227,7 @@ export default {
               this.$notify({
                 title: '成功',
                 dangerouslyUseHTMLString: true,
-                message: '操作成功',
+                message: '更新成功',
                 type: 'success'
               })
             })
@@ -197,7 +239,7 @@ export default {
               this.$notify({
                 title: '成功',
                 dangerouslyUseHTMLString: true,
-                message: '操作成功',
+                message: '添加成功',
                 type: 'success'
               })
             })
@@ -208,12 +250,20 @@ export default {
         }
       })
     },
-    statusFormatter(row, column, cellValue, index) {
+    statusFormat(row, column, cellValue, index) {
       const statusMap = {
         '1': '正常',
         '0': '禁用'
       }
       return statusMap[cellValue]
+    },
+    sexFormat(row, column, cellValue, index) {
+      const sexMap = {
+        '1': '男',
+        '2': '女',
+        '3': '其他'
+      }
+      return sexMap[cellValue]
     }
   }
 }
@@ -222,5 +272,9 @@ export default {
 <style scoped>
 .table-container {
   margin-top: 1em;
+}
+.btn-group {
+  margin-left: 1em;
+  display: inline;
 }
 </style>

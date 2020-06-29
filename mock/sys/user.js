@@ -41,18 +41,16 @@ module.exports = [
     url: '/sys/user/list',
     type: 'get',
     response: config => {
-      const { username, nickname, idCard, current = 1, size = 20, sort } = config.query
+      const { params, current = 1, size = 20 } = config.query
 
-      let mockList = users.filter(item => {
+      const { username, nickname, idCard } = JSON.parse(params)
+
+      const mockList = users.filter(item => {
         if (username && item.username !== username) return false
         if (nickname && item.nickname !== nickname) return false
-        if (idCard && item.idCard.indexOf(idCard) < 0) return false
+        if (idCard && item.idCard !== idCard) return false
         return true
       })
-
-      if (sort === '-id') {
-        mockList = mockList.reverse()
-      }
 
       const pageList = mockList.filter((item, index) => index < size * current && index >= size * (current - 1))
 
