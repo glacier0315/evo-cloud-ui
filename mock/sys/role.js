@@ -30,7 +30,7 @@ for (let i = 0; i < 97; i++) {
     'id': Random.id(),
     'name': Random.string('lower', 5),
     'code': Random.string('lower', 6),
-    'status|1': ['0', '1'],
+    'status|1': ['1', '2'],
     description: Random.paragraph()
   }))
 }
@@ -42,11 +42,12 @@ module.exports = [
     response: config => {
       const { params, current = 1, size = 20 } = config.query
 
-      const { name, code } = JSON.parse(params)
+      const { name, code, status } = JSON.parse(params)
 
       const mockList = roles.filter(item => {
         if (name && item.name !== name) return false
         if (code && item.code !== code) return false
+        if (status && item.status !== status) return false
         return true
       })
 

@@ -3,6 +3,19 @@
     <div>
       <el-input v-model="pageRequest.params.name" placeholder="角色名称" style="width:100px;margin-left:1em;" />
       <el-input v-model="pageRequest.params.code" placeholder="角色编码" style="width:100px;margin-left:1em;" />
+      <el-select v-model="pageRequest.params.status" placeholder="状态" style="width:100px;margin-left:1em;">
+        <el-option
+          :key="''"
+          :label="'全部'"
+          :value="null"
+        />
+        <el-option
+          v-for="item in statusList"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value"
+        />
+      </el-select>
       <div class="btn-group">
         <el-button type="primary" @click="getPageList">
           {{ $t('table.search') }}
@@ -119,7 +132,11 @@ export default {
           { required: true, message: '请输入角色编码', trigger: 'blur' },
           { min: 5, max: 20, message: '长度在 5 到 20个字符', trigger: 'blur' }
         ]
-      }
+      },
+      statusList: [
+        { label: '正常', value: '1' },
+        { label: '禁用', value: '2' }
+      ]
     }
   },
   created() {
@@ -198,11 +215,13 @@ export default {
       })
     },
     statusFormat(row, column, cellValue, index) {
-      const statusMap = {
-        '1': '正常',
-        '2': '禁用'
-      }
-      return statusMap[cellValue]
+      const status = {}
+      this.statusList.forEach((item) => {
+        if (cellValue && item.value === cellValue) {
+          Object.assign(status, item)
+        }
+      })
+      return status.label
     }
   }
 }

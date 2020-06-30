@@ -4,6 +4,32 @@
       <el-input v-model="pageRequest.params.username" placeholder="用户名" style="width:100px;margin-left:1em;" />
       <el-input v-model="pageRequest.params.nickname" placeholder="昵称" style="width:100px;margin-left:1em;" />
       <el-input v-model="pageRequest.params.idCard" placeholder="身份证号" style="width:200px;margin-left:1em;" />
+      <el-select v-model="pageRequest.params.sex" placeholder="性别" style="width:100px;margin-left:1em;">
+        <el-option
+          :key="''"
+          :label="'全部'"
+          :value="null"
+        />
+        <el-option
+          v-for="item in sexList"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value"
+        />
+      </el-select>
+      <el-select v-model="pageRequest.params.status" placeholder="状态" style="width:100px;margin-left:1em;">
+        <el-option
+          :key="''"
+          :label="'全部'"
+          :value="null"
+        />
+        <el-option
+          v-for="item in statusList"
+          :key="item.value"
+          :label="item.label"
+          :value="item.value"
+        />
+      </el-select>
       <div class="btn-group">
         <el-button type="primary" @click="getPageList">
           {{ $t('table.search') }}
@@ -72,9 +98,13 @@
         </el-form-item>
         <el-form-item label="性别" prop="sex">
           <el-radio-group v-model="user.sex">
-            <el-radio :label="1">男</el-radio>
-            <el-radio :label="2">女</el-radio>
-            <el-radio :label="3">其他</el-radio>
+            <el-radio
+              v-for="(item,index) in sexList"
+              :key="index"
+              :label="item.value"
+            >
+              {{ item.label }}
+            </el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="身份证号" prop="idCard">
@@ -100,8 +130,13 @@
         </el-form-item>
         <el-form-item label="状态" prop="status">
           <el-radio-group v-model="user.status">
-            <el-radio :label="'1'">正常</el-radio>
-            <el-radio :label="'2'">禁用</el-radio>
+            <el-radio
+              v-for="(item,index) in statusList"
+              :key="index"
+              :label="item.value"
+            >
+              {{ item.label }}
+            </el-radio>
           </el-radio-group>
         </el-form-item>
       </el-form>
@@ -162,6 +197,15 @@ export default {
           { min: 5, max: 20, message: '长度在 5 到 20个字符', trigger: 'blur' }
         ]
       },
+      sexList: [
+        { label: '男', value: 1 },
+        { label: '女', value: 2 },
+        { label: '其他', value: 3 }
+      ],
+      statusList: [
+        { label: '正常', value: '1' },
+        { label: '禁用', value: '2' }
+      ],
       pickerOptions: {
         disabledDate(time) {
           return time.getTime() > Date.now()
@@ -251,19 +295,22 @@ export default {
       })
     },
     statusFormat(row, column, cellValue, index) {
-      const statusMap = {
-        '1': '正常',
-        '2': '禁用'
-      }
-      return statusMap[cellValue]
+      const status = {}
+      this.statusList.forEach((item) => {
+        if (cellValue && item.value === cellValue) {
+          Object.assign(status, item)
+        }
+      })
+      return status.label
     },
     sexFormat(row, column, cellValue, index) {
-      const sexMap = {
-        '1': '男',
-        '2': '女',
-        '3': '其他'
-      }
-      return sexMap[cellValue]
+      const sex = {}
+      this.sexList.forEach((item) => {
+        if (cellValue && item.value === cellValue) {
+          Object.assign(sex, item)
+        }
+      })
+      return sex.label
     }
   }
 }
