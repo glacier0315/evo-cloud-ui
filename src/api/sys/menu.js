@@ -10,10 +10,41 @@ export const getRouters = () => {
     method: 'get'
   })
 }
-
+// 获取权限
 export const getPermissions = () => {
   return request({
     url: '/sys/menu/getPermissions',
     method: 'get'
+  })
+}
+
+export const getTree = () => {
+  return request({
+    url: '/sys/menu/tree',
+    method: 'get'
+  })
+}
+
+export function add(data) {
+  return request({
+    url: '/sys/menu/add',
+    method: 'post',
+    data
+  })
+}
+
+export function update(data) {
+  return request({
+    url: `/sys/menu/update`,
+    method: 'put',
+    data
+  })
+}
+
+export function del(id) {
+  return request({
+    url: `/sys/menu/delete`,
+    method: 'delete',
+    params: { 'id': id }
   })
 }
