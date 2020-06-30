@@ -1,4 +1,4 @@
-const { asyncRoutes } = require('./route')
+const { asyncRoutes } = require('../route')
 
 module.exports = [
   // mock get all routes form server

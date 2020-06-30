@@ -1,84 +1,111 @@
 const Mock = require('mockjs')
-const { asyncRoutes } = require('./route')
 
-const routes = asyncRoutes
-
+const Random = Mock.Random
 const roles = [
   {
-    key: 'admin',
+    id: 'admin',
     name: 'admin',
-    description: 'Super Administrator. Have access to view all pages.',
-    routes: routes
+    code: 'visitor',
+    status: '1',
+    description: 'Super Administrator. Have access to view all pages.'
   },
   {
-    key: 'editor',
+    id: 'editor',
     name: 'editor',
-    description: 'Normal Editor. Can see all pages except permission page',
-    routes: routes.filter(i => i.path !== '/permission')// just a mock
+    code: 'editor',
+    status: '1',
+    description: 'Normal Editor. Can see all pages except permission page'
   },
   {
-    key: 'visitor',
+    id: 'visitor',
     name: 'visitor',
-    description: 'Just a visitor. Can only see the home page and the document page',
-    routes: [{
-      path: '',
-      redirect: 'dashboard',
-      children: [
-        {
-          path: 'dashboard',
-          name: 'Dashboard',
-          meta: { title: 'dashboard', icon: 'dashboard' }
-        }
-      ]
-    }]
+    code: 'visitor',
+    status: '1',
+    description: 'Just a visitor. Can only see the home page and the document page'
   }
 ]
 
+for (let i = 0; i < 97; i++) {
+  roles.push(Mock.mock({
+    'id': Random.id(),
+    'name': Random.string('lower', 5),
+    'code': Random.string('lower', 6),
+    'status|1': ['0', '1'],
+    description: Random.paragraph()
+  }))
+}
+
 module.exports = [
-  // mock get all roles form server
   {
-    url: '/vue-element-admin/roles',
+    url: '/sys/role/list',
     type: 'get',
-    response: _ => {
+    response: config => {
+      const { params, current = 1, size = 20 } = config.query
+
+      const { name, code } = JSON.parse(params)
+
+      const mockList = roles.filter(item => {
+        if (name && item.name !== name) return false
+        if (code && item.code !== code) return false
+        return true
+      })
+
+      const pageList = mockList.filter((item, index) => index < size * current && index >= size * (current - 1))
+
       return {
         code: '20000',
-        data: roles
+        data: {
+          total: mockList.length,
+          records: pageList
+        }
       }
     }
   },
 
-  // add role
   {
-    url: '/vue-element-admin/role',
+    url: '/sys/role/add',
     type: 'post',
-    response: {
-      code: '20000',
-      data: {
-        key: Mock.mock('@integer(300, 5000)')
+    response: config => {
+      const role = config.body
+      role.id = Random.id()
+      roles.push(role)
+      return {
+        code: '20000',
+        data: 'success'
       }
     }
   },
 
-  // update role
   {
-    url: '/vue-element-admin/role/[A-Za-z0-9]',
+    url: '/sys/role/update',
     type: 'put',
-    response: {
-      code: '20000',
-      data: {
-        status: 'success'
+    response: config => {
+      const role = config.body
+      roles.forEach((item, index) => {
+        if (role && role.id && item.id === role.id) {
+          roles.splice(index, 1, role)
+        }
+      })
+      return {
+        code: '20000',
+        data: 'success'
       }
     }
   },
 
-  // delete role
   {
-    url: '/vue-element-admin/role/[A-Za-z0-9]',
+    url: '/sys/role/delete',
     type: 'delete',
-    response: {
-      code: '20000',
-      data: {
-        status: 'success'
+    response: config => {
+      const id = config.query.id
+      roles.forEach((item, index) => {
+        if (id && item.id === id) {
+          roles.splice(index, 1)
+        }
+      })
+      return {
+        code: '20000',
+        data: 'success'
       }
     }
   }

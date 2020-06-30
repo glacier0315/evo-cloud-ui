@@ -8,7 +8,7 @@
         <el-button type="primary" @click="getPageList">
           {{ $t('table.search') }}
         </el-button>
-        <el-button type="primary" @click="handleAddUser">
+        <el-button type="primary" @click="handleAdd">
           {{ $t('table.add') }}
         </el-button>
       </div>
@@ -40,7 +40,7 @@
         <el-table-column align="center" label="状态" prop="status" :formatter="statusFormat" />
         <el-table-column align="center" label="操作">
           <template slot-scope="scope">
-            <el-button type="primary" size="small" @click="handleEditUser(scope)">
+            <el-button type="primary" size="small" @click="handleEdit(scope)">
               {{ $t('table.edit') }}
             </el-button>
             <el-button type="danger" size="small" @click="handleDelete(scope)">
@@ -101,7 +101,7 @@
         <el-form-item label="状态" prop="status">
           <el-radio-group v-model="user.status">
             <el-radio :label="'1'">正常</el-radio>
-            <el-radio :label="'0'">禁用</el-radio>
+            <el-radio :label="'2'">禁用</el-radio>
           </el-radio-group>
         </el-form-item>
       </el-form>
@@ -109,7 +109,7 @@
         <el-button type="danger" @click="dialogVisible=false">
           {{ $t('table.cancel') }}
         </el-button>
-        <el-button type="primary" @click="confirmUser">
+        <el-button type="primary" @click="confirmHandle">
           {{ $t('table.confirm') }}
         </el-button>
       </div>
@@ -187,12 +187,12 @@ export default {
         this.listLoading = false
       })
     },
-    handleAddUser() {
+    handleAdd() {
       this.user = Object.assign({}, defaultUser)
       this.dialogType = 'new'
       this.dialogVisible = true
     },
-    handleEditUser(scope) {
+    handleEdit(scope) {
       this.dialogType = 'edit'
       this.dialogVisible = true
       this.user = Object.assign({}, scope.row)
@@ -213,7 +213,7 @@ export default {
         })
         .catch(err => { console.error(err) })
     },
-    async confirmUser() {
+    async confirmHandle() {
       const isEdit = this.dialogType === 'edit'
 
       this.$refs['user'].validate((valid) => {
@@ -253,7 +253,7 @@ export default {
     statusFormat(row, column, cellValue, index) {
       const statusMap = {
         '1': '正常',
-        '0': '禁用'
+        '2': '禁用'
       }
       return statusMap[cellValue]
     },

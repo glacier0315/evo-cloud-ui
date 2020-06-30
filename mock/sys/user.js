@@ -1,23 +1,6 @@
 const Mock = require('mockjs')
 
-var Random = Mock.Random
-
-// 使用 Mock
-// var users = Mock.mock({
-//   'list|10-25': [{
-//     'id|+1': 1,
-//     'username|+1': Random.string('lower', 5),
-//     'password|+1': Random.string('lower', 6),
-//     'nickname|+1': Random.string('lower', 5),
-//     'idCard|+1': /\d{17,17}[0-9]|[X]/,
-//     'birthday|+1': Random.date('yyyy-MM-dd'),
-//     'sex|1': [1, 2],
-//     'status|1': ['0', '1'],
-//     'email|+1': Mock.mock('@email'),
-//     'mobile|+1': /[1]\d{10,10}/,
-//     'delFlag': '0'
-//   }]
-// })
+const Random = Mock.Random
 
 const users = []
 for (let i = 0; i < 100; i++) {

@@ -81,7 +81,6 @@ service.interceptors.response.use(
     }
   },
   error => {
-    // for debug
     console.log('error start')
     console.log(error)
     console.log('error end')

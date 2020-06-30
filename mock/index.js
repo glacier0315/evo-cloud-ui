@@ -6,6 +6,7 @@ const user = require('./sys/user')
 const role = require('./sys/role')
 const menu = require('./sys/menu')
 const article = require('./example/article')
+const exampleRole = require('./example/role')
 const search = require('./remote-search')
 
 const mocks = [
@@ -13,8 +14,9 @@ const mocks = [
   ...user,
   ...menu,
   ...role,
+  ...search,
   ...article,
-  ...search
+  ...exampleRole
 ]
 
 // for front mock
