@@ -80,6 +80,7 @@ export default {
       role: Object.assign({}, defaultRole),
       routes: [],
       rolesList: [],
+      serviceRoutes: [],
       dialogVisible: false,
       dialogType: 'new',
       checkStrictly: false,
@@ -219,19 +220,12 @@ export default {
 
       const checkedKeys = this.$refs.tree.getCheckedKeys()
       this.role.routes = this.generateTree(deepClone(this.serviceRoutes), '/', checkedKeys)
-
       if (isEdit) {
-        await updateRole(this.role.key, this.role)
-        for (let index = 0; index < this.rolesList.length; index++) {
-          if (this.rolesList[index].key === this.role.key) {
-            this.rolesList.splice(index, 1, Object.assign({}, this.role))
-            break
-          }
-        }
+        await updateRole(this.role)
+        this.getRoles()
       } else {
-        const { data } = await addRole(this.role)
-        this.role.key = data.key
-        this.rolesList.push(this.role)
+        await addRole(this.role)
+        this.getRoles()
       }
 
       const { description, key, name } = this.role

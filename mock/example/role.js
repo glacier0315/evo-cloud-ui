@@ -1,6 +1,7 @@
 const Mock = require('mockjs')
 const { asyncRoutes } = require('../route')
 
+const Random = Mock.Random
 const routes = asyncRoutes
 
 const roles = [
@@ -41,7 +42,7 @@ module.exports = [
     type: 'get',
     response: _ => {
       return {
-        code: 20000,
+        code: '20000',
         data: routes
       }
     }
@@ -63,34 +64,50 @@ module.exports = [
   {
     url: '/vue-element-admin/role',
     type: 'post',
-    response: {
-      code: '20000',
-      data: {
-        key: Mock.mock('@integer(300, 5000)')
+    response: config => {
+      const role = config.body
+      role.key = Random.id()
+      roles.push(role)
+      return {
+        code: '20000',
+        data: 'success'
       }
     }
   },
 
   // update role
   {
-    url: '/vue-element-admin/role/[A-Za-z0-9]',
+    url: '/vue-element-admin/role',
     type: 'put',
-    response: {
-      code: '20000',
-      data: {
-        status: 'success'
+    response: config => {
+      const role = config.body
+      console.log('role1', role)
+      roles.forEach((item, index) => {
+        if (role && role.key && item.key === role.key) {
+          roles.splice(index, 1, role)
+        }
+      })
+      return {
+        code: '20000',
+        data: 'success'
       }
     }
   },
 
   // delete role
   {
-    url: '/vue-element-admin/role/[A-Za-z0-9]',
+    url: '/vue-element-admin/role',
     type: 'delete',
-    response: {
-      code: '20000',
-      data: {
-        status: 'success'
+    response: config => {
+      const key = config.query.key
+      roles.forEach((item, index) => {
+        if (key && item.key === key) {
+          roles.splice(index, 1)
+        }
+      })
+      return {
+        code: '20000',
+        data: 'success'
       }
     }
   }
