@@ -136,7 +136,7 @@
   </div>
 </template>
 <script>
-import { getList, add, update, del } from '@/api/sys/menu'
+import { getMenuList, addMenu, updateMenu, delMenu } from '@/api/sys/menu'
 import { buildTree } from '@/utils/tree'
 
 const defaultMenu = {
@@ -195,14 +195,19 @@ export default {
   methods: {
     getTreeList() {
       this.listLoading = true
-      getList().then(response => {
+      getMenuList().then(response => {
         this.menuList = response.data
         this.treeData = buildTree(this.menuList)
         this.listLoading = false
       })
     },
-    handleAdd() {
+    handleAdd(scope) {
       this.menu = Object.assign({}, defaultMenu)
+      if (scope && scope.row) {
+        const { id, name } = scope.row
+        this.menu.parentId = id
+        this.menu.parentName = name
+      }
       this.dialogType = 'new'
       this.dialogVisible = true
       this.showTree = false
@@ -220,7 +225,7 @@ export default {
         type: 'warning'
       })
         .then(async() => {
-          await del(row.id)
+          await delMenu(row.id)
           this.getTreeList()
           this.$message({
             type: 'success',
@@ -235,7 +240,7 @@ export default {
       this.$refs['menu'].validate((valid) => {
         if (valid) {
           if (isEdit) {
-            update(this.menu).then(data => {
+            updateMenu(this.menu).then(data => {
               this.dialogVisible = false
               this.getTreeList()
 
@@ -247,7 +252,7 @@ export default {
               })
             })
           } else {
-            add(this.menu).then(data => {
+            addMenu(this.menu).then(data => {
               this.dialogVisible = false
               this.getTreeList()
 
@@ -271,7 +276,6 @@ export default {
         if (item.type === 3) {
           return false
         }
-        console.log('this.menu.id', this.menu.id)
         // 过滤当前菜单
         if (this.menu.id && this.menu.id === item.id) {
           return false

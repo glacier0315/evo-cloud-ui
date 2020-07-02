@@ -80,6 +80,19 @@
             <el-radio :label="'2'">禁用</el-radio>
           </el-radio-group>
         </el-form-item>
+        <el-form-item label="描述" prop="description">
+          <el-input v-model="role.description" type="textarea" placeholder="描述" />
+        </el-form-item>
+        <el-form-item label="菜单">
+          <el-tree
+            ref="menuTree"
+            :check-strictly="checkStrictly"
+            :data="menuTreeData"
+            :props="defaultProps"
+            show-checkbox
+            node-key="id"
+          />
+        </el-form-item>
       </el-form>
       <div style="text-align:right;">
         <el-button type="danger" @click="dialogVisible=false">
@@ -94,14 +107,18 @@
 </template>
 
 <script>
-import { getList, add, update, del } from '@/api/sys/role'
+import { getRoleList, addRole, updateRole, delRole } from '@/api/sys/role'
+import { getMenuList } from '@/api/sys/menu'
+import { buildTree } from '@/utils/tree'
 import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
 
 const defaultRole = {
   id: '',
   name: '',
   code: '',
-  status: '1'
+  status: '1',
+  description: '',
+  menus: []
 }
 
 export default {
@@ -133,6 +150,12 @@ export default {
           { min: 5, max: 20, message: '长度在 5 到 20个字符', trigger: 'blur' }
         ]
       },
+      menuTreeData: [],
+      checkStrictly: false,
+      defaultProps: {
+        children: 'children',
+        label: 'name'
+      },
       statusList: [
         { label: '正常', value: '1' },
         { label: '禁用', value: '2' }
@@ -141,11 +164,18 @@ export default {
   },
   created() {
     this.getPageList()
+    this.getMenuTree()
   },
   methods: {
+    async getMenuTree() {
+      this.menuTreeData = []
+      getMenuList().then(response => {
+        this.menuTreeData = buildTree(response.data)
+      })
+    },
     getPageList() {
       this.listLoading = true
-      getList(this.pageRequest).then(response => {
+      getRoleList(this.pageRequest).then(response => {
         this.list = response.data.records
         this.total = response.data.total
         this.listLoading = false
@@ -168,7 +198,7 @@ export default {
         type: 'warning'
       })
         .then(async() => {
-          await del(row.id)
+          await delRole(row.id)
           this.getPageList()
           this.$message({
             type: 'success',
@@ -184,7 +214,7 @@ export default {
         console.log('valid,', valid)
         if (valid) {
           if (isEdit) {
-            update(this.role).then(data => {
+            updateRole(this.role).then(data => {
               this.dialogVisible = false
               this.getPageList()
 
@@ -196,7 +226,7 @@ export default {
               })
             })
           } else {
-            add(this.role).then(data => {
+            addRole(this.role).then(data => {
               this.dialogVisible = false
               this.getPageList()
 

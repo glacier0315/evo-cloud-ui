@@ -1,6 +1,6 @@
 import request from '@/utils/request'
 
-export function getList(data) {
+export function getUserList(data) {
   return request({
     url: '/sys/user/list',
     method: 'get',
@@ -8,7 +8,7 @@ export function getList(data) {
   })
 }
 
-export function add(data) {
+export function addUser(data) {
   return request({
     url: '/sys/user/add',
     method: 'post',
@@ -16,7 +16,7 @@ export function add(data) {
   })
 }
 
-export function update(data) {
+export function updateUser(data) {
   return request({
     url: `/sys/user/update`,
     method: 'put',
@@ -24,7 +24,7 @@ export function update(data) {
   })
 }
 
-export function del(id) {
+export function delUser(id) {
   return request({
     url: `/sys/user/delete`,
     method: 'delete',

@@ -153,7 +153,7 @@
 </template>
 
 <script>
-import { getList, add, update, del } from '@/api/sys/user'
+import { getUserList, addUser, updateUser, delUser } from '@/api/sys/user'
 import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
 
 const defaultUser = {
@@ -225,7 +225,7 @@ export default {
   methods: {
     getPageList() {
       this.listLoading = true
-      getList(this.pageRequest).then(response => {
+      getUserList(this.pageRequest).then(response => {
         this.list = response.data.records
         this.total = response.data.total
         this.listLoading = false
@@ -248,7 +248,7 @@ export default {
         type: 'warning'
       })
         .then(async() => {
-          await del(row.id)
+          await delUser(row.id)
           this.getPageList()
           this.$message({
             type: 'success',
@@ -264,7 +264,7 @@ export default {
         console.log('valid,', valid)
         if (valid) {
           if (isEdit) {
-            update(this.user).then(data => {
+            updateUser(this.user).then(data => {
               this.dialogVisible = false
               this.getPageList()
 
@@ -276,7 +276,7 @@ export default {
               })
             })
           } else {
-            add(this.user).then(data => {
+            addUser(this.user).then(data => {
               this.dialogVisible = false
               this.getPageList()
 

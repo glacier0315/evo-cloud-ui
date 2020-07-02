@@ -1,6 +1,6 @@
 import request from '@/utils/request'
 
-export function getList(data) {
+export function getRoleList(data) {
   return request({
     url: '/sys/role/list',
     method: 'get',
@@ -8,7 +8,7 @@ export function getList(data) {
   })
 }
 
-export function add(data) {
+export function addRole(data) {
   return request({
     url: '/sys/role/add',
     method: 'post',
@@ -16,7 +16,7 @@ export function add(data) {
   })
 }
 
-export function update(data) {
+export function updateRole(data) {
   return request({
     url: `/sys/role/update`,
     method: 'put',
@@ -24,7 +24,7 @@ export function update(data) {
   })
 }
 
-export function del(id) {
+export function delRole(id) {
   return request({
     url: `/sys/role/delete`,
     method: 'delete',

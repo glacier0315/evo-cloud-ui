@@ -18,14 +18,14 @@ export const getPermissions = () => {
   })
 }
 
-export const getList = () => {
+export const getMenuList = () => {
   return request({
     url: '/sys/menu/list',
     method: 'get'
   })
 }
 
-export function add(data) {
+export function addMenu(data) {
   return request({
     url: '/sys/menu/add',
     method: 'post',
@@ -33,7 +33,7 @@ export function add(data) {
   })
 }
 
-export function update(data) {
+export function updateMenu(data) {
   return request({
     url: `/sys/menu/update`,
     method: 'put',
@@ -41,7 +41,7 @@ export function update(data) {
   })
 }
 
-export function del(id) {
+export function delMenu(id) {
   return request({
     url: `/sys/menu/delete`,
     method: 'delete',
