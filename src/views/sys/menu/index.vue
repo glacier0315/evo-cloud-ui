@@ -97,11 +97,16 @@
             <el-tree
               ref="tree"
               :data="treeParentData"
-              :props="defaultProps"
               accordion
               node-key="id"
               @node-click="handleNodeClick"
-            />
+            >
+              <div slot-scope="{ node, data }">
+                <span>
+                  {{ data.name }}
+                </span>
+              </div>
+            </el-tree>
           </div>
         </el-form-item>
         <el-form-item v-if="menu.type!==3" label="显示" prop="visible">
@@ -168,10 +173,6 @@ export default {
           { required: true, message: '请输入用户名', trigger: 'blur' },
           { min: 5, max: 20, message: '长度在 5 到 20个字符', trigger: 'blur' }
         ]
-      },
-      defaultProps: {
-        children: 'children',
-        label: 'name'
       },
       typeList: [
         { label: '目录', value: 1 },
@@ -266,9 +267,12 @@ export default {
     },
     filterDate() {
       const menus = this.menuList.filter(item => {
+        // 权限过滤
         if (item.type === 3) {
           return false
         }
+        console.log('this.menu.id', this.menu.id)
+        // 过滤当前菜单
         if (this.menu.id && this.menu.id === item.id) {
           return false
         }

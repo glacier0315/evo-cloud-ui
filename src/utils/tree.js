@@ -14,8 +14,6 @@ const buildChildren = (parent, array) => {
       if (item.parentId &&
         item.parentId === parent.id) {
         const element = Object.assign({}, item)
-        // 从数组中删除元素
-        array.splice(index, 1)
         buildChildren(element, array)
         children.push(element)
       }
