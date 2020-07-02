@@ -18,9 +18,9 @@ export const getPermissions = () => {
   })
 }
 
-export const getTree = () => {
+export const getList = () => {
   return request({
-    url: '/sys/menu/tree',
+    url: '/sys/menu/list',
     method: 'get'
   })
 }
