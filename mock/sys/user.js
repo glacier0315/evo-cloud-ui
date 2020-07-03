@@ -21,12 +21,11 @@ for (let i = 0; i < 100; i++) {
 
 module.exports = [
   {
-    url: '/sys/user/list',
-    type: 'get',
+    url: '/sys/user/pageList',
+    type: 'post',
     response: config => {
-      const { params, current = 1, size = 20 } = config.query
-
-      const { username, nickname, idCard, sex, status } = JSON.parse(params)
+      const { params, current = 1, size = 20 } = config.body
+      const { username, nickname, idCard, sex, status } = params
 
       const mockList = users.filter(item => {
         if (username && item.username !== username) return false

@@ -41,12 +41,12 @@ for (let i = 0; i < 97; i++) {
 
 module.exports = [
   {
-    url: '/sys/role/list',
-    type: 'get',
+    url: '/sys/role/pageList',
+    type: 'post',
     response: config => {
-      const { params, current = 1, size = 20 } = config.query
+      const { params, current = 1, size = 20 } = config.body
 
-      const { name, code, status } = JSON.parse(params)
+      const { name, code, status } = params
 
       const mockList = roles.filter(item => {
         if (name && item.name !== name) return false

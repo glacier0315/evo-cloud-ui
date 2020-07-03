@@ -2,9 +2,9 @@ import request from '@/utils/request'
 
 export function getRoleList(data) {
   return request({
-    url: '/sys/role/list',
-    method: 'get',
-    params: data
+    url: '/sys/role/pageList',
+    method: 'post',
+    data
   })
 }
 
