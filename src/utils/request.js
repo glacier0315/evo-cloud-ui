@@ -14,9 +14,7 @@ const service = axios.create({
 service.interceptors.request.use(
   config => {
     // do something before request is sent
-    console.log('config start')
-    console.log(config)
-    console.log('config end')
+    console.log('request config', config)
 
     if (store.getters.token) {
       // let each request carry token
@@ -29,9 +27,7 @@ service.interceptors.request.use(
   error => {
     // do something with request error
     // for debug
-    console.log('error start')
-    console.log(error)
-    console.log('error end')
+    console.log('request error', error)
     return Promise.reject(error)
   }
 )
@@ -50,9 +46,7 @@ service.interceptors.response.use(
    */
   response => {
     const res = response.data
-    console.log('res start')
-    console.log(res)
-    console.log('res end')
+    console.log('request res', res)
 
     // if the custom code is not 20000, it is judged as an error.
     if (res.code !== '20000') {
@@ -81,9 +75,7 @@ service.interceptors.response.use(
     }
   },
   error => {
-    console.log('error start')
-    console.log(error)
-    console.log('error end')
+    console.log('request error', error)
     Message({
       message: error.message,
       type: 'error',
