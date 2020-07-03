@@ -88,10 +88,18 @@
             ref="menuTree"
             :check-strictly="checkStrictly"
             :data="menuTreeData"
-            :props="defaultProps"
             show-checkbox
             node-key="id"
-          />
+          >
+            <div slot-scope="{ node, data }">
+              <span>
+                {{ data.name }}
+              </span>
+              <span style="margin-left: 3em;">
+                {{ data.type | typeFormat }}
+              </span>
+            </div>
+          </el-tree>
         </el-form-item>
       </el-form>
       <div style="text-align:right;">
@@ -107,7 +115,7 @@
 </template>
 
 <script>
-import { getRoleList, addRole, updateRole, delRole } from '@/api/sys/role'
+import { getRoleList, addRole, updateRole, delRole, getRoleMenus } from '@/api/sys/role'
 import { getMenuList } from '@/api/sys/menu'
 import { buildTree } from '@/utils/tree'
 import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
@@ -124,6 +132,16 @@ const defaultRole = {
 export default {
   name: 'Role',
   components: { Pagination },
+  filters: {
+    typeFormat: (cellValue) => {
+      const typeMap = {
+        1: '目录',
+        2: '端点',
+        3: '权限'
+      }
+      return typeMap[cellValue]
+    }
+  },
   data() {
     return {
       listLoading: true,
@@ -152,14 +170,11 @@ export default {
       },
       menuTreeData: [],
       checkStrictly: false,
-      defaultProps: {
-        children: 'children',
-        label: 'name'
-      },
       statusList: [
         { label: '正常', value: '1' },
         { label: '禁用', value: '2' }
       ]
+
     }
   },
   created() {
@@ -182,14 +197,20 @@ export default {
       })
     },
     handleAdd() {
-      this.role = Object.assign({}, defaultRole)
       this.dialogType = 'new'
+      this.setCheckedKeys([])
+      this.role = Object.assign({}, defaultRole)
       this.dialogVisible = true
     },
     handleEdit(scope) {
       this.dialogType = 'edit'
-      this.dialogVisible = true
       this.role = Object.assign({}, scope.row)
+      getRoleMenus(this.role.id)
+        .then(res => {
+          this.role.menus = res.data
+        })
+      this.setCheckedKeys(this.role.menus)
+      this.dialogVisible = true
     },
     handleDelete({ $index, row }) {
       this.$confirm('确认删除当前角色?', 'Warning', {
@@ -210,8 +231,10 @@ export default {
     async confirmHandle() {
       const isEdit = this.dialogType === 'edit'
 
+      // 设置menus
+      const menus = this.getCheckedKeys()
+      this.role.menus = menus
       this.$refs['role'].validate((valid) => {
-        console.log('valid,', valid)
         if (valid) {
           if (isEdit) {
             updateRole(this.role).then(data => {
@@ -241,6 +264,18 @@ export default {
         } else {
           console.log('error submit!!')
           return false
+        }
+      })
+    },
+    getCheckedKeys() {
+      return this.$refs['menuTree'].getCheckedKeys()
+    },
+    setCheckedKeys(arrayKey) {
+      this.$nextTick(() => {
+        // 先清空选择，然后再添加选择
+        this.$refs['menuTree'].setCheckedKeys([], false)
+        if (arrayKey && arrayKey instanceof Array && arrayKey.length > 0) {
+          this.$refs['menuTree'].setCheckedKeys(arrayKey, false)
         }
       })
     },

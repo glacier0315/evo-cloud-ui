@@ -31,3 +31,11 @@ export function delRole(id) {
     params: { 'id': id }
   })
 }
+
+export function getRoleMenus(id) {
+  return request({
+    url: `/sys/role/menus`,
+    method: 'get',
+    params: { 'id': id }
+  })
+}

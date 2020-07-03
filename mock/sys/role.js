@@ -7,21 +7,24 @@ const roles = [
     name: 'admin',
     code: 'visitor',
     status: '1',
-    description: 'Super Administrator. Have access to view all pages.'
+    description: 'Super Administrator. Have access to view all pages.',
+    menus: []
   },
   {
     id: 'editor',
     name: 'editor',
     code: 'editor',
     status: '1',
-    description: 'Normal Editor. Can see all pages except permission page'
+    description: 'Normal Editor. Can see all pages except permission page',
+    menus: []
   },
   {
     id: 'visitor',
     name: 'visitor',
     code: 'visitor',
     status: '1',
-    description: 'Just a visitor. Can only see the home page and the document page'
+    description: 'Just a visitor. Can only see the home page and the document page',
+    menus: []
   }
 ]
 
@@ -31,7 +34,8 @@ for (let i = 0; i < 97; i++) {
     'name': Random.string('lower', 5),
     'code': Random.string('lower', 6),
     'status|1': ['1', '2'],
-    description: Random.paragraph()
+    description: Random.paragraph(),
+    menus: []
   }))
 }
 
@@ -107,6 +111,19 @@ module.exports = [
       return {
         code: '20000',
         data: 'success'
+      }
+    }
+  },
+
+  {
+    url: '/sys/role/menus',
+    type: 'get',
+    response: config => {
+      const id = config.query.id
+      const role = roles.filter(item => id && item.id === id)
+      return {
+        code: '20000',
+        data: role.menus
       }
     }
   }

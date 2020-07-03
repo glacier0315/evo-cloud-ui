@@ -261,7 +261,6 @@ export default {
       const isEdit = this.dialogType === 'edit'
 
       this.$refs['user'].validate((valid) => {
-        console.log('valid,', valid)
         if (valid) {
           if (isEdit) {
             updateUser(this.user).then(data => {
