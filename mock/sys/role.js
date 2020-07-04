@@ -116,14 +116,19 @@ module.exports = [
   },
 
   {
-    url: '/sys/role/menus',
+    url: '/sys/menu/findByRole',
     type: 'get',
     response: config => {
-      const id = config.query.id
-      const role = roles.filter(item => id && item.id === id)
+      const id = config.query.roleId
+      let menus = []
+      roles.forEach(item => {
+        if (id && item.id === id) {
+          menus = item.menus
+        }
+      })
       return {
         code: '20000',
-        data: role.menus
+        data: menus
       }
     }
   }

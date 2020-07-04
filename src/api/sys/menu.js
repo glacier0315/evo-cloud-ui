@@ -48,3 +48,11 @@ export function delMenu(id) {
     params: { 'id': id }
   })
 }
+
+export function getRoleMenus(roleId) {
+  return request({
+    url: `/sys/menu/findByRole`,
+    method: 'get',
+    params: { 'roleId': roleId }
+  })
+}

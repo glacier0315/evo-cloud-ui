@@ -117,6 +117,7 @@
             type="date"
             placeholder="出生日期"
             :picker-options="pickerOptions"
+            value-format="yyyy-MM-dd"
           />
         </el-form-item>
         <el-form-item label="邮箱" prop="email">

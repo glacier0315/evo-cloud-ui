@@ -10,10 +10,12 @@ const buildChildren = (parent, array) => {
     parent.id &&
     array instanceof Array &&
     array.length > 0) {
-    array.forEach((item, index) => {
+    array.forEach(item => {
       if (item.parentId &&
         item.parentId === parent.id) {
         const element = Object.assign({}, item)
+        // 设置父级名称
+        element.parentName = parent.name
         buildChildren(element, array)
         children.push(element)
       }

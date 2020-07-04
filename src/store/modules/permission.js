@@ -39,16 +39,21 @@ const actions = {
       getPermissions().then(res => {
         const permissions = res.data
         console.log('permissions, ', permissions)
-        commit('SET_PERMISSIONS', permissions)
+        if (permissions && permissions instanceof Array && permissions.length > 0) {
+          commit('SET_PERMISSIONS', permissions)
+        }
         resolve(permissions)
       })
     })
   }
 }
 
-// 遍历后台传来的路由字符串，转换为组件对象
-function filterAsyncRouter(asyncRouterMap) {
-  return asyncRouterMap.filter(route => {
+/**
+ * 遍历后台传来的路由数组，转换为组件对象
+ * @param {*} asyncRouterArray 路由数组
+ */
+function filterAsyncRouter(asyncRouterArray) {
+  return asyncRouterArray.filter(route => {
     if (route.component) {
       // Layout组件特殊处理
       if (route.component === 'Layout') {
@@ -57,14 +62,19 @@ function filterAsyncRouter(asyncRouterMap) {
         route.component = loadView(route.component)
       }
     }
-    if (route.children != null && route.children && route.children.length) {
+    if (route.children && route.children instanceof Array && route.children.length > 0) {
       route.children = filterAsyncRouter(route.children)
     }
     return true
   })
 }
 
-export const loadView = (view) => { // 路由懒加载
+/**
+ * 路由懒加载
+ * @param {*} view 视图组件
+ */
+export const loadView = (view) => {
+  // 路由懒加载
   return (resolve) => require([`@/views/${view}`], resolve)
 }
 

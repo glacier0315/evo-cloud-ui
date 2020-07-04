@@ -115,8 +115,8 @@
 </template>
 
 <script>
-import { getRoleList, addRole, updateRole, delRole, getRoleMenus } from '@/api/sys/role'
-import { getMenuList } from '@/api/sys/menu'
+import { getRoleList, addRole, updateRole, delRole } from '@/api/sys/role'
+import { getMenuList, getRoleMenus } from '@/api/sys/menu'
 import { buildTree } from '@/utils/tree'
 import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
 
@@ -161,11 +161,11 @@ export default {
       rules: {
         name: [
           { required: true, message: '请输入角色名称', trigger: 'blur' },
-          { min: 5, max: 20, message: '长度在 5 到 20个字符', trigger: 'blur' }
+          { min: 4, max: 20, message: '长度在 5 到 20个字符', trigger: 'blur' }
         ],
         code: [
           { required: true, message: '请输入角色编码', trigger: 'blur' },
-          { min: 5, max: 20, message: '长度在 5 到 20个字符', trigger: 'blur' }
+          { min: 3, max: 20, message: '长度在 5 到 20个字符', trigger: 'blur' }
         ]
       },
       menuTreeData: [],
@@ -198,18 +198,19 @@ export default {
     },
     handleAdd() {
       this.dialogType = 'new'
-      this.setCheckedKeys([])
+      this.resetChecked()
       this.role = Object.assign({}, defaultRole)
       this.dialogVisible = true
     },
     handleEdit(scope) {
       this.dialogType = 'edit'
       this.role = Object.assign({}, scope.row)
+      this.resetChecked()
       getRoleMenus(this.role.id)
         .then(res => {
           this.role.menus = res.data
+          this.setCheckedKeys(res.data)
         })
-      this.setCheckedKeys(this.role.menus)
       this.dialogVisible = true
     },
     handleDelete({ $index, row }) {
@@ -270,14 +271,18 @@ export default {
     getCheckedKeys() {
       return this.$refs['menuTree'].getCheckedKeys()
     },
-    setCheckedKeys(arrayKey) {
+    resetChecked() {
       this.$nextTick(() => {
-        // 先清空选择，然后再添加选择
-        this.$refs['menuTree'].setCheckedKeys([], false)
-        if (arrayKey && arrayKey instanceof Array && arrayKey.length > 0) {
-          this.$refs['menuTree'].setCheckedKeys(arrayKey, false)
-        }
+        // 清空选择
+        this.setCheckedKeys([], false)
       })
+    },
+    setCheckedKeys(arrayKey) {
+      if (arrayKey && arrayKey instanceof Array && arrayKey.length > 0) {
+        this.$refs['menuTree'].setCheckedKeys(arrayKey, false)
+      } else {
+        this.$refs['menuTree'].setCheckedKeys([], false)
+      }
     },
     statusFormat(row, column, cellValue, index) {
       const status = {}
