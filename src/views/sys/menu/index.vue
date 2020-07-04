@@ -64,7 +64,7 @@
             </el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item v-if="menu.type===2" label="路径" prop="path">
+        <el-form-item v-if="menu.type!==3" label="路径" prop="path">
           <el-input v-model="menu.path" placeholder="相对路径" />
         </el-form-item>
         <el-form-item v-if="menu.type===2" label="外链" prop="isFrame">
