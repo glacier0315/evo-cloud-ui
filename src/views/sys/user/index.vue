@@ -62,7 +62,7 @@
             <span>{{ scope.row.birthday | parseTime('{y}-{m}-{d}') }}</span>
           </template>
         </el-table-column>
-        <el-table-column align="center" label="单位" prop="deptId" />
+        <el-table-column align="center" label="单位" prop="deptName" />
         <el-table-column align="center" label="状态" prop="status" :formatter="statusFormat" />
         <el-table-column align="center" label="操作">
           <template slot-scope="scope">
@@ -126,8 +126,27 @@
         <el-form-item label="手机号" prop="mobile">
           <el-input v-model="user.mobile" placeholder="手机号" />
         </el-form-item>
-        <el-form-item label="单位id" prop="deptId">
-          <el-input v-model="user.deptId" placeholder="单位id" />
+        <el-form-item label="单位" prop="deptName">
+          <el-input
+            v-model="user.deptName"
+            placeholder="单位"
+            @click.native="toggleTree"
+          />
+          <div v-if="showTree">
+            <el-tree
+              ref="tree"
+              :data="deptTreeData"
+              accordion
+              node-key="id"
+              @node-click="handleNodeClick"
+            >
+              <div slot-scope="{ node, data }">
+                <span>
+                  {{ data.name }}
+                </span>
+              </div>
+            </el-tree>
+          </div>
         </el-form-item>
         <el-form-item label="状态" prop="status">
           <el-radio-group v-model="user.status">
@@ -156,6 +175,8 @@
 <script>
 import { getUserList, addUser, updateUser, delUser } from '@/api/sys/user'
 import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
+import { getDeptList } from '@/api/sys/dept'
+import { buildTree } from '@/utils/tree'
 
 const defaultUser = {
   id: null,
@@ -167,7 +188,8 @@ const defaultUser = {
   status: '1',
   email: null,
   mobile: null,
-  deptId: null
+  deptId: null,
+  deptName: null
 }
 
 export default {
@@ -187,6 +209,8 @@ export default {
       },
       list: [],
       total: 0,
+      showTree: false,
+      deptTreeData: [],
       user: Object.assign({}, defaultUser),
       rules: {
         username: [
@@ -222,6 +246,7 @@ export default {
   },
   created() {
     this.getPageList()
+    this.getDeptTree()
   },
   methods: {
     getPageList() {
@@ -230,6 +255,12 @@ export default {
         this.list = response.data.records
         this.total = response.data.total
         this.listLoading = false
+      })
+    },
+    async getDeptTree() {
+      this.deptTreeData = []
+      getDeptList().then(response => {
+        this.deptTreeData = buildTree(response.data)
       })
     },
     handleAdd() {
@@ -293,6 +324,15 @@ export default {
           return false
         }
       })
+    },
+    toggleTree() {
+      this.showTree = !this.showTree
+    },
+    handleNodeClick(data) {
+      const { id, name } = data
+      this.user.deptId = id
+      this.user.deptName = name
+      this.showTree = false
     },
     statusFormat(row, column, cellValue, index) {
       const status = {}
