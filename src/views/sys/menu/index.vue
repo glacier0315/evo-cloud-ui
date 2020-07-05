@@ -170,8 +170,12 @@ export default {
       treeParentData: [],
       rules: {
         name: [
-          { required: true, message: '请输入用户名', trigger: 'blur' },
-          { min: 2, max: 20, message: '长度在 5 到 20个字符', trigger: 'blur' }
+          { required: true, message: '请输入菜单名称', trigger: 'blur' },
+          { min: 2, max: 20, message: '长度在 2 到 20个字符', trigger: 'blur' }
+        ],
+        path: [
+          { required: true, message: '请输入菜单路径', trigger: 'blur' },
+          { min: 2, max: 20, message: '长度在 2 到 20个字符', trigger: 'blur' }
         ]
       },
       typeList: [
@@ -219,7 +223,7 @@ export default {
       this.menu = Object.assign({}, scope.row)
     },
     handleDelete({ $index, row }) {
-      this.$confirm('确认删除当前用户?', 'Warning', {
+      this.$confirm('确认删除当前菜单?', 'Warning', {
         confirmButtonText: '确认',
         cancelButtonText: '关闭',
         type: 'warning'

@@ -101,6 +101,21 @@
             </div>
           </el-tree>
         </el-form-item>
+        <el-form-item label="组织机构">
+          <el-tree
+            ref="deptTree"
+            :check-strictly="checkStrictly"
+            :data="deptTreeData"
+            show-checkbox
+            node-key="id"
+          >
+            <div slot-scope="{ node, data }">
+              <span>
+                {{ data.name }}
+              </span>
+            </div>
+          </el-tree>
+        </el-form-item>
       </el-form>
       <div style="text-align:right;">
         <el-button type="danger" @click="dialogVisible=false">
@@ -117,6 +132,7 @@
 <script>
 import { getRoleList, addRole, updateRole, delRole } from '@/api/sys/role'
 import { getMenuList, getRoleMenus } from '@/api/sys/menu'
+import { getDeptList, getRoleDepts } from '@/api/sys/dept'
 import { buildTree } from '@/utils/tree'
 import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
 
@@ -126,7 +142,8 @@ const defaultRole = {
   code: '',
   status: '1',
   description: '',
-  menus: []
+  menus: [],
+  depts: []
 }
 
 export default {
@@ -161,14 +178,15 @@ export default {
       rules: {
         name: [
           { required: true, message: '请输入角色名称', trigger: 'blur' },
-          { min: 4, max: 20, message: '长度在 5 到 20个字符', trigger: 'blur' }
+          { min: 3, max: 20, message: '长度在 3 到 20个字符', trigger: 'blur' }
         ],
         code: [
           { required: true, message: '请输入角色编码', trigger: 'blur' },
-          { min: 3, max: 20, message: '长度在 5 到 20个字符', trigger: 'blur' }
+          { min: 3, max: 20, message: '长度在 3 到 20个字符', trigger: 'blur' }
         ]
       },
       menuTreeData: [],
+      deptTreeData: [],
       checkStrictly: false,
       statusList: [
         { label: '正常', value: '1' },
@@ -180,12 +198,19 @@ export default {
   created() {
     this.getPageList()
     this.getMenuTree()
+    this.getDeptTree()
   },
   methods: {
     async getMenuTree() {
       this.menuTreeData = []
       getMenuList().then(response => {
         this.menuTreeData = buildTree(response.data)
+      })
+    },
+    async getDeptTree() {
+      this.deptTreeData = []
+      getDeptList().then(response => {
+        this.deptTreeData = buildTree(response.data)
       })
     },
     getPageList() {
@@ -205,11 +230,17 @@ export default {
     handleEdit(scope) {
       this.dialogType = 'edit'
       this.role = Object.assign({}, scope.row)
-      this.resetChecked()
+      this.resetChecked('menuTree')
       getRoleMenus(this.role.id)
         .then(res => {
           this.role.menus = res.data
-          this.setCheckedKeys(res.data)
+          this.setCheckedKeys('menuTree', res.data)
+        })
+      this.resetChecked('deptTree')
+      getRoleDepts(this.role.id)
+        .then(res => {
+          this.role.depts = res.data
+          this.setCheckedKeys('deptTree', res.data)
         })
       this.dialogVisible = true
     },
@@ -233,8 +264,11 @@ export default {
       const isEdit = this.dialogType === 'edit'
 
       // 设置menus
-      const menus = this.getCheckedKeys()
+      const menus = this.getCheckedKeys('menuTree')
       this.role.menus = menus
+      // 设置组织机构
+      const depts = this.getCheckedKeys('deptTree')
+      this.role.depts = depts
       this.$refs['role'].validate((valid) => {
         if (valid) {
           if (isEdit) {
@@ -268,20 +302,20 @@ export default {
         }
       })
     },
-    getCheckedKeys() {
-      return this.$refs['menuTree'].getCheckedKeys()
+    getCheckedKeys(ref) {
+      return this.$refs[ref].getCheckedKeys()
     },
-    resetChecked() {
+    resetChecked(ref) {
       this.$nextTick(() => {
         // 清空选择
-        this.setCheckedKeys([], false)
+        this.setCheckedKeys(ref, [])
       })
     },
-    setCheckedKeys(arrayKey) {
+    setCheckedKeys(ref, arrayKey) {
       if (arrayKey && arrayKey instanceof Array && arrayKey.length > 0) {
-        this.$refs['menuTree'].setCheckedKeys(arrayKey, false)
+        this.$refs[ref].setCheckedKeys(arrayKey, false)
       } else {
-        this.$refs['menuTree'].setCheckedKeys([], false)
+        this.$refs[ref].setCheckedKeys([], false)
       }
     },
     statusFormat(row, column, cellValue, index) {

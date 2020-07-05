@@ -131,5 +131,23 @@ module.exports = [
         data: menus
       }
     }
+  },
+
+  {
+    url: '/sys/dept/findByRole',
+    type: 'get',
+    response: config => {
+      const id = config.query.roleId
+      let depts = []
+      roles.forEach(item => {
+        if (id && item.id === id) {
+          depts = item.depts
+        }
+      })
+      return {
+        code: '20000',
+        data: depts
+      }
+    }
   }
 ]
