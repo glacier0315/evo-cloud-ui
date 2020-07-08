@@ -126,6 +126,7 @@
         <el-form-item label="手机号" prop="mobile">
           <el-input v-model="user.mobile" placeholder="手机号" />
         </el-form-item>
+        <!--
         <el-form-item label="单位" prop="deptName">
           <el-input
             v-model="user.deptName"
@@ -147,6 +148,14 @@
               </div>
             </el-tree>
           </div>
+        </el-form-item>
+        -->
+        <el-form-item label="单位">
+          <tree-select
+            v-model="user.deptId"
+            :options="deptTreeData"
+            @selected="selected"
+          />
         </el-form-item>
         <el-form-item label="状态" prop="status">
           <el-radio-group v-model="user.status">
@@ -174,9 +183,10 @@
 
 <script>
 import { getUserList, addUser, updateUser, delUser } from '@/api/sys/user'
-import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
 import { getDeptList } from '@/api/sys/dept'
 import { buildTree } from '@/utils/tree'
+import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
+import TreeSelect from '@/components/TreeSelect'
 
 const defaultUser = {
   id: null,
@@ -194,7 +204,7 @@ const defaultUser = {
 
 export default {
   name: 'User',
-  components: { Pagination },
+  components: { Pagination, TreeSelect },
   data() {
     return {
       listLoading: true,
@@ -291,7 +301,7 @@ export default {
     },
     async confirmHandle() {
       const isEdit = this.dialogType === 'edit'
-
+      console.log('this.user', this.user)
       this.$refs['user'].validate((valid) => {
         if (valid) {
           if (isEdit) {
@@ -330,9 +340,16 @@ export default {
     },
     handleNodeClick(data) {
       const { id, name } = data
+      console.log('data', data)
       this.user.deptId = id
       this.user.deptName = name
       this.showTree = false
+    },
+    selected(data) {
+      const { id, name } = data
+      console.log('data', data)
+      this.user.deptId = id
+      this.user.deptName = name
     },
     statusFormat(row, column, cellValue, index) {
       const status = {}
