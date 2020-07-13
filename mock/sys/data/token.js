@@ -14,6 +14,6 @@ const tokens = {
   }
 }
 
-module.exports = [
+module.exports = {
   tokens
-]
+}

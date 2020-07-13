@@ -1,33 +1,5 @@
-
-const tokens = {
-  admin: {
-    code: '20000',
-    access_token: 'admin-token',
-    refresh_token: 'admin-token',
-    expires_in: 5
-  },
-  editor: {
-    code: '20000',
-    access_token: 'editor-token',
-    refresh_token: 'admin-token',
-    expires_in: 5
-  }
-}
-
-const users = {
-  'admin-token': {
-    roles: ['admin'],
-    introduction: 'I am a super administrator',
-    avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
-    name: 'Super Admin'
-  },
-  'editor-token': {
-    roles: ['editor'],
-    introduction: 'I am an editor',
-    avatar: 'https://wpimg.wallstcn.com/f778738c-e4f8-4870-b634-56703b4acafe.gif',
-    name: 'Normal Editor'
-  }
-}
+const { tokens } = require('./sys/data/token')
+const { users } = require('./sys/data/user')
 
 module.exports = [
   // user login
@@ -55,7 +27,13 @@ module.exports = [
     response: config => {
       const { authorization } = config.headers
       const token = authorization.substring('Bearer '.length, authorization.length)
-      const info = users[token]
+      let info = {}
+      users.forEach(item => {
+        // 设置id和token  一致
+        if (token && token === item.id) {
+          info = Object.assign({}, item)
+        }
+      })
 
       // mock error
       if (!info) {
