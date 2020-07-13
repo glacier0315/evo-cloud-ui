@@ -29,7 +29,7 @@
       ref="input"
       v-model="labelModel"
       clearable
-      :style="`width: ${width}px`"
+      :style="intpuStyle"
       :class="{ 'rotate': showStatus }"
       suffix-icon="el-icon-arrow-down"
       :placeholder="placeholder"
@@ -47,9 +47,17 @@ export default {
   },
   props: {
     // 接收绑定参数
-    value: String,
-    // 输入框宽度
-    width: String,
+    value: {
+      type: String,
+      default: ''
+    },
+    // 输入框样式
+    intpuStyle: {
+      type: Object,
+      default: () => {
+        return {}
+      }
+    },
     // 选项数据
     options: {
       type: Array,
@@ -65,12 +73,14 @@ export default {
     props: {
       type: Object,
       required: false,
-      default: () => ({
-        parent: 'parentId',
-        value: 'id',
-        label: 'name',
-        children: 'children'
-      })
+      default: () => {
+        return {
+          parent: 'parentId',
+          value: 'id',
+          label: 'name',
+          children: 'children'
+        }
+      }
     }
   },
   data() {
