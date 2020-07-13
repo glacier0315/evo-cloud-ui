@@ -40,7 +40,7 @@
       </div>
     </div>
 
-    <div class="table-container">
+    <div class="pagination-container">
       <el-table
         v-loading="listLoading"
         :data="list"
@@ -126,30 +126,6 @@
         <el-form-item label="手机号" prop="mobile">
           <el-input v-model="user.mobile" placeholder="手机号" />
         </el-form-item>
-        <!--
-        <el-form-item label="单位" prop="deptName">
-          <el-input
-            v-model="user.deptName"
-            placeholder="单位"
-            @click.native="toggleTree"
-          />
-          <div v-if="showTree">
-            <el-tree
-              ref="tree"
-              :data="deptTreeData"
-              accordion
-              node-key="id"
-              @node-click="handleNodeClick"
-            >
-              <div slot-scope="{ node, data }">
-                <span>
-                  {{ data.name }}
-                </span>
-              </div>
-            </el-tree>
-          </div>
-        </el-form-item>
-        -->
         <el-form-item label="单位">
           <tree-select
             v-model="user.deptId"
@@ -219,7 +195,6 @@ export default {
       },
       list: [],
       total: 0,
-      showTree: false,
       deptTreeData: [],
       user: Object.assign({}, defaultUser),
       rules: {
@@ -335,19 +310,8 @@ export default {
         }
       })
     },
-    toggleTree() {
-      this.showTree = !this.showTree
-    },
-    handleNodeClick(data) {
-      const { id, name } = data
-      console.log('data', data)
-      this.user.deptId = id
-      this.user.deptName = name
-      this.showTree = false
-    },
     selected(data) {
       const { id, name } = data
-      console.log('data', data)
       this.user.deptId = id
       this.user.deptName = name
     },
@@ -374,9 +338,6 @@ export default {
 </script>
 
 <style scoped>
-.table-container {
-  margin-top: 1em;
-}
 .btn-group {
   margin-left: 1em;
   display: inline;

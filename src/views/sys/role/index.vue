@@ -26,7 +26,7 @@
       </div>
     </div>
 
-    <div class="table-container">
+    <div class="pagination-container">
       <el-table
         v-loading="listLoading"
         :data="list"
@@ -332,9 +332,6 @@ export default {
 </script>
 
 <style scoped>
-.table-container {
-  margin-top: 1em;
-}
 .btn-group {
   margin-left: 1em;
   display: inline;
