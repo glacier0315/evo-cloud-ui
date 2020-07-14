@@ -1,5 +1,5 @@
 const Mock = require('mockjs')
-const { asyncRoutes } = require('../route')
+const { asyncRoutes } = require('../data/route')
 
 const Random = Mock.Random
 const routes = asyncRoutes

@@ -1,23 +1,7 @@
 const Mock = require('mockjs')
+const { users } = require('./data/user')
 
 const Random = Mock.Random
-
-const users = []
-for (let i = 0; i < 100; i++) {
-  users.push(Mock.mock({
-    'id': Random.id(),
-    'username': Random.string('lower', 5),
-    'password': Random.string('lower', 6),
-    'nickname': Random.string('lower', 5),
-    'idCard': /\d{17,17}([0-9]|[X])/,
-    'birthday': Random.date('yyyy-MM-dd'),
-    'sex|1': [1, 2],
-    'status|1': ['1', '2'],
-    'email|+1': Mock.mock('@email'),
-    'mobile|+1': /[1]\d{10,10}/,
-    'delFlag': '0'
-  }))
-}
 
 module.exports = [
   {
