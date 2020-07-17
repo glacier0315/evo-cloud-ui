@@ -78,6 +78,54 @@ module.exports = [
         data: 'success'
       }
     }
+  },
+
+  {
+    url: '/sys/user/profile',
+    type: 'get',
+    response: config => {
+      const user = {}
+      if (users && users.length > 0) {
+        Object.assign(user, users[0])
+      }
+      return {
+        code: '20000',
+        data: user
+      }
+    }
+  },
+
+  {
+    url: '/sys/user/profile',
+    type: 'put',
+    response: config => {
+      return {
+        code: '20000',
+        data: 'success'
+      }
+    }
+  },
+
+  {
+    url: '/sys/user/profile/updatePwd',
+    type: 'put',
+    response: config => {
+      return {
+        code: '20000',
+        data: 'success'
+      }
+    }
+  },
+
+  {
+    url: '/sys/user/profile/avatar',
+    type: 'post',
+    response: config => {
+      return {
+        code: '20000',
+        data: 'success'
+      }
+    }
   }
 ]
 
