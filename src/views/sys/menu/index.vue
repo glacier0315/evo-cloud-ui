@@ -1,20 +1,19 @@
 <template>
   <div class="app-container">
-    <div>
-      <div class="btn-group">
+    <el-form ref="roleSearch" :inline="true" label-width="68px">
+      <el-form-item>
         <el-button type="primary" @click="getTreeList">
           {{ $t('table.search') }}
         </el-button>
         <el-button type="primary" @click="handleAdd">
           {{ $t('table.add') }}
         </el-button>
-      </div>
-    </div>
+      </el-form-item>
+    </el-form>
 
     <div>
       <el-table
         :data="treeData"
-        style="margin-top: 1em;"
         row-key="id"
         border
         default-expand-all

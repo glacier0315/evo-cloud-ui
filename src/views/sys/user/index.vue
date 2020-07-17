@@ -1,46 +1,74 @@
 <template>
   <div class="app-container">
-    <div>
-      <el-input v-model="pageRequest.params.username" placeholder="用户名" style="width:100px;margin-left:1em;" />
-      <el-input v-model="pageRequest.params.nickname" placeholder="昵称" style="width:100px;margin-left:1em;" />
-      <el-input v-model="pageRequest.params.idCard" placeholder="身份证号" style="width:200px;margin-left:1em;" />
-      <el-select v-model="pageRequest.params.sex" placeholder="性别" style="width:100px;margin-left:1em;">
-        <el-option
-          :key="''"
-          :label="'全部'"
-          :value="null"
+    <el-form ref="userSearch" :model="pageRequest.params" :inline="true" label-width="68px">
+      <el-form-item label="用户名" prop="username">
+        <el-input
+          v-model="pageRequest.params.username"
+          placeholder="请输入用户名称"
+          clearable
+          size="small"
+          @keyup.enter.native="getPageList"
         />
-        <el-option
-          v-for="item in sexList"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value"
+      </el-form-item>
+      <el-form-item label="昵称" prop="nickname">
+        <el-input
+          v-model="pageRequest.params.nickname"
+          placeholder="请输入昵称"
+          clearable
+          size="small"
+          @keyup.enter.native="getPageList"
         />
-      </el-select>
-      <el-select v-model="pageRequest.params.status" placeholder="状态" style="width:100px;margin-left:1em;">
-        <el-option
-          :key="''"
-          :label="'全部'"
-          :value="null"
+      </el-form-item>
+      <el-form-item label="身份证号" prop="idCard">
+        <el-input
+          v-model="pageRequest.params.idCard"
+          placeholder="请输入身份证号"
+          clearable
+          size="small"
+          @keyup.enter.native="getPageList"
         />
-        <el-option
-          v-for="item in statusList"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value"
-        />
-      </el-select>
-      <div class="btn-group">
+      </el-form-item>
+      <el-form-item label="性别" prop="sex">
+        <el-select v-model="pageRequest.params.sex" placeholder="性别" clearable>
+          <el-option
+            :key="''"
+            :label="'全部'"
+            :value="null"
+          />
+          <el-option
+            v-for="item in sexList"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="状态" prop="status">
+        <el-select v-model="pageRequest.params.status" placeholder="状态" clearable>
+          <el-option
+            :key="''"
+            :label="'全部'"
+            :value="null"
+          />
+          <el-option
+            v-for="item in statusList"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item>
         <el-button type="primary" @click="getPageList">
           {{ $t('table.search') }}
         </el-button>
         <el-button type="primary" @click="handleAdd">
           {{ $t('table.add') }}
         </el-button>
-      </div>
-    </div>
+      </el-form-item>
+    </el-form>
 
-    <div class="pagination-container">
+    <div>
       <el-table
         v-loading="listLoading"
         :data="list"

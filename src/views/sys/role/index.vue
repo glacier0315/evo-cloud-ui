@@ -1,32 +1,50 @@
 <template>
   <div class="app-container">
-    <div>
-      <el-input v-model="pageRequest.params.name" placeholder="角色名称" style="width:100px;margin-left:1em;" />
-      <el-input v-model="pageRequest.params.code" placeholder="角色编码" style="width:100px;margin-left:1em;" />
-      <el-select v-model="pageRequest.params.status" placeholder="状态" style="width:100px;margin-left:1em;">
-        <el-option
-          :key="''"
-          :label="'全部'"
-          :value="null"
+    <el-form ref="roleSearch" :model="pageRequest.params" :inline="true" label-width="68px">
+      <el-form-item label="角色名称" prop="name">
+        <el-input
+          v-model="pageRequest.params.name"
+          placeholder="角色名称"
+          clearable
+          size="small"
+          @keyup.enter.native="getPageList"
         />
-        <el-option
-          v-for="item in statusList"
-          :key="item.value"
-          :label="item.label"
-          :value="item.value"
+      </el-form-item>
+      <el-form-item label="角色编码" prop="code">
+        <el-input
+          v-model="pageRequest.params.code"
+          placeholder="角色编码"
+          clearable
+          size="small"
+          @keyup.enter.native="getPageList"
         />
-      </el-select>
-      <div class="btn-group">
+      </el-form-item>
+      <el-form-item label="状态" prop="status">
+        <el-select v-model="pageRequest.params.status" placeholder="状态" clearable>
+          <el-option
+            :key="''"
+            :label="'全部'"
+            :value="null"
+          />
+          <el-option
+            v-for="item in statusList"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item>
         <el-button type="primary" @click="getPageList">
           {{ $t('table.search') }}
         </el-button>
         <el-button type="primary" @click="handleAdd">
           {{ $t('table.add') }}
         </el-button>
-      </div>
-    </div>
+      </el-form-item>
+    </el-form>
 
-    <div class="pagination-container">
+    <div>
       <el-table
         v-loading="listLoading"
         :data="list"
