@@ -9,13 +9,14 @@ module.exports = [
     type: 'post',
     response: config => {
       const { params, current = 1, size = 20 } = config.body
-      const { username, nickname, idCard, sex, status } = params
+      const { username, nickname, idCard, sex, deptId, status } = params
 
       const mockList = users.filter(item => {
         if (username && item.username !== username) return false
         if (nickname && item.nickname !== nickname) return false
         if (idCard && item.idCard !== idCard) return false
         if (sex && item.sex !== sex) return false
+        if (deptId && item.deptId !== deptId) return false
         if (status && item.status !== status) return false
         return true
       })

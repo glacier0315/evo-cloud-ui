@@ -31,11 +31,6 @@
       <el-form-item label="性别" prop="sex">
         <el-select v-model="pageRequest.params.sex" placeholder="性别" clearable>
           <el-option
-            :key="''"
-            :label="'全部'"
-            :value="null"
-          />
-          <el-option
             v-for="item in sexList"
             :key="item.value"
             :label="item.label"
@@ -43,13 +38,15 @@
           />
         </el-select>
       </el-form-item>
+      <el-form-item label="单位" prop="deptId">
+        <tree-select
+          v-model="pageRequest.params.deptId"
+          :options="deptTreeData"
+          @selected="selectedSearch"
+        />
+      </el-form-item>
       <el-form-item label="状态" prop="status">
         <el-select v-model="pageRequest.params.status" placeholder="状态" clearable>
-          <el-option
-            :key="''"
-            :label="'全部'"
-            :value="null"
-          />
           <el-option
             v-for="item in statusList"
             :key="item.value"
@@ -342,6 +339,11 @@ export default {
       const { id, name } = data
       this.user.deptId = id
       this.user.deptName = name
+    },
+    selectedSearch(data) {
+      const { id, name } = data
+      this.pageRequest.params.deptId = id
+      this.pageRequest.params.deptName = name
     },
     statusFormat(row, column, cellValue, index) {
       const status = {}
