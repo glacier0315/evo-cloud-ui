@@ -93,16 +93,11 @@ export function updateUserProfile(data) {
  * @param {*} oldPassword
  * @param {*} newPassword
  */
-export function updateUserPwd(id, oldPassword, newPassword) {
-  const data = {
-    id,
-    oldPassword,
-    newPassword
-  }
+export function updateUserPwd(data) {
   return request({
     url: '/sys/user/updatePwd',
     method: 'put',
-    params: data
+    data
   })
 }
 
