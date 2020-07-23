@@ -77,7 +77,6 @@
         style="width: 100%"
       >
         <el-table-column align="center" label="序号" type="index" width="80px" />
-        <el-table-column align="center" label="主键" prop="id" />
         <el-table-column align="center" label="用户名" prop="username" />
         <el-table-column align="center" label="昵称" prop="nickname" />
         <el-table-column align="center" label="性别" prop="sex" :formatter="sexFormat" />

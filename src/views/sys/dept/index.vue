@@ -62,7 +62,7 @@
             </el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item v-if="dept.type !== 1" label="父级机构" prop="parentName">
+        <el-form-item v-if="dept.type && dept.type !== 1" label="父级机构" prop="parentName">
           <el-input
             v-model="dept.parentName"
             placeholder="父级机构"

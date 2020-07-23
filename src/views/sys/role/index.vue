@@ -56,7 +56,6 @@
         style="width: 100%"
       >
         <el-table-column align="center" label="序号" type="index" width="80px" />
-        <el-table-column align="center" label="主键" prop="id" />
         <el-table-column align="center" label="角色名称" prop="name" />
         <el-table-column align="center" label="角色编码" prop="code" />
         <el-table-column align="center" label="状态" prop="status" :formatter="statusFormat" />
