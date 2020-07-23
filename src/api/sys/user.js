@@ -50,13 +50,13 @@ export function delUser(id) {
 
 /**
  * 用户密码重置
- * @param {*} userId
- * @param {*} password
+ * @param {*} id
+ * @param {*} oldPassword
  */
-export function resetUserPwd(userId, password) {
+export function resetUserPwd(id, oldPassword) {
   const data = {
-    userId,
-    password
+    id,
+    oldPassword
   }
   return request({
     url: '/sys/user/resetPwd',
@@ -89,18 +89,18 @@ export function updateUserProfile(data) {
 
 /**
  * 用户密码重置
- * @param {*} userId
+ * @param {*} id
  * @param {*} oldPassword
  * @param {*} newPassword
  */
-export function updateUserPwd(userId, oldPassword, newPassword) {
+export function updateUserPwd(id, oldPassword, newPassword) {
   const data = {
-    userId,
+    id,
     oldPassword,
     newPassword
   }
   return request({
-    url: '/sys/user/profile/updatePwd',
+    url: '/sys/user/updatePwd',
     method: 'put',
     params: data
   })
@@ -112,7 +112,7 @@ export function updateUserPwd(userId, oldPassword, newPassword) {
  */
 export function uploadAvatar(data) {
   return request({
-    url: '/sys/user/profile/avatar',
+    url: '/sys/user/avatar',
     method: 'post',
     data: data
   })

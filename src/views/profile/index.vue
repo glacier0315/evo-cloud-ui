@@ -8,7 +8,10 @@
           </div>
           <div>
             <div class="text-center">
-              <userAvatar :user="user" />
+              <userAvatar
+                :user="user"
+                @updateAvatar="updateAvatar"
+              />
             </div>
             <ul class="list-group list-group-striped">
               <li class="list-group-item">
@@ -82,7 +85,7 @@
 import userAvatar from './components/userAvatar'
 import userInfo from './components/userInfo'
 import resetPwd from './components/resetPwd'
-import { getUserProfile } from '@/api/sys/user'
+import { getUserProfile, uploadAvatar } from '@/api/sys/user'
 
 export default {
   name: 'Profile',
@@ -101,6 +104,11 @@ export default {
       getUserProfile().then(response => {
         this.user = response.data
       })
+    },
+    updateAvatar(avatar) {
+      uploadAvatar({ id: this.user.id, avatar: avatar })
+      // 修改缓存中的头像
+      this.$store.dispatch('user/changeAvatar', avatar)
     }
   }
 }

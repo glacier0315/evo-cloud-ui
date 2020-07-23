@@ -108,7 +108,7 @@ module.exports = [
   },
 
   {
-    url: '/sys/user/profile/updatePwd',
+    url: '/sys/user/updatePwd',
     type: 'put',
     response: config => {
       return {
@@ -119,7 +119,7 @@ module.exports = [
   },
 
   {
-    url: '/sys/user/profile/avatar',
+    url: '/sys/user/avatar',
     type: 'post',
     response: config => {
       return {
