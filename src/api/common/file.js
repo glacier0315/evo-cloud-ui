@@ -7,6 +7,7 @@ import request from '@/utils/request'
 export function uploadFile(data) {
   return request({
     url: '/web/dfs/upload',
+    headers: { 'Content-Type': 'multipart/form-data' },
     method: 'post',
     data
   })
