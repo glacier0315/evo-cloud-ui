@@ -10,6 +10,8 @@ const service = axios.create({
   timeout: 5000 // request timeout
 })
 
+axios.defaults.headers['Content-Type'] = 'application/json;charset=utf-8'
+
 // request interceptor
 service.interceptors.request.use(
   config => {
