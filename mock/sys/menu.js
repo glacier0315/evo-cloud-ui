@@ -1,13 +1,14 @@
 const Mock = require('mockjs')
 const { menus } = require('./data/menu')
 const { asyncRoutes } = require('../data/route')
+const { sys } = require('../constant')
 
 const Random = Mock.Random
 
 module.exports = [
   // mock get all routes form server
   {
-    url: '/sys/menu/getRouters',
+    url: sys + '/menu/getRouters',
     type: 'get',
     response: _ => {
       return {
@@ -19,7 +20,7 @@ module.exports = [
 
   // mock get all permissions form server
   {
-    url: '/sys/menu/getPermissions',
+    url: sys + '/menu/getPermissions',
     type: 'get',
     response: _ => {
       return {
@@ -29,7 +30,7 @@ module.exports = [
     }
   },
   {
-    url: '/sys/menu/list',
+    url: sys + '/menu/list',
     type: 'get',
     response: config => {
       return {
@@ -40,7 +41,7 @@ module.exports = [
   },
 
   {
-    url: '/sys/menu/add',
+    url: sys + '/menu/add',
     type: 'post',
     response: config => {
       const menu = config.body
@@ -54,7 +55,7 @@ module.exports = [
   },
 
   {
-    url: '/sys/menu/update',
+    url: sys + '/menu/update',
     type: 'put',
     response: config => {
       const menu = config.body
@@ -71,7 +72,7 @@ module.exports = [
   },
 
   {
-    url: '/sys/menu/delete',
+    url: sys + '/menu/delete',
     type: 'delete',
     response: config => {
       const id = config.query.id

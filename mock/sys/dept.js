@@ -1,11 +1,12 @@
 const Mock = require('mockjs')
 const { depts } = require('./data/dept')
+const { sys } = require('../constant')
 
 const Random = Mock.Random
 
 module.exports = [
   {
-    url: '/sys/dept/list',
+    url: sys + '/dept/list',
     type: 'get',
     response: config => {
       return {
@@ -16,7 +17,7 @@ module.exports = [
   },
 
   {
-    url: '/sys/dept/add',
+    url: sys + '/dept/add',
     type: 'post',
     response: config => {
       const dept = config.body
@@ -30,7 +31,7 @@ module.exports = [
   },
 
   {
-    url: '/sys/dept/update',
+    url: sys + '/dept/update',
     type: 'put',
     response: config => {
       const dept = config.body
@@ -47,7 +48,7 @@ module.exports = [
   },
 
   {
-    url: '/sys/dept/delete',
+    url: sys + '/dept/delete',
     type: 'delete',
     response: config => {
       const id = config.query.id

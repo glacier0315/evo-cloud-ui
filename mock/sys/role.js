@@ -1,11 +1,12 @@
 const Mock = require('mockjs')
 const { roles } = require('./data/role')
+const { sys } = require('../constant')
 
 const Random = Mock.Random
 
 module.exports = [
   {
-    url: '/sys/role/pageList',
+    url: sys + '/role/pageList',
     type: 'post',
     response: config => {
       const { params, current = 1, size = 20 } = config.body
@@ -32,7 +33,7 @@ module.exports = [
   },
 
   {
-    url: '/sys/role/add',
+    url: sys + '/role/add',
     type: 'post',
     response: config => {
       const role = config.body
@@ -46,7 +47,7 @@ module.exports = [
   },
 
   {
-    url: '/sys/role/update',
+    url: sys + '/role/update',
     type: 'put',
     response: config => {
       const role = config.body
@@ -63,7 +64,7 @@ module.exports = [
   },
 
   {
-    url: '/sys/role/delete',
+    url: sys + '/role/delete',
     type: 'delete',
     response: config => {
       const id = config.query.id
@@ -80,7 +81,7 @@ module.exports = [
   },
 
   {
-    url: '/sys/menu/findByRole',
+    url: sys + '/menu/findByRole',
     type: 'get',
     response: config => {
       const id = config.query.roleId
@@ -98,7 +99,7 @@ module.exports = [
   },
 
   {
-    url: '/sys/dept/findByRole',
+    url: sys + '/dept/findByRole',
     type: 'get',
     response: config => {
       const id = config.query.roleId

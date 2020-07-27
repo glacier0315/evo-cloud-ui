@@ -1,10 +1,11 @@
 const Mock = require('mockjs')
+const { commonWeb } = require('../constant')
 
 const Random = Mock.Random
 
 module.exports = [
   {
-    url: '/web/dfs/upload',
+    url: commonWeb + '/dfs/upload',
     type: 'post',
     response: config => {
       return {
@@ -15,7 +16,7 @@ module.exports = [
   },
 
   {
-    url: '/web/dfs/delete',
+    url: commonWeb + '/dfs/delete',
     type: 'post',
     response: config => {
       return {

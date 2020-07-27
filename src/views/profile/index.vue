@@ -107,8 +107,15 @@ export default {
     },
     updateAvatar(avatar) {
       uploadAvatar({ id: this.user.id, avatar: avatar })
-      // 修改缓存中的头像
-      this.$store.dispatch('user/changeAvatar', avatar)
+        .then(response => {
+          // 触发父组件时间
+          this.$message({
+            type: 'success',
+            message: '修改成功!'
+          })
+          // 修改缓存中的头像
+          this.$store.dispatch('user/changeAvatar', avatar)
+        })
     }
   }
 }

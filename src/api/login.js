@@ -1,4 +1,5 @@
 import request from '@/utils/request'
+import { authorizationServer, sys } from '@/common/constant'
 
 export function login(data) {
   const form = {
@@ -9,7 +10,7 @@ export function login(data) {
     scope: 'all'
   }
   return request({
-    url: '/uas/oauth/token',
+    url: authorizationServer + '/oauth/token',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
       'Authorization': 'Basic ZWJvb3Qtc3lzOmVib290LXN5cw=='
@@ -21,7 +22,7 @@ export function login(data) {
 
 export function getInfo() {
   return request({
-    url: '/sys/oauth/userInfo',
+    url: sys + '/oauth/userInfo',
     method: 'get'
   })
 }
@@ -33,7 +34,7 @@ export const refreshToken = (refresh_token) => {
     scope: 'all'
   }
   return request({
-    url: '/uas/oauth/token',
+    url: authorizationServer + '/oauth/token',
     method: 'post',
     params: form
   })
@@ -41,7 +42,7 @@ export const refreshToken = (refresh_token) => {
 
 export function logout() {
   return request({
-    url: '/uas/logout',
+    url: authorizationServer + '/logout',
     method: 'post'
   })
 }

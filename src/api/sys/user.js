@@ -1,4 +1,5 @@
 import request from '@/utils/request'
+import { sys } from '@/common/constant'
 
 /**
  * 查询用户
@@ -6,7 +7,7 @@ import request from '@/utils/request'
  */
 export function getUserList(data) {
   return request({
-    url: '/sys/user/pageList',
+    url: sys + '/user/pageList',
     method: 'post',
     data
   })
@@ -18,7 +19,7 @@ export function getUserList(data) {
  */
 export function addUser(data) {
   return request({
-    url: '/sys/user/add',
+    url: sys + '/user/add',
     method: 'post',
     data
   })
@@ -30,7 +31,7 @@ export function addUser(data) {
  */
 export function updateUser(data) {
   return request({
-    url: '/sys/user/update',
+    url: sys + '/user/update',
     method: 'put',
     data
   })
@@ -42,7 +43,7 @@ export function updateUser(data) {
  */
 export function delUser(id) {
   return request({
-    url: '/sys/user/delete',
+    url: sys + '/user/delete',
     method: 'delete',
     params: { 'id': id }
   })
@@ -59,7 +60,7 @@ export function resetUserPwd(id, oldPassword) {
     oldPassword
   }
   return request({
-    url: '/sys/user/resetPwd',
+    url: sys + '/user/resetPwd',
     method: 'post',
     data: data
   })
@@ -70,7 +71,7 @@ export function resetUserPwd(id, oldPassword) {
  */
 export function getUserProfile() {
   return request({
-    url: '/sys/user/profile',
+    url: sys + '/user/profile',
     method: 'get'
   })
 }
@@ -81,7 +82,7 @@ export function getUserProfile() {
  */
 export function updateUserProfile(data) {
   return request({
-    url: '/sys/user/profile',
+    url: sys + '/user/profile',
     method: 'put',
     data: data
   })
@@ -95,7 +96,7 @@ export function updateUserProfile(data) {
  */
 export function updateUserPwd(data) {
   return request({
-    url: '/sys/user/updatePwd',
+    url: sys + '/user/updatePwd',
     method: 'put',
     data
   })
@@ -107,7 +108,7 @@ export function updateUserPwd(data) {
  */
 export function uploadAvatar(data) {
   return request({
-    url: '/sys/user/avatar',
+    url: sys + '/user/avatar',
     method: 'post',
     data: data
   })

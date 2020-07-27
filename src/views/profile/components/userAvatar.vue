@@ -1,6 +1,6 @@
 <template>
   <div>
-    <img :src="options.img" title="点击上传头像" class="img-circle img-lg" @click="editCropper()">
+    <img :src="avatar" title="点击上传头像" class="img-circle img-lg" @click="editCropper()">
     <el-dialog :title="title" :visible.sync="open" width="800px" append-to-body>
       <el-row :gutter="20">
         <el-col :xs="24" :md="12" :style="{height: '350px'}">
@@ -57,7 +57,7 @@
 </template>
 
 <script>
-import store from '@/store'
+import { mapState } from 'vuex'
 import { VueCropper } from 'vue-cropper'
 import { uploadFile } from '@/api/common/file'
 
@@ -78,7 +78,7 @@ export default {
       // 弹出层标题
       title: '修改头像',
       options: {
-        img: store.getters.avatar, // 裁剪图片的地址
+        img: '', // 裁剪图片的地址
         autoCrop: true, // 是否默认生成截图框
         autoCropWidth: 200, // 默认生成截图框宽度
         autoCropHeight: 200, // 默认生成截图框高度
@@ -87,9 +87,15 @@ export default {
       previews: {}
     }
   },
+  computed: {
+    ...mapState({
+      avatar: state => state.user.avatar
+    })
+  },
   methods: {
     // 编辑头像
     editCropper() {
+      this.options.img = ''
       this.open = true
     },
     // 覆盖默认的上传行为
@@ -131,13 +137,8 @@ export default {
         formData.append('file', data)
         uploadFile(formData).then(response => {
           this.open = false
-          this.options.img = response.data
           // 触发父组件时间
-          this.$emit('updateAvatar', this.options.img)
-          this.$message({
-            type: 'success',
-            message: '修改成功!'
-          })
+          this.$emit('updateAvatar', response.data)
           this.$refs.cropper.clearCrop()
         })
       })

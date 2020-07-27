@@ -1,11 +1,12 @@
 const Mock = require('mockjs')
 const { users } = require('./data/user')
+const { sys } = require('../constant')
 
 const Random = Mock.Random
 
 module.exports = [
   {
-    url: '/sys/user/pageList',
+    url: sys + '/user/pageList',
     type: 'post',
     response: config => {
       const { params, current = 1, size = 20 } = config.body
@@ -34,7 +35,7 @@ module.exports = [
   },
 
   {
-    url: '/sys/user/add',
+    url: sys + '/user/add',
     type: 'post',
     response: config => {
       const user = config.body
@@ -48,7 +49,7 @@ module.exports = [
   },
 
   {
-    url: '/sys/user/update',
+    url: sys + '/user/update',
     type: 'put',
     response: config => {
       const user = config.body
@@ -65,7 +66,7 @@ module.exports = [
   },
 
   {
-    url: '/sys/user/delete',
+    url: sys + '/user/delete',
     type: 'delete',
     response: config => {
       const id = config.query.id
@@ -82,7 +83,7 @@ module.exports = [
   },
 
   {
-    url: '/sys/user/profile',
+    url: sys + '/user/profile',
     type: 'get',
     response: config => {
       const user = {}
@@ -97,7 +98,7 @@ module.exports = [
   },
 
   {
-    url: '/sys/user/profile',
+    url: sys + '/user/profile',
     type: 'put',
     response: config => {
       return {
@@ -108,7 +109,7 @@ module.exports = [
   },
 
   {
-    url: '/sys/user/updatePwd',
+    url: sys + '/user/updatePwd',
     type: 'put',
     response: config => {
       return {
@@ -119,7 +120,7 @@ module.exports = [
   },
 
   {
-    url: '/sys/user/avatar',
+    url: sys + '/user/avatar',
     type: 'post',
     response: config => {
       return {

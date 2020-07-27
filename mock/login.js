@@ -1,10 +1,11 @@
 const { tokens } = require('./sys/data/token')
 const { users } = require('./sys/data/user')
+const { authorizationServer, sys } = require('./constant')
 
 module.exports = [
   // user login
   {
-    url: '/uas/oauth/token',
+    url: authorizationServer + '/oauth/token',
     type: 'post',
     response: config => {
       const { username } = config.query
@@ -16,13 +17,16 @@ module.exports = [
           message: 'Account and password are incorrect.'
         }
       }
-      return token
+      return {
+        code: '20000',
+        data: token
+      }
     }
   },
 
   // get user info
   {
-    url: '/sys/oauth/userInfo\.*',
+    url: sys + '/oauth/userInfo\.*',
     type: 'get',
     response: config => {
       const { authorization } = config.headers
@@ -52,7 +56,7 @@ module.exports = [
 
   // user logout
   {
-    url: '/uas/logout',
+    url: authorizationServer + '/logout',
     type: 'post',
     response: _ => {
       return {

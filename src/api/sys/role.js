@@ -1,8 +1,9 @@
 import request from '@/utils/request'
+import { sys } from '@/common/constant'
 
 export function getRoleList(data) {
   return request({
-    url: '/sys/role/pageList',
+    url: sys + '/role/pageList',
     method: 'post',
     data
   })
@@ -10,7 +11,7 @@ export function getRoleList(data) {
 
 export function addRole(data) {
   return request({
-    url: '/sys/role/add',
+    url: sys + '/role/add',
     method: 'post',
     data
   })
@@ -18,7 +19,7 @@ export function addRole(data) {
 
 export function updateRole(data) {
   return request({
-    url: `/sys/role/update`,
+    url: sys + '/role/update',
     method: 'put',
     data
   })
@@ -26,7 +27,7 @@ export function updateRole(data) {
 
 export function delRole(id) {
   return request({
-    url: `/sys/role/delete`,
+    url: sys + '/role/delete',
     method: 'delete',
     params: { 'id': id }
   })
