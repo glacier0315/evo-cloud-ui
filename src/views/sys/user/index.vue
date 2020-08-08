@@ -103,8 +103,8 @@
       <pagination
         v-show="total>0"
         :total="total"
-        :page.sync="pageRequest.current"
-        :limit.sync="pageRequest.size"
+        :page.sync="pageRequest.pageNum"
+        :limit.sync="pageRequest.pageSize"
         @pagination="getPageList"
       />
     </div>
@@ -211,8 +211,8 @@ export default {
       dialogVisible: false,
       dialogType: 'new',
       pageRequest: {
-        current: 1,
-        size: 10,
+        pageNum: 1,
+        pageSize: 10,
         params: {
           username: null
         }
@@ -261,7 +261,7 @@ export default {
     getPageList() {
       this.listLoading = true
       getUserList(this.pageRequest).then(response => {
-        this.list = response.data.records
+        this.list = response.data.list
         this.total = response.data.total
         this.listLoading = false
       })
