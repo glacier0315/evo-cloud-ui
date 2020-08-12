@@ -135,7 +135,7 @@
   </div>
 </template>
 <script>
-import { getMenuList, addMenu, updateMenu, delMenu } from '@/api/sys/menu'
+import { getMenuList, saveMenu, delMenu } from '@/api/sys/menu'
 import { buildTree } from '@/utils/tree'
 
 const defaultMenu = {
@@ -242,31 +242,26 @@ export default {
 
       this.$refs['menu'].validate((valid) => {
         if (valid) {
-          if (isEdit) {
-            updateMenu(this.menu).then(data => {
-              this.dialogVisible = false
-              this.getTreeList()
+          saveMenu(this.menu).then(data => {
+            this.dialogVisible = false
+            this.getTreeList()
 
+            if (isEdit) {
               this.$notify({
                 title: '成功',
                 dangerouslyUseHTMLString: true,
                 message: '更新成功',
                 type: 'success'
               })
-            })
-          } else {
-            addMenu(this.menu).then(data => {
-              this.dialogVisible = false
-              this.getTreeList()
-
+            } else {
               this.$notify({
                 title: '成功',
                 dangerouslyUseHTMLString: true,
                 message: '添加成功',
                 type: 'success'
               })
-            })
-          }
+            }
+          })
         } else {
           console.log('error submit!!')
           return false

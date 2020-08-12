@@ -17,19 +17,17 @@ module.exports = [
           message: 'Account and password are incorrect.'
         }
       }
-      return {
-        code: '20000',
-        data: token
-      }
+      return token
     }
   },
 
   // get user info
   {
-    url: sys + '/oauth/userInfo\.*',
+    url: sys + '/oauth/userInfo',
     type: 'get',
     response: config => {
       const { authorization } = config.headers
+      console.log('authorization:', authorization)
       const token = authorization.substring('Bearer '.length, authorization.length)
       let info = {}
       users.forEach(item => {

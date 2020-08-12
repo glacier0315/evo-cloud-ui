@@ -9,7 +9,7 @@ module.exports = [
     url: sys + '/user/pageList',
     type: 'post',
     response: config => {
-      const { params, current = 1, size = 20 } = config.body
+      const { params, pageNum = 1, pageSize = 20 } = config.body
       const { username, nickname, idCard, sex, deptId, status } = params
 
       const mockList = users.filter(item => {
@@ -22,13 +22,15 @@ module.exports = [
         return true
       })
 
-      const pageList = mockList.filter((item, index) => index < size * current && index >= size * (current - 1))
+      const pageList = mockList.filter((item, index) => index < pageSize * pageNum && index >= pageSize * (pageNum - 1))
 
       return {
         code: '20000',
         data: {
+          pageNum: pageNum,
+          pageSize: pageSize,
           total: mockList.length,
-          records: pageList
+          list: pageList
         }
       }
     }

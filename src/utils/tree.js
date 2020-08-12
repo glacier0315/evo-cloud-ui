@@ -20,6 +20,8 @@ const buildChildren = (parent, array) => {
         children.push(element)
       }
     })
+    // 排序
+    children.sort(treeSort)
     parent.children = children
   }
 }
@@ -31,9 +33,7 @@ const buildTree = (array) => {
     array.length > 0) {
     // 查找顶级元素
     array.forEach(element => {
-      if (element.parentId &&
-        element.parentId !== '0' &&
-        element.parentId.length > 0) {
+      if (element.parentId) {
         children.push(element)
       } else {
         tree.push(Object.assign({}, element))
@@ -44,8 +44,16 @@ const buildTree = (array) => {
       buildChildren(element, children)
     })
   }
-
+  // 排序
+  tree.sort(treeSort)
   return tree
+}
+
+const treeSort = (a, b) => {
+  // 默认为0
+  const orderNum1 = a.orderNum || 0
+  const orderNum2 = b.orderNum || 0
+  return orderNum1 - orderNum2
 }
 
 module.exports = {

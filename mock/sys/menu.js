@@ -41,29 +41,22 @@ module.exports = [
   },
 
   {
-    url: sys + '/menu/add',
+    url: sys + '/menu/save',
     type: 'post',
     response: config => {
       const menu = config.body
-      menu.id = Random.id()
-      menus.push(menu)
-      return {
-        code: '20000',
-        data: 'success'
+      if (menu.id) {
+        // 更新
+        menus.forEach((item, index) => {
+          if (menu && menu.id && item.id === menu.id) {
+            menus.splice(index, 1, menu)
+          }
+        })
+      } else {
+        // 新增
+        menu.id = Random.id()
+        menus.push(menu)
       }
-    }
-  },
-
-  {
-    url: sys + '/menu/update',
-    type: 'put',
-    response: config => {
-      const menu = config.body
-      menus.forEach((item, index) => {
-        if (menu && menu.id && item.id === menu.id) {
-          menus.splice(index, 1, menu)
-        }
-      })
       return {
         code: '20000',
         data: 'success'

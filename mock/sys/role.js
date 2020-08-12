@@ -9,7 +9,7 @@ module.exports = [
     url: sys + '/role/pageList',
     type: 'post',
     response: config => {
-      const { params, current = 1, size = 20 } = config.body
+      const { params, pageNum = 1, pageSize = 20 } = config.body
 
       const { name, code, status } = params
 
@@ -20,42 +20,37 @@ module.exports = [
         return true
       })
 
-      const pageList = mockList.filter((item, index) => index < size * current && index >= size * (current - 1))
+      const pageList = mockList.filter((item, index) => index < pageSize * pageNum && index >= pageSize * (pageNum - 1))
 
       return {
         code: '20000',
         data: {
+          pageNum: pageNum,
+          pageSize: pageSize,
           total: mockList.length,
-          records: pageList
+          list: pageList
         }
       }
     }
   },
 
   {
-    url: sys + '/role/add',
+    url: sys + '/role/save',
     type: 'post',
     response: config => {
       const role = config.body
-      role.id = Random.id()
-      roles.push(role)
-      return {
-        code: '20000',
-        data: 'success'
+      if (role.id) {
+        // 更新
+        roles.forEach((item, index) => {
+          if (role && role.id && item.id === role.id) {
+            roles.splice(index, 1, role)
+          }
+        })
+      } else {
+        // 新增
+        role.id = Random.id()
+        roles.push(role)
       }
-    }
-  },
-
-  {
-    url: sys + '/role/update',
-    type: 'put',
-    response: config => {
-      const role = config.body
-      roles.forEach((item, index) => {
-        if (role && role.id && item.id === role.id) {
-          roles.splice(index, 1, role)
-        }
-      })
       return {
         code: '20000',
         data: 'success'

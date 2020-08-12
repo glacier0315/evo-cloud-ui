@@ -9,18 +9,10 @@ export function getRoleList(data) {
   })
 }
 
-export function addRole(data) {
+export function saveRole(data) {
   return request({
-    url: sys + '/role/add',
+    url: sys + '/role/save',
     method: 'post',
-    data
-  })
-}
-
-export function updateRole(data) {
-  return request({
-    url: sys + '/role/update',
-    method: 'put',
     data
   })
 }

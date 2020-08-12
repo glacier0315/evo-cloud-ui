@@ -147,7 +147,7 @@
 </template>
 
 <script>
-import { getRoleList, addRole, updateRole, delRole } from '@/api/sys/role'
+import { getRoleList, saveRole, delRole } from '@/api/sys/role'
 import { getMenuList, getRoleMenus } from '@/api/sys/menu'
 import { getDeptList, getRoleDepts } from '@/api/sys/dept'
 import { buildTree } from '@/utils/tree'
@@ -240,7 +240,8 @@ export default {
     },
     handleAdd() {
       this.dialogType = 'new'
-      this.resetChecked()
+      this.resetChecked('menuTree')
+      this.resetChecked('deptTree')
       this.role = Object.assign({}, defaultRole)
       this.dialogVisible = true
     },
@@ -288,31 +289,26 @@ export default {
       this.role.depts = depts
       this.$refs['role'].validate((valid) => {
         if (valid) {
-          if (isEdit) {
-            updateRole(this.role).then(data => {
-              this.dialogVisible = false
-              this.getPageList()
+          saveRole(this.role).then(data => {
+            this.dialogVisible = false
+            this.getPageList()
 
+            if (isEdit) {
               this.$notify({
                 title: '成功',
                 dangerouslyUseHTMLString: true,
                 message: '更新成功',
                 type: 'success'
               })
-            })
-          } else {
-            addRole(this.role).then(data => {
-              this.dialogVisible = false
-              this.getPageList()
-
+            } else {
               this.$notify({
                 title: '成功',
                 dangerouslyUseHTMLString: true,
                 message: '添加成功',
                 type: 'success'
               })
-            })
-          }
+            }
+          })
         } else {
           console.log('error submit!!')
           return false

@@ -111,7 +111,7 @@
   </div>
 </template>
 <script>
-import { getDeptList, addDept, updateDept, delDept } from '@/api/sys/dept'
+import { getDeptList, saveDept, delDept } from '@/api/sys/dept'
 import { buildTree } from '@/utils/tree'
 
 const defaultDept = {
@@ -208,31 +208,26 @@ export default {
 
       this.$refs['dept'].validate((valid) => {
         if (valid) {
-          if (isEdit) {
-            updateDept(this.dept).then(data => {
-              this.dialogVisible = false
-              this.getTreeList()
+          saveDept(this.dept).then(data => {
+            this.dialogVisible = false
+            this.getTreeList()
 
+            if (isEdit) {
               this.$notify({
                 title: '成功',
                 dangerouslyUseHTMLString: true,
                 message: '更新成功',
                 type: 'success'
               })
-            })
-          } else {
-            addDept(this.dept).then(data => {
-              this.dialogVisible = false
-              this.getTreeList()
-
+            } else {
               this.$notify({
                 title: '成功',
                 dangerouslyUseHTMLString: true,
                 message: '添加成功',
                 type: 'success'
               })
-            })
-          }
+            }
+          })
         } else {
           console.log('error submit!!')
           return false

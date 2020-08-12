@@ -17,29 +17,23 @@ module.exports = [
   },
 
   {
-    url: sys + '/dept/add',
+    url: sys + '/dept/save',
     type: 'post',
     response: config => {
       const dept = config.body
-      dept.id = Random.id()
-      depts.push(dept)
-      return {
-        code: '20000',
-        data: 'success'
+      if (dept.id) {
+        // 更新
+        depts.forEach((item, index) => {
+          if (dept && dept.id && item.id === dept.id) {
+            depts.splice(index, 1, dept)
+          }
+        })
+      } else {
+        // 新增
+        dept.id = Random.id()
+        depts.push(dept)
       }
-    }
-  },
 
-  {
-    url: sys + '/dept/update',
-    type: 'put',
-    response: config => {
-      const dept = config.body
-      depts.forEach((item, index) => {
-        if (dept && dept.id && item.id === dept.id) {
-          depts.splice(index, 1, dept)
-        }
-      })
       return {
         code: '20000',
         data: 'success'

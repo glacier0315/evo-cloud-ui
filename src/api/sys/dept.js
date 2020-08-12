@@ -11,18 +11,10 @@ export const getDeptList = () => {
   })
 }
 
-export function addDept(data) {
+export function saveDept(data) {
   return request({
-    url: sys + '/dept/add',
+    url: sys + '/dept/save',
     method: 'post',
-    data
-  })
-}
-
-export function updateDept(data) {
-  return request({
-    url: sys + '/dept/update',
-    method: 'put',
     data
   })
 }

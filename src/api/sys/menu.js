@@ -26,18 +26,10 @@ export const getMenuList = () => {
   })
 }
 
-export function addMenu(data) {
+export function saveMenu(data) {
   return request({
-    url: sys + '/menu/add',
+    url: sys + '/menu/save',
     method: 'post',
-    data
-  })
-}
-
-export function updateMenu(data) {
-  return request({
-    url: sys + '/menu/update',
-    method: 'put',
     data
   })
 }
