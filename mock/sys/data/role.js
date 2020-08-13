@@ -7,24 +7,30 @@ const roles = [
     name: 'admin',
     code: 'visitor',
     status: '1',
+    dataScope: '1',
     description: 'Super Administrator. Have access to view all pages.',
-    menus: []
+    menus: [],
+    depts: []
   },
   {
     id: 'editor',
     name: 'editor',
     code: 'editor',
     status: '1',
+    dataScope: '1',
     description: 'Normal Editor. Can see all pages except permission page',
-    menus: []
+    menus: [],
+    depts: []
   },
   {
     id: 'visitor',
     name: 'visitor',
     code: 'visitor',
     status: '1',
+    dataScope: '1',
     description: 'Just a visitor. Can only see the home page and the document page',
-    menus: []
+    menus: [],
+    depts: []
   }
 ]
 
@@ -34,6 +40,7 @@ for (let i = 0; i < 97; i++) {
     'name': Random.string('lower', 5),
     'code': Random.string('lower', 6),
     'status|1': ['1', '2'],
+    'dataScope|1': ['1', '2', '3', '4', '5', '6'],
     description: Random.paragraph(),
     menus: []
   }))

@@ -124,7 +124,7 @@
         </el-form-item>
       </el-form>
       <div style="text-align:right;">
-        <el-button type="danger" @click="dialogVisible=false">
+        <el-button type="danger" @click="closeDialog">
           {{ $t('table.cancel') }}
         </el-button>
         <el-button type="primary" @click="confirmHandle">
@@ -203,6 +203,10 @@ export default {
         this.treeData = buildTree(this.menuList)
         this.listLoading = false
       })
+    },
+    closeDialog() {
+      this.dialogVisible = false
+      this.$refs['menu'].resetFields()
     },
     handleAdd(scope) {
       this.menu = Object.assign({}, defaultMenu)

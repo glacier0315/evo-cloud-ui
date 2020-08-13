@@ -170,7 +170,7 @@
         </el-form-item>
       </el-form>
       <div style="text-align:right;">
-        <el-button type="danger" @click="dialogVisible=false">
+        <el-button type="danger" @click="closeDialog">
           {{ $t('table.cancel') }}
         </el-button>
         <el-button type="primary" @click="confirmHandle">
@@ -305,6 +305,10 @@ export default {
       getDeptList().then(response => {
         this.deptTreeData = buildTree(response.data)
       })
+    },
+    closeDialog() {
+      this.dialogVisible = false
+      this.$refs['user'].resetFields()
     },
     handleAdd() {
       this.user = Object.assign({}, defaultUser)

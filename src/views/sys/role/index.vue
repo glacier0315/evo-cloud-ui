@@ -93,9 +93,18 @@
         </el-form-item>
         <el-form-item label="状态" prop="status">
           <el-radio-group v-model="role.status">
-            <el-radio :label="'1'">正常</el-radio>
-            <el-radio :label="'2'">禁用</el-radio>
+            <el-radio v-for="(item, index) in statusList" :key="'status_'+ index" :label="item.value">{{ item.label }}</el-radio>
           </el-radio-group>
+        </el-form-item>
+        <el-form-item label="数据权限" prop="dataScope">
+          <el-select v-model="role.dataScope" placeholder="请选择">
+            <el-option
+              v-for="(item, index) in dataScopeList"
+              :key="'dataScope_'+ index"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
         </el-form-item>
         <el-form-item label="描述" prop="description">
           <el-input v-model="role.description" type="textarea" placeholder="描述" />
@@ -118,7 +127,7 @@
             </div>
           </el-tree>
         </el-form-item>
-        <el-form-item label="组织机构">
+        <el-form-item v-if="role.dataScope === '5'" label="组织机构">
           <el-tree
             ref="deptTree"
             :check-strictly="checkStrictly"
@@ -135,7 +144,7 @@
         </el-form-item>
       </el-form>
       <div style="text-align:right;">
-        <el-button type="danger" @click="dialogVisible=false">
+        <el-button type="danger" @click="closeDialog">
           {{ $t('table.cancel') }}
         </el-button>
         <el-button type="primary" @click="confirmHandle">
@@ -159,6 +168,7 @@ const defaultRole = {
   code: '',
   status: '1',
   description: '',
+  dataScope: '6',
   menus: [],
   depts: []
 }
@@ -216,6 +226,14 @@ export default {
       statusList: [
         { label: '正常', value: '1' },
         { label: '禁用', value: '2' }
+      ],
+      dataScopeList: [
+        { label: '全部单位', value: '1' },
+        { label: '所属一级单位及以下', value: '2' },
+        { label: '所属二级单位及以下', value: '3' },
+        { label: '所属单位部门及以下', value: '4' },
+        { label: '自定义', value: '5' },
+        { label: '仅自己', value: '6' }
       ]
 
     }
@@ -246,6 +264,10 @@ export default {
         this.listLoading = false
       })
     },
+    closeDialog() {
+      this.dialogVisible = false
+      this.$refs['role'].resetFields()
+    },
     handleAdd() {
       this.dialogType = 'new'
       this.resetChecked('menuTree')
@@ -262,12 +284,15 @@ export default {
           this.role.menus = res.data
           this.setCheckedKeys('menuTree', res.data)
         })
-      this.resetChecked('deptTree')
-      getRoleDepts(this.role.id)
-        .then(res => {
-          this.role.depts = res.data
-          this.setCheckedKeys('deptTree', res.data)
-        })
+      if (this.role.dataScope === '5') {
+        // 自定义
+        this.resetChecked('deptTree')
+        getRoleDepts(this.role.id)
+          .then(res => {
+            this.role.depts = res.data
+            this.setCheckedKeys('deptTree', res.data)
+          })
+      }
       this.dialogVisible = true
     },
     handleDelete({ $index, row }) {
@@ -293,8 +318,12 @@ export default {
       const menus = this.getCheckedKeys('menuTree')
       this.role.menus = menus
       // 设置组织机构
-      const depts = this.getCheckedKeys('deptTree')
-      this.role.depts = depts
+      if (this.role.dataScope === '5') {
+        // 自定义
+        const depts = this.getCheckedKeys('deptTree')
+        this.role.depts = depts
+      }
+
       this.$refs['role'].validate((valid) => {
         if (valid) {
           saveRole(this.role).then(data => {
@@ -333,17 +362,14 @@ export default {
       })
     },
     setCheckedKeys(ref, arrayKey) {
-      if (arrayKey && arrayKey instanceof Array && arrayKey.length > 0) {
-        this.$refs[ref].setCheckedKeys(arrayKey, false)
-      } else {
-        this.$refs[ref].setCheckedKeys([], false)
-      }
+      this.$refs[ref].setCheckedKeys(arrayKey || [], false)
     },
     statusFormat(row, column, cellValue, index) {
       const status = {}
       this.statusList.forEach((item) => {
         if (cellValue && item.value === cellValue) {
           Object.assign(status, item)
+          return
         }
       })
       return status.label

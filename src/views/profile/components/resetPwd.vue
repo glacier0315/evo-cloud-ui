@@ -46,15 +46,24 @@ export default {
       // 表单校验
       rules: {
         oldPassword: [
-          { required: true, message: '旧密码不能为空', trigger: 'blur' }
+          { required: true, message: '旧密码不能为空', trigger: 'blur' },
+          {
+            pattern: /^(?!_)(?!.*?_$)[a-zA-Z0-9_]{5,20}$/,
+            message: '密码不合法，长度是5到20位，支持(字母，数字，下划线)，不能以下划线开头结尾',
+            trigger: 'blur'
+          }
         ],
         newPassword: [
           { required: true, message: '新密码不能为空', trigger: 'blur' },
-          { min: 5, max: 20, message: '长度在 5 到 20 个字符', trigger: 'blur' }
+          {
+            pattern: /^(?!_)(?!.*?_$)[a-zA-Z0-9_]{5,20}$/,
+            message: '新密码不合法，长度是5到20位，支持(字母，数字，下划线)，不能以下划线开头结尾',
+            trigger: 'blur'
+          }
         ],
         confirmPassword: [
           { required: true, message: '确认密码不能为空', trigger: 'blur' },
-          { required: true, validator: equalToPassword, trigger: 'blur' }
+          { validator: equalToPassword, trigger: 'blur' }
         ]
       }
     }
