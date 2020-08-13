@@ -224,11 +224,45 @@ export default {
       rules: {
         username: [
           { required: true, message: '请输入用户名', trigger: 'blur' },
-          { min: 4, max: 20, message: '长度在 4 到 20个字符', trigger: 'blur' }
+          {
+            pattern: /^(?!_)(?!.*?_$)[a-zA-Z0-9_]{5,20}$/,
+            message: '用户名不合法，长度是5到20位，支持(字母，数字，下划线)，不能以下划线开头结尾',
+            trigger: 'blur'
+          }
         ],
         nickname: [
           { required: true, message: '请输入昵称', trigger: 'blur' },
-          { min: 4, max: 20, message: '长度在 4 到 20个字符', trigger: 'blur' }
+          {
+            pattern: /^(?!_)(?!.*?_$)[\u4e00-\u9fa5_a-zA-Z0-9_]{4,10}$/,
+            message: '昵称不合法，长度是4到10位，支持(中文，字母，数字，下划线)，不能以下划线开头结尾',
+            trigger: 'blur'
+          }
+        ],
+        idCard: [
+          { required: true, message: '请输入身份证号', trigger: 'blur' },
+          {
+            pattern: /^[1-9]\d{5}(18|19|([23]\d))\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$/,
+            message: '请输入正确的身份证号，长度18位',
+            trigger: 'blur'
+          }
+        ],
+        email: [
+          { required: true, message: '请输入邮箱', trigger: 'blur' },
+          {
+            pattern: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/, message: '请输入正确的邮箱',
+            trigger: 'blur'
+          }
+        ],
+        mobile: [
+          { required: true, message: '请输入手机号', trigger: 'blur' },
+          {
+            pattern: /^((13[0-9])|(14[5|7])|(15([0-3]|[5-9]))|(18[0,5-9]))\d{8}$/,
+            message: '请输入正确的手机号，长度11位',
+            trigger: 'blur'
+          }
+        ],
+        deptId: [
+          { required: true, message: '请选择单位', trigger: 'blur' }
         ]
       },
       sexList: [

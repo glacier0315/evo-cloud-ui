@@ -1,8 +1,8 @@
 
 /**
  * 组装子元素
- * @param {父类} parent
- * @param {待分析数组} array
+ * @param {Object} parent 父类
+ * @param {Array} array 待分析数组
  */
 const buildChildren = (parent, array) => {
   const children = []
@@ -26,6 +26,10 @@ const buildChildren = (parent, array) => {
   }
 }
 
+/**
+ * 组装结构树
+ * @param {Array} array 数组
+ */
 const buildTree = (array) => {
   const tree = []
   const children = []
@@ -49,6 +53,11 @@ const buildTree = (array) => {
   return tree
 }
 
+/**
+ * 排序
+ * @param {Object} a
+ * @param {Object} b
+ */
 const treeSort = (a, b) => {
   // 默认为0
   const orderNum1 = a.orderNum || 0

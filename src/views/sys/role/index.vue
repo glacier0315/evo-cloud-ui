@@ -195,11 +195,19 @@ export default {
       rules: {
         name: [
           { required: true, message: '请输入角色名称', trigger: 'blur' },
-          { min: 3, max: 20, message: '长度在 3 到 20个字符', trigger: 'blur' }
+          {
+            pattern: /^(?!_)(?!.*?_$)[\u4e00-\u9fa5_a-zA-Z0-9_]{2,10}$/,
+            message: '角色名称不合法，长度是2到10位，支持(中文，字母，数字，下划线)，不能以下划线开头结尾',
+            trigger: 'blur'
+          }
         ],
         code: [
           { required: true, message: '请输入角色编码', trigger: 'blur' },
-          { min: 3, max: 20, message: '长度在 3 到 20个字符', trigger: 'blur' }
+          {
+            pattern: /^(?!_)(?!.*?_$)[a-zA-Z0-9_]{3,20}$/,
+            message: '角色编码不合法，长度是3到20位，支持(字母，数字，下划线)，不能以下划线开头结尾',
+            trigger: 'blur'
+          }
         ]
       },
       menuTreeData: [],
