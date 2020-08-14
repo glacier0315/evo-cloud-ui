@@ -17,7 +17,7 @@ module.exports = {
 
   /**
    * @type {string}
-   * @description 公共服务器前缀
+   * @description 公共文件服务器前缀
    */
-  commonWeb: '/common-web'
+  fdfs: '/fdfs'
 }

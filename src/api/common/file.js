@@ -1,5 +1,5 @@
 import request from '@/utils/request'
-import { commonWeb } from '@/common/constant'
+import { fdfs } from '@/common/constant'
 
 /**
  * 查询用户
@@ -7,7 +7,7 @@ import { commonWeb } from '@/common/constant'
  */
 export function uploadFile(data) {
   return request({
-    url: commonWeb + '/dfs/upload',
+    url: fdfs + '/dfs/upload',
     headers: { 'Content-Type': 'multipart/form-data' },
     method: 'post',
     data
@@ -16,7 +16,7 @@ export function uploadFile(data) {
 
 export function deleteFile(data) {
   return request({
-    url: commonWeb + '/dfs/delete',
+    url: fdfs + '/dfs/delete',
     method: 'post',
     data
   })
