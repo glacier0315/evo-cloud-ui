@@ -37,8 +37,8 @@ export function saveMenu(data) {
 export function delMenu(id) {
   return request({
     url: sys + '/menu/delete',
-    method: 'delete',
-    params: { 'id': id }
+    method: 'post',
+    data: { 'id': id }
   })
 }
 

@@ -22,8 +22,8 @@ export function saveDept(data) {
 export function delDept(id) {
   return request({
     url: sys + '/dept/delete',
-    method: 'delete',
-    params: { 'id': id }
+    method: 'post',
+    data: { 'id': id }
   })
 }
 

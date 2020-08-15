@@ -20,7 +20,7 @@ export function saveRole(data) {
 export function delRole(id) {
   return request({
     url: sys + '/role/delete',
-    method: 'delete',
-    params: { 'id': id }
+    method: 'post',
+    data: { 'id': id }
   })
 }

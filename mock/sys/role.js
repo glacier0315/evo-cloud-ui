@@ -60,9 +60,9 @@ module.exports = [
 
   {
     url: sys + '/role/delete',
-    type: 'delete',
+    type: 'post',
     response: config => {
-      const id = config.query.id
+      const { id } = config.body
       roles.forEach((item, index) => {
         if (id && item.id === id) {
           roles.splice(index, 1)

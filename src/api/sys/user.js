@@ -32,7 +32,7 @@ export function addUser(data) {
 export function updateUser(data) {
   return request({
     url: sys + '/user/update',
-    method: 'put',
+    method: 'post',
     data
   })
 }
@@ -44,8 +44,8 @@ export function updateUser(data) {
 export function delUser(id) {
   return request({
     url: sys + '/user/delete',
-    method: 'delete',
-    params: { 'id': id }
+    method: 'post',
+    data: { 'id': id }
   })
 }
 
@@ -83,7 +83,7 @@ export function getUserProfile() {
 export function updateUserProfile(data) {
   return request({
     url: sys + '/user/profile',
-    method: 'put',
+    method: 'post',
     data: data
   })
 }
@@ -97,7 +97,7 @@ export function updateUserProfile(data) {
 export function updateUserPwd(data) {
   return request({
     url: sys + '/user/updatePwd',
-    method: 'put',
+    method: 'post',
     data
   })
 }

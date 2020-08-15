@@ -43,9 +43,9 @@ module.exports = [
 
   {
     url: sys + '/dept/delete',
-    type: 'delete',
+    type: 'post',
     response: config => {
-      const id = config.query.id
+      const { id } = config.body
       depts.forEach((item, index) => {
         if (id && item.id === id) {
           depts.splice(index, 1)

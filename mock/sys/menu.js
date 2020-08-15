@@ -66,9 +66,9 @@ module.exports = [
 
   {
     url: sys + '/menu/delete',
-    type: 'delete',
+    type: 'post',
     response: config => {
-      const id = config.query.id
+      const { id } = config.body
       menus.forEach((item, index) => {
         if (id && item.id === id) {
           menus.splice(index, 1)

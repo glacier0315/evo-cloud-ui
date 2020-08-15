@@ -115,10 +115,10 @@
     >
       <el-form ref="user" :model="user" :rules="rules" label-width="80px">
         <el-form-item label="用户名" prop="username">
-          <el-input v-model="user.username" placeholder="用户名" />
+          <el-input v-model="user.username" placeholder="用户名" maxlength="20" minlength="5" />
         </el-form-item>
         <el-form-item label="昵称" prop="nickname">
-          <el-input v-model="user.nickname" placeholder="昵称" />
+          <el-input v-model="user.nickname" placeholder="昵称" maxlength="10" minlength="4" />
         </el-form-item>
         <el-form-item label="性别" prop="sex">
           <el-radio-group v-model="user.sex">
@@ -132,7 +132,7 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item label="身份证号" prop="idCard">
-          <el-input v-model="user.idCard" placeholder="身份证号" />
+          <el-input v-model="user.idCard" placeholder="身份证号" maxlength="18" minlength="15" />
         </el-form-item>
         <el-form-item label="出生日期" prop="birthday">
           <el-date-picker
@@ -145,10 +145,10 @@
           />
         </el-form-item>
         <el-form-item label="邮箱" prop="email">
-          <el-input v-model="user.email" placeholder="邮箱" />
+          <el-input v-model="user.email" placeholder="邮箱" maxlength="100" />
         </el-form-item>
         <el-form-item label="手机号" prop="mobile">
-          <el-input v-model="user.mobile" placeholder="手机号" />
+          <el-input v-model="user.mobile" placeholder="手机号" maxlength="11" />
         </el-form-item>
         <el-form-item label="单位">
           <tree-select

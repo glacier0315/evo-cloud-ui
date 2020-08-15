@@ -52,7 +52,7 @@ module.exports = [
 
   {
     url: sys + '/user/update',
-    type: 'put',
+    type: 'post',
     response: config => {
       const user = config.body
       users.forEach((item, index) => {
@@ -69,9 +69,9 @@ module.exports = [
 
   {
     url: sys + '/user/delete',
-    type: 'delete',
+    type: 'post',
     response: config => {
-      const id = config.query.id
+      const { id } = config.body
       users.forEach((item, index) => {
         if (id && item.id === id) {
           users.splice(index, 1)
@@ -101,7 +101,7 @@ module.exports = [
 
   {
     url: sys + '/user/profile',
-    type: 'put',
+    type: 'post',
     response: config => {
       return {
         code: '20000',
@@ -112,7 +112,7 @@ module.exports = [
 
   {
     url: sys + '/user/updatePwd',
-    type: 'put',
+    type: 'post',
     response: config => {
       return {
         code: '20000',
