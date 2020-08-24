@@ -1,8 +1,8 @@
 {
-  "name": "vue-element-admin",
+  "name": "eboot",
   "version": "4.3.1",
   "description": "A magical vue admin. An out-of-box UI solution for enterprise applications. Newest development stack of vue. Lots of awesome features",
-  "author": "Pan <panfree23@gmail.com>",
+  "author": "glacier <glacier0315@gmail.com>",
   "scripts": {
     "dev": "vue-cli-service serve",
     "lint": "eslint --ext .js,.vue src",
@@ -80,7 +80,7 @@
     "last 2 versions"
   ],
   "bugs": {
-    "url": "https://github.com/PanJiaChen/vue-element-admin/issues"
+    "url": "https://github.com/glacier0315/eboot-ui/issues"
   },
   "engines": {
     "node": ">=8.9",
@@ -109,6 +109,6 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/PanJiaChen/vue-element-admin.git"
+    "url": "git+https://github.com/glacier0315/eboot-ui.git"
   }
 }
