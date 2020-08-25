@@ -120,6 +120,6 @@ npm run lint -- --fix
 
 Modern browsers and Internet Explorer 10+.
 
-| [IE / Edge | Firefox | Chrome | Safari |
+| IE / Edge | Firefox | Chrome | Safari |
 | --------- | --------- | --------- | --------- |
 | IE10, IE11, Edge | last 2 versions | last 2 versions | last 2 versions |
