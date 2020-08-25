@@ -1,3 +1,8 @@
+## 平台简介
+
+* 前端采用Vue、Element UI。
+* 感谢[Vue-Element-Admin](https://github.com/PanJiaChen/vue-element-admin)。
+
 
 ## 功能
 
