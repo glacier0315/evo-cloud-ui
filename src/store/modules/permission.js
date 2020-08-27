@@ -53,20 +53,24 @@ const actions = {
  * @param {*} asyncRouterArray 路由数组
  */
 function filterAsyncRouter(asyncRouterArray) {
-  return asyncRouterArray.filter(route => {
-    if (route.component) {
-      // Layout组件特殊处理
-      if (route.component === 'Layout') {
-        route.component = Layout
-      } else {
-        route.component = loadView(route.component)
+  // 路由数组存在时
+  if (asyncRouterArray && asyncRouterArray instanceof Array) {
+    return asyncRouterArray.filter(route => {
+      if (route.component) {
+        // Layout组件特殊处理
+        if (route.component === 'Layout') {
+          route.component = Layout
+        } else {
+          route.component = loadView(route.component)
+        }
       }
-    }
-    if (route.children && route.children instanceof Array && route.children.length > 0) {
-      route.children = filterAsyncRouter(route.children)
-    }
-    return true
-  })
+      if (route.children && route.children instanceof Array && route.children.length > 0) {
+        route.children = filterAsyncRouter(route.children)
+      }
+      return true
+    })
+  }
+  return []
 }
 
 /**
