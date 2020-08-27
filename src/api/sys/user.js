@@ -52,12 +52,12 @@ export function delUser(id) {
 /**
  * 用户密码重置
  * @param {*} id
- * @param {*} oldPassword
+ * @param {*} newPassword
  */
-export function resetUserPwd(id, oldPassword) {
+export function resetUserPwd(id, newPassword) {
   const data = {
     id,
-    oldPassword
+    newPassword
   }
   return request({
     url: sys + '/user/resetPwd',

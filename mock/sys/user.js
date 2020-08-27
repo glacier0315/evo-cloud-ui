@@ -111,6 +111,17 @@ module.exports = [
   },
 
   {
+    url: sys + '/user/resetPwd',
+    type: 'post',
+    response: config => {
+      return {
+        code: '20000',
+        data: 'success'
+      }
+    }
+  },
+
+  {
     url: sys + '/user/updatePwd',
     type: 'post',
     response: config => {

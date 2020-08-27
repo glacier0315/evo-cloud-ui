@@ -7,6 +7,7 @@
           placeholder="请输入用户名称"
           clearable
           size="small"
+          style="width:140px;"
           @keyup.enter.native="getPageList"
         />
       </el-form-item>
@@ -16,6 +17,7 @@
           placeholder="请输入昵称"
           clearable
           size="small"
+          style="width:140px;"
           @keyup.enter.native="getPageList"
         />
       </el-form-item>
@@ -25,11 +27,18 @@
           placeholder="请输入身份证号"
           clearable
           size="small"
+          style="width:200px;"
           @keyup.enter.native="getPageList"
         />
       </el-form-item>
       <el-form-item label="性别" prop="sex">
-        <el-select v-model="pageRequest.params.sex" placeholder="性别" clearable>
+        <el-select
+          v-model="pageRequest.params.sex"
+          placeholder="性别"
+          clearable
+          size="small"
+          style="width:80px;"
+        >
           <el-option
             v-for="item in sexList"
             :key="item.value"
@@ -46,7 +55,13 @@
         />
       </el-form-item>
       <el-form-item label="状态" prop="status">
-        <el-select v-model="pageRequest.params.status" placeholder="状态" clearable>
+        <el-select
+          v-model="pageRequest.params.status"
+          style="width:80px;"
+          placeholder="状态"
+          clearable
+          size="small"
+        >
           <el-option
             v-for="item in statusList"
             :key="item.value"
@@ -56,15 +71,55 @@
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="getPageList">
+        <el-button
+          type="primary"
+          icon="el-icon-search"
+          size="mini"
+          @click="handleQuery"
+        >
           {{ $t('table.search') }}
         </el-button>
-        <el-button type="primary" @click="handleAdd">
-          {{ $t('table.add') }}
+        <el-button
+          icon="el-icon-refresh"
+          size="mini"
+          @click="resetQuery"
+        >
+          {{ $t('table.reset') }}
         </el-button>
       </el-form-item>
     </el-form>
-
+    <el-row :gutter="10" class="mb8">
+      <el-col :span="1.5">
+        <el-button
+          type="primary"
+          icon="el-icon-plus"
+          size="mini"
+          @click="handleAdd"
+        >
+          {{ $t('table.add') }}
+        </el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button
+          type="info"
+          icon="el-icon-upload2"
+          size="mini"
+          @click="handleImport"
+        >
+          {{ $t('table.import') }}
+        </el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button
+          type="warning"
+          icon="el-icon-download"
+          size="mini"
+          @click="handleExport"
+        >
+          {{ $t('table.export') }}
+        </el-button>
+      </el-col>
+    </el-row>
     <div>
       <el-table
         v-loading="listLoading"
@@ -88,14 +143,36 @@
         </el-table-column>
         <el-table-column align="center" label="单位" prop="deptName" />
         <el-table-column align="center" label="状态" prop="status" :formatter="statusFormat" />
-        <el-table-column align="center" label="操作">
+        <el-table-column
+          align="center"
+          width="240"
+          label="操作"
+          class-name="small-padding fixed-width"
+        >
           <template slot-scope="scope">
-            <el-button type="primary" size="small" @click="handleEdit(scope)">
+            <el-button
+              type="primary"
+              size="mini"
+              icon="el-icon-edit"
+              @click="handleEdit(scope)"
+            >
               {{ $t('table.edit') }}
             </el-button>
-            <el-button type="danger" size="small" @click="handleDelete(scope)">
+            <el-button
+              v-if="scope.row.id !== 1"
+              size="mini"
+              type="danger"
+              icon="el-icon-delete"
+              @click="handleDelete(scope)"
+            >
               {{ $t('table.delete') }}
             </el-button>
+            <el-button
+              size="mini"
+              type="warning"
+              icon="el-icon-key"
+              @click="handleResetPwd(scope.row)"
+            >{{ $t('table.reset') }}</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -112,68 +189,99 @@
     <el-dialog
       :visible.sync="dialogVisible"
       :title="dialogType==='edit'?'编辑':'添加'"
+      width="750px"
+      append-to-body
     >
       <el-form ref="user" :model="user" :rules="rules" label-width="80px">
-        <el-form-item label="用户名" prop="username">
-          <el-input v-model="user.username" placeholder="用户名" maxlength="20" minlength="5" />
-        </el-form-item>
-        <el-form-item label="昵称" prop="nickname">
-          <el-input v-model="user.nickname" placeholder="昵称" maxlength="10" minlength="4" />
-        </el-form-item>
-        <el-form-item label="性别" prop="sex">
-          <el-radio-group v-model="user.sex">
-            <el-radio
-              v-for="(item,index) in sexList"
-              :key="index"
-              :label="item.value"
-            >
-              {{ item.label }}
-            </el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="身份证号" prop="idCard">
-          <el-input v-model="user.idCard" placeholder="身份证号" maxlength="18" minlength="15" />
-        </el-form-item>
-        <el-form-item label="出生日期" prop="birthday">
-          <el-date-picker
-            v-model="user.birthday"
-            align="right"
-            type="date"
-            placeholder="出生日期"
-            :picker-options="pickerOptions"
-            value-format="yyyy-MM-dd"
-          />
-        </el-form-item>
-        <el-form-item label="邮箱" prop="email">
-          <el-input v-model="user.email" placeholder="邮箱" maxlength="100" />
-        </el-form-item>
-        <el-form-item label="手机号" prop="mobile">
-          <el-input v-model="user.mobile" placeholder="手机号" maxlength="11" />
-        </el-form-item>
-        <el-form-item label="单位">
-          <tree-select
-            v-model="user.deptId"
-            :options="deptTreeData"
-            @selected="selected"
-          />
-        </el-form-item>
-        <el-form-item label="状态" prop="status">
-          <el-radio-group v-model="user.status">
-            <el-radio
-              v-for="(item,index) in statusList"
-              :key="index"
-              :label="item.value"
-            >
-              {{ item.label }}
-            </el-radio>
-          </el-radio-group>
-        </el-form-item>
+        <el-row v-if="user.id == undefined || user.id == null">
+          <el-col :span="12">
+            <el-form-item label="用户名" prop="username">
+              <el-input v-model="user.username" placeholder="用户名" maxlength="20" minlength="5" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12" />
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="昵称" prop="nickname">
+              <el-input v-model="user.nickname" placeholder="昵称" maxlength="10" minlength="4" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="性别" prop="sex">
+              <el-radio-group v-model="user.sex">
+                <el-radio
+                  v-for="(item,index) in sexList"
+                  :key="index"
+                  :label="item.value"
+                >
+                  {{ item.label }}
+                </el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="身份证号" prop="idCard">
+              <el-input v-model="user.idCard" placeholder="身份证号" maxlength="18" minlength="15" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="出生日期" prop="birthday">
+              <el-date-picker
+                v-model="user.birthday"
+                align="right"
+                type="date"
+                placeholder="出生日期"
+                :picker-options="pickerOptions"
+                value-format="yyyy-MM-dd"
+              />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="邮箱" prop="email">
+              <el-input v-model="user.email" placeholder="邮箱" maxlength="100" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="手机号" prop="mobile">
+              <el-input v-model="user.mobile" placeholder="手机号" maxlength="11" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="单位">
+              <tree-select
+                v-model="user.deptId"
+                :options="deptTreeData"
+                @selected="selected"
+              />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="状态" prop="status">
+              <el-radio-group v-model="user.status">
+                <el-radio
+                  v-for="(item,index) in statusList"
+                  :key="index"
+                  :label="item.value"
+                >
+                  {{ item.label }}
+                </el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+        </el-row>
       </el-form>
       <div style="text-align:right;">
-        <el-button type="danger" @click="closeDialog">
+        <el-button type="danger" size="small" @click="closeDialog">
           {{ $t('table.cancel') }}
         </el-button>
-        <el-button type="primary" @click="confirmHandle">
+        <el-button type="primary" size="small" @click="confirmHandle">
           {{ $t('table.confirm') }}
         </el-button>
       </div>
@@ -182,7 +290,7 @@
 </template>
 
 <script>
-import { getUserList, addUser, updateUser, delUser } from '@/api/sys/user'
+import { getUserList, addUser, updateUser, delUser, resetUserPwd } from '@/api/sys/user'
 import { getDeptList } from '@/api/sys/dept'
 import { buildTree } from '@/utils/tree'
 import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
@@ -288,7 +396,7 @@ export default {
     }
   },
   created() {
-    this.getPageList()
+    this.handleQuery()
     this.getDeptTree()
   },
   methods: {
@@ -310,16 +418,30 @@ export default {
       this.dialogVisible = false
       this.$refs['user'].resetFields()
     },
+    /** 搜索按钮操作 */
+    handleQuery() {
+      this.pageRequest.pageNum = 1
+      this.getPageList()
+    },
+    /** 重置查询 */
+    resetQuery() {
+      this.pageRequest.params = {}
+      this.$refs['userSearch'].resetFields()
+      this.handleQuery()
+    },
+    /** 新增 */
     handleAdd() {
       this.user = Object.assign({}, defaultUser)
       this.dialogType = 'new'
       this.dialogVisible = true
     },
+    /** 修改 */
     handleEdit(scope) {
       this.dialogType = 'edit'
       this.dialogVisible = true
       this.user = Object.assign({}, scope.row)
     },
+    /** 删除 */
     handleDelete({ $index, row }) {
       this.$confirm('确认删除当前用户?', 'Warning', {
         confirmButtonText: '确认',
@@ -336,6 +458,23 @@ export default {
         })
         .catch(err => { console.error(err) })
     },
+    /** 重置密码按钮操作 */
+    handleResetPwd(row) {
+      this.$prompt('请输入"' + row.username + '"的新密码', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消'
+      }).then(({ value }) => {
+        resetUserPwd(row.id, value).then(data => {
+          this.$notify({
+            title: '成功',
+            dangerouslyUseHTMLString: true,
+            message: '修改成功，新密码是：' + value,
+            type: 'success'
+          })
+        })
+      }).catch(() => {})
+    },
+    /** 新增或者编辑时 保存 */
     async confirmHandle() {
       const isEdit = this.dialogType === 'edit'
       console.log('this.user', this.user)
@@ -371,6 +510,16 @@ export default {
           return false
         }
       })
+    },
+    /** 导出按钮操作 */
+    handleExport() {
+      // todo
+      console.log('导出')
+    },
+    /** 导入按钮操作 */
+    handleImport() {
+      // todo
+      console.log('导入')
     },
     selected(data) {
       const { id, name } = data
@@ -408,5 +557,8 @@ export default {
 .btn-group {
   margin-left: 1em;
   display: inline;
+}
+.el-row {
+  margin-bottom: 1em;
 }
 </style>
