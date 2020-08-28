@@ -48,10 +48,15 @@
         </el-select>
       </el-form-item>
       <el-form-item label="单位" prop="deptId">
-        <tree-select
+        <treeselect
           v-model="pageRequest.params.deptId"
+          name="deptSearch"
+          :multiple="false"
+          :searchable="false"
+          :clearable="true"
           :options="deptTreeData"
-          @selected="selectedSearch"
+          :normalizer="normalizer"
+          style="width:180px;"
         />
       </el-form-item>
       <el-form-item label="状态" prop="status">
@@ -255,10 +260,15 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="单位">
-              <tree-select
+              <treeselect
                 v-model="user.deptId"
+                name="dept"
+                :multiple="false"
+                :searchable="false"
+                :clearable="true"
                 :options="deptTreeData"
-                @selected="selected"
+                :normalizer="normalizer"
+                @select="selectDept"
               />
             </el-form-item>
           </el-col>
@@ -294,7 +304,8 @@ import { getUserList, addUser, updateUser, delUser, resetUserPwd } from '@/api/s
 import { getDeptList } from '@/api/sys/dept'
 import { buildTree } from '@/utils/tree'
 import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
-import TreeSelect from '@/components/TreeSelect'
+import Treeselect from '@riophae/vue-treeselect'
+import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 
 const defaultUser = {
   id: null,
@@ -312,7 +323,7 @@ const defaultUser = {
 
 export default {
   name: 'User',
-  components: { Pagination, TreeSelect },
+  components: { Pagination, Treeselect },
   data() {
     return {
       listLoading: true,
@@ -400,6 +411,7 @@ export default {
     this.getDeptTree()
   },
   methods: {
+    /** 获取用户分页 */
     getPageList() {
       this.listLoading = true
       getUserList(this.pageRequest).then(response => {
@@ -408,12 +420,14 @@ export default {
         this.listLoading = false
       })
     },
+    /** 获取组织机构数 */
     async getDeptTree() {
       this.deptTreeData = []
       getDeptList().then(response => {
         this.deptTreeData = buildTree(response.data)
       })
     },
+    /** 关闭用户弹窗 */
     closeDialog() {
       this.dialogVisible = false
       this.$refs['user'].resetFields()
@@ -521,16 +535,12 @@ export default {
       // todo
       console.log('导入')
     },
-    selected(data) {
-      const { id, name } = data
-      this.user.deptId = id
+    /** 选择单位时更新 用户单位名称 */
+    selectDept(data) {
+      const { name } = data
       this.user.deptName = name
     },
-    selectedSearch(data) {
-      const { id, name } = data
-      this.pageRequest.params.deptId = id
-      this.pageRequest.params.deptName = name
-    },
+    /** status 格式化 */
     statusFormat(row, column, cellValue, index) {
       const status = {}
       this.statusList.forEach((item) => {
@@ -540,6 +550,7 @@ export default {
       })
       return status.label
     },
+    /** 性别格式化 */
     sexFormat(row, column, cellValue, index) {
       const sex = {}
       this.sexList.forEach((item) => {
@@ -548,6 +559,14 @@ export default {
         }
       })
       return sex.label
+    },
+    /** 处理属性数据 */
+    normalizer(node) {
+      return {
+        id: node.id,
+        label: node.name,
+        children: node.children
+      }
     }
   }
 }

@@ -20,9 +20,11 @@ const buildChildren = (parent, array) => {
         children.push(element)
       }
     })
-    // 排序
-    children.sort(treeSort)
-    parent.children = children
+    if (children.length > 0) {
+      // 排序
+      children.sort(treeSort)
+      parent.children = children
+    }
   }
 }
 
