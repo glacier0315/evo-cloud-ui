@@ -1,16 +1,30 @@
 <template>
   <div class="app-container">
-    <el-form ref="roleSearch" :inline="true" label-width="68px">
-      <el-form-item>
-        <el-button type="primary" @click="getTreeList">
+    <el-form
+      ref="queryForm"
+      :inline="true"
+      label-width="68px"
+    />
+    <el-row :gutter="10" class="mb8">
+      <el-col :span="1.5">
+        <el-button
+          type="primary"
+          icon="el-icon-search"
+          @click="getTreeList"
+        >
           {{ $t('table.search') }}
         </el-button>
-        <el-button type="primary" @click="handleAdd">
+      </el-col>
+      <el-col :span="1.5">
+        <el-button
+          type="primary"
+          icon="el-icon-plus"
+          @click="handleAdd"
+        >
           {{ $t('table.add') }}
         </el-button>
-      </el-form-item>
-    </el-form>
-
+      </el-col>
+    </el-row>
     <div>
       <el-table
         :data="treeData"
@@ -24,15 +38,36 @@
         <el-table-column prop="code" label="编码" />
         <el-table-column prop="type" label="类型" :formatter="typeFormat" width="80" />
         <el-table-column prop="status" label="显示" :formatter="statusFormat" width="80" />
-        <el-table-column align="center" label="操作" width="280">
+        <el-table-column
+          align="center"
+          width="280"
+          label="操作"
+          class-name="small-padding fixed-width"
+        >
           <template slot-scope="scope">
-            <el-button type="primary" size="small" @click="handleAdd(scope)">
+            <el-button
+              v-if="scope.row.type !== 3"
+              type="primary"
+              size="mini"
+              icon="el-icon-plus"
+              @click="handleAdd(scope)"
+            >
               {{ $t('table.add') }}
             </el-button>
-            <el-button type="primary" size="small" @click="handleEdit(scope)">
+            <el-button
+              type="primary"
+              size="mini"
+              icon="el-icon-edit"
+              @click="handleEdit(scope)"
+            >
               {{ $t('table.edit') }}
             </el-button>
-            <el-button type="danger" size="small" @click="handleDelete(scope)">
+            <el-button
+              size="mini"
+              type="danger"
+              icon="el-icon-delete"
+              @click="handleDelete(scope)"
+            >
               {{ $t('table.delete') }}
             </el-button>
           </template>
@@ -42,69 +77,101 @@
 
     <el-dialog
       :visible.sync="dialogVisible"
-      :title="dialogType==='edit'?'编辑':'添加'"
+      :title="dept.id ?'编辑':'添加'"
     >
-      <el-form ref="dept" :model="dept" :rules="rules" label-width="80px">
-        <el-form-item label="机构名称" prop="name">
-          <el-input v-model="dept.name" placeholder="机构名称" />
-        </el-form-item>
-        <el-form-item label="机构编码" prop="code">
-          <el-input v-model="dept.code" placeholder="机构编码" />
-        </el-form-item>
-        <el-form-item label="机构类型" prop="type">
-          <el-radio-group v-model="dept.type">
-            <el-radio
-              v-for="(item,index) in typeList"
-              :key="index"
-              :label="item.value"
+      <el-form
+        ref="dept"
+        :model="dept"
+        :rules="rules"
+        label-width="80px"
+      >
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="机构名称" prop="name">
+              <el-input
+                v-model="dept.name"
+                placeholder="机构名称"
+              />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="机构编码" prop="code">
+              <el-input
+                v-model="dept.code"
+                placeholder="机构编码"
+              />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="机构类型" prop="type">
+              <el-radio-group v-model="dept.type">
+                <el-radio
+                  v-for="(item,index) in typeList"
+                  :key="index"
+                  :label="item.value"
+                >
+                  {{ item.label }}
+                </el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="状态" prop="status">
+              <el-radio-group v-model="dept.status">
+                <el-radio
+                  v-for="(item,index) in statusList"
+                  :key="index"
+                  :label="item.value"
+                >
+                  {{ item.label }}
+                </el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item
+              v-if="dept.type && dept.type !== 1"
+              label="父级资源"
+              prop="parentId"
             >
-              {{ item.label }}
-            </el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item v-if="dept.type && dept.type !== 1" label="父级机构" prop="parentName">
-          <el-input
-            v-model="dept.parentName"
-            placeholder="父级机构"
-            @click.native="toggleTree"
-          />
-          <div v-if="showTree">
-            <el-tree
-              ref="tree"
-              :data="treeParentData"
-              accordion
-              node-key="id"
-              @node-click="handleNodeClick"
-            >
-              <div slot-scope="{ node, data }">
-                <span>
-                  {{ data.name }}
-                </span>
-              </div>
-            </el-tree>
-          </div>
-        </el-form-item>
-        <el-form-item label="状态" prop="status">
-          <el-radio-group v-model="dept.status">
-            <el-radio
-              v-for="(item,index) in statusList"
-              :key="index"
-              :label="item.value"
-            >
-              {{ item.label }}
-            </el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="排序号" prop="orderNum">
-          <el-input-number v-model="dept.orderNum" :min="1" :step="1" />
-        </el-form-item>
+              <treeselect
+                v-model="dept.parentId"
+                name="dept"
+                :multiple="false"
+                :clearable="true"
+                :options="treeParentData"
+                :normalizer="normalizer"
+              />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="排序号" prop="orderNum">
+              <el-input-number
+                v-model="dept.orderNum"
+                :min="1"
+                :step="1"
+              />
+            </el-form-item>
+          </el-col>
+        </el-row>
       </el-form>
-      <div style="text-align:right;">
-        <el-button type="danger" @click="closeDialog">
-          {{ $t('table.cancel') }}
-        </el-button>
-        <el-button type="primary" @click="confirmHandle">
+      <div slot="footer" class="dialog-footer">
+        <el-button
+          type="primary"
+          @click="confirmHandle"
+        >
           {{ $t('table.confirm') }}
+        </el-button>
+        <el-button
+          @click="closeDialog"
+        >
+          {{ $t('table.cancel') }}
         </el-button>
       </div>
     </el-dialog>
@@ -113,14 +180,17 @@
 <script>
 import { getDeptList, saveDept, delDept } from '@/api/sys/dept'
 import { buildTree } from '@/utils/tree'
+import Treeselect from '@riophae/vue-treeselect'
+import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 
+/** 表单默认值 */
 const defaultDept = {
   id: '',
   name: '',
   code: '',
   type: 1,
   status: 1,
-  parentId: '',
+  parentId: undefined,
   parentName: '',
   orderNum: 1,
   children: []
@@ -128,27 +198,36 @@ const defaultDept = {
 
 export default {
   name: 'Dept',
+  /** 注册组件 */
+  components: { Treeselect },
   data() {
     return {
+      // 遮罩层
       listLoading: true,
+      // 弹出层
       dialogVisible: false,
-      dialogType: 'new',
-      showTree: false,
+      // 表单
       dept: Object.assign({}, defaultDept),
+      // 单位集合
       deptList: [],
+      // 单位树
       treeData: [],
+      // 父级单位树
       treeParentData: [],
+      // 表单校验
       rules: {
         name: [
           { required: true, message: '请输入名称', trigger: 'blur' },
           { min: 2, max: 20, message: '长度在 5 到 20个字符', trigger: 'blur' }
         ]
       },
+      // 类型
       typeList: [
         { label: '公司', value: 1 },
         { label: '部门', value: 2 },
         { label: '科室', value: 3 }
       ],
+      // 状态
       statusList: [
         { label: '显示', value: 1 },
         { label: '隐藏', value: 2 }
@@ -159,38 +238,41 @@ export default {
     this.getTreeList()
   },
   methods: {
+    /** 查询单位数 */
     getTreeList() {
       this.listLoading = true
       getDeptList().then(response => {
+        // 记录单位集合
         this.deptList = response.data
         this.treeData = buildTree(this.deptList)
         this.listLoading = false
       })
     },
+    /** 关闭弹出层 */
     closeDialog() {
       this.dialogVisible = false
       this.$refs['dept'].resetFields()
     },
+    /** 新增 */
     handleAdd(scope) {
       this.dept = Object.assign({}, defaultDept)
       if (scope && scope.row) {
-        const { id, name, type } = scope.row
+        const { id, type } = scope.row
         this.dept.parentId = id
-        this.dept.parentName = name
         if (type === 1) {
           this.dept.type = 2
         }
       }
-      this.dialogType = 'new'
+      this.genDeptTree()
       this.dialogVisible = true
-      this.showTree = false
     },
+    /** 编辑 */
     handleEdit(scope) {
-      this.dialogType = 'edit'
-      this.dialogVisible = true
-      this.showTree = false
       this.dept = Object.assign({}, scope.row)
+      this.genDeptTree()
+      this.dialogVisible = true
     },
+    /** 删除 */
     handleDelete({ $index, row }) {
       this.$confirm('确认删除当前机构?', 'Warning', {
         confirmButtonText: '确认',
@@ -207,8 +289,9 @@ export default {
         })
         .catch(err => { console.error(err) })
     },
+    /** 提交表单 */
     async confirmHandle() {
-      const isEdit = this.dialogType === 'edit'
+      const isEdit = this.dept.id
 
       this.$refs['dept'].validate((valid) => {
         if (valid) {
@@ -238,7 +321,8 @@ export default {
         }
       })
     },
-    filterDate() {
+    /** 生成父级单位树 */
+    genDeptTree() {
       const depts = this.deptList.filter(item => {
         // 过滤当前机构
         if (this.dept.id && this.dept.id === item.id) {
@@ -246,18 +330,9 @@ export default {
         }
         return true
       })
-      return depts
+      this.treeParentData = buildTree(depts)
     },
-    toggleTree() {
-      this.showTree = !this.showTree
-      this.treeParentData = buildTree(this.filterDate())
-    },
-    handleNodeClick(data) {
-      const { id, name } = data
-      this.dept.parentId = id
-      this.dept.parentName = name
-      this.showTree = false
-    },
+    /** 类型 格式化 */
     typeFormat(row, column, cellValue, index) {
       const type = {}
       this.typeList.forEach((item) => {
@@ -267,6 +342,7 @@ export default {
       })
       return type.label
     },
+    /** 状态 格式化 */
     statusFormat(row, column, cellValue, index) {
       const status = {}
       this.statusList.forEach((item) => {
@@ -275,6 +351,14 @@ export default {
         }
       })
       return status.label
+    },
+    /** 处理属性数据 */
+    normalizer(node) {
+      return {
+        id: node.id,
+        label: node.name,
+        children: node.children
+      }
     }
   }
 }
@@ -283,8 +367,7 @@ export default {
 .table-container {
   margin: 1em;
 }
-.btn-group {
-  margin-left: 1em;
-  display: inline;
+.el-row {
+  margin-bottom: 1em;
 }
 </style>

@@ -1,12 +1,16 @@
 <template>
   <div class="app-container">
-    <el-form ref="userSearch" :model="pageRequest.params" :inline="true" label-width="68px">
+    <el-form
+      ref="queryForm"
+      :model="pageRequest.params"
+      :inline="true"
+      label-width="68px"
+    >
       <el-form-item label="用户名" prop="username">
         <el-input
           v-model="pageRequest.params.username"
           placeholder="请输入用户名称"
           clearable
-          size="small"
           style="width:140px;"
           @keyup.enter.native="getPageList"
         />
@@ -16,7 +20,6 @@
           v-model="pageRequest.params.nickname"
           placeholder="请输入昵称"
           clearable
-          size="small"
           style="width:140px;"
           @keyup.enter.native="getPageList"
         />
@@ -26,7 +29,6 @@
           v-model="pageRequest.params.idCard"
           placeholder="请输入身份证号"
           clearable
-          size="small"
           style="width:200px;"
           @keyup.enter.native="getPageList"
         />
@@ -36,7 +38,6 @@
           v-model="pageRequest.params.sex"
           placeholder="性别"
           clearable
-          size="small"
           style="width:80px;"
         >
           <el-option
@@ -52,8 +53,7 @@
           v-model="pageRequest.params.deptId"
           name="deptSearch"
           :multiple="false"
-          :searchable="false"
-          :clearable="true"
+          clearable
           :options="deptTreeData"
           :normalizer="normalizer"
           style="width:180px;"
@@ -62,10 +62,9 @@
       <el-form-item label="状态" prop="status">
         <el-select
           v-model="pageRequest.params.status"
-          style="width:80px;"
           placeholder="状态"
           clearable
-          size="small"
+          style="width:80px;"
         >
           <el-option
             v-for="item in statusList"
@@ -79,14 +78,12 @@
         <el-button
           type="primary"
           icon="el-icon-search"
-          size="mini"
           @click="handleQuery"
         >
           {{ $t('table.search') }}
         </el-button>
         <el-button
           icon="el-icon-refresh"
-          size="mini"
           @click="resetQuery"
         >
           {{ $t('table.reset') }}
@@ -98,7 +95,6 @@
         <el-button
           type="primary"
           icon="el-icon-plus"
-          size="mini"
           @click="handleAdd"
         >
           {{ $t('table.add') }}
@@ -108,7 +104,6 @@
         <el-button
           type="info"
           icon="el-icon-upload2"
-          size="mini"
           @click="handleImport"
         >
           {{ $t('table.import') }}
@@ -118,7 +113,6 @@
         <el-button
           type="warning"
           icon="el-icon-download"
-          size="mini"
           @click="handleExport"
         >
           {{ $t('table.export') }}
@@ -193,15 +187,25 @@
 
     <el-dialog
       :visible.sync="dialogVisible"
-      :title="dialogType==='edit'?'编辑':'添加'"
+      :title="user.id ? '编辑':'添加'"
       width="750px"
       append-to-body
     >
-      <el-form ref="user" :model="user" :rules="rules" label-width="80px">
+      <el-form
+        ref="user"
+        :model="user"
+        :rules="rules"
+        label-width="80px"
+      >
         <el-row v-if="user.id == undefined || user.id == null">
           <el-col :span="12">
             <el-form-item label="用户名" prop="username">
-              <el-input v-model="user.username" placeholder="用户名" maxlength="20" minlength="5" />
+              <el-input
+                v-model="user.username"
+                placeholder="用户名"
+                maxlength="20"
+                minlength="5"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="12" />
@@ -209,7 +213,12 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="昵称" prop="nickname">
-              <el-input v-model="user.nickname" placeholder="昵称" maxlength="10" minlength="4" />
+              <el-input
+                v-model="user.nickname"
+                placeholder="昵称"
+                maxlength="10"
+                minlength="4"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -229,7 +238,12 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="身份证号" prop="idCard">
-              <el-input v-model="user.idCard" placeholder="身份证号" maxlength="18" minlength="15" />
+              <el-input
+                v-model="user.idCard"
+                placeholder="身份证号"
+                maxlength="18"
+                minlength="15"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -248,23 +262,30 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="邮箱" prop="email">
-              <el-input v-model="user.email" placeholder="邮箱" maxlength="100" />
+              <el-input
+                v-model="user.email"
+                placeholder="邮箱"
+                maxlength="100"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="手机号" prop="mobile">
-              <el-input v-model="user.mobile" placeholder="手机号" maxlength="11" />
+              <el-input
+                v-model="user.mobile"
+                placeholder="手机号"
+                maxlength="11"
+              />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="单位">
+            <el-form-item label="单位" prop="deptId">
               <treeselect
                 v-model="user.deptId"
                 name="dept"
                 :multiple="false"
-                :searchable="false"
                 :clearable="true"
                 :options="deptTreeData"
                 :normalizer="normalizer"
@@ -286,13 +307,32 @@
             </el-form-item>
           </el-col>
         </el-row>
+        <el-row>
+          <el-col :span="24">
+            <el-form-item label="角色" prop="roles">
+              <treeselect
+                v-model="user.roles"
+                name="role"
+                :multiple="true"
+                :clearable="true"
+                :options="roleData"
+                :normalizer="normalizer"
+              />
+            </el-form-item>
+          </el-col>
+        </el-row>
       </el-form>
-      <div style="text-align:right;">
-        <el-button type="danger" size="small" @click="closeDialog">
-          {{ $t('table.cancel') }}
-        </el-button>
-        <el-button type="primary" size="small" @click="confirmHandle">
+      <div slot="footer" class="dialog-footer">
+        <el-button
+          type="primary"
+          @click="confirmHandle"
+        >
           {{ $t('table.confirm') }}
+        </el-button>
+        <el-button
+          @click="closeDialog"
+        >
+          {{ $t('table.cancel') }}
         </el-button>
       </div>
     </el-dialog>
@@ -302,11 +342,13 @@
 <script>
 import { getUserList, addUser, updateUser, delUser, resetUserPwd } from '@/api/sys/user'
 import { getDeptList } from '@/api/sys/dept'
+import { getRoleList } from '@/api/sys/role'
 import { buildTree } from '@/utils/tree'
-import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
+import Pagination from '@/components/Pagination'
 import Treeselect from '@riophae/vue-treeselect'
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 
+/** 用户默认值 */
 const defaultUser = {
   id: null,
   username: '',
@@ -318,17 +360,21 @@ const defaultUser = {
   email: null,
   mobile: null,
   deptId: null,
-  deptName: null
+  deptName: null,
+  roles: []
 }
 
 export default {
   name: 'User',
+  /** 注册组件 */
   components: { Pagination, Treeselect },
   data() {
     return {
+      // 遮罩层
       listLoading: true,
+      // 弹出层显示
       dialogVisible: false,
-      dialogType: 'new',
+      // 分页请求
       pageRequest: {
         pageNum: 1,
         pageSize: 10,
@@ -336,10 +382,17 @@ export default {
           username: null
         }
       },
+      // 用户列表
       list: [],
+      // 总记录数
       total: 0,
+      // 组织机构树
       deptTreeData: [],
+      // 角色列表
+      roleData: [],
+      // 用户表单
       user: Object.assign({}, defaultUser),
+      // 表单校验
       rules: {
         username: [
           { required: true, message: '请输入用户名', trigger: 'blur' },
@@ -373,26 +426,24 @@ export default {
           }
         ],
         mobile: [
-          { required: true, message: '请输入手机号', trigger: 'blur' },
-          {
-            pattern: /^((13[0-9])|(14[5|7])|(15([0-3]|[5-9]))|(18[0,5-9]))\d{8}$/,
-            message: '请输入正确的手机号，长度11位',
-            trigger: 'blur'
-          }
+          { required: true, message: '请输入手机号', trigger: 'blur' }
         ],
         deptId: [
           { required: true, message: '请选择单位', trigger: 'blur' }
         ]
       },
+      // 性别集合
       sexList: [
         { label: '男', value: 1 },
         { label: '女', value: 2 },
         { label: '其他', value: 3 }
       ],
+      // 状态集合
       statusList: [
         { label: '正常', value: '1' },
         { label: '禁用', value: '2' }
       ],
+      // 日期选项
       pickerOptions: {
         disabledDate(time) {
           return time.getTime() > Date.now()
@@ -408,7 +459,8 @@ export default {
   },
   created() {
     this.handleQuery()
-    this.getDeptTree()
+    this.getDeptData()
+    this.getRoleData()
   },
   methods: {
     /** 获取用户分页 */
@@ -420,8 +472,16 @@ export default {
         this.listLoading = false
       })
     },
+    /** 获取角色列表 */
+    async getRoleData() {
+      this.roleData = []
+      getRoleList().then(response => {
+        this.roleData = response.data || []
+        console.log('this.roleData', this.roleData)
+      })
+    },
     /** 获取组织机构数 */
-    async getDeptTree() {
+    async getDeptData() {
       this.deptTreeData = []
       getDeptList().then(response => {
         this.deptTreeData = buildTree(response.data)
@@ -440,18 +500,16 @@ export default {
     /** 重置查询 */
     resetQuery() {
       this.pageRequest.params = {}
-      this.$refs['userSearch'].resetFields()
+      this.$refs['queryForm'].resetFields()
       this.handleQuery()
     },
     /** 新增 */
     handleAdd() {
       this.user = Object.assign({}, defaultUser)
-      this.dialogType = 'new'
       this.dialogVisible = true
     },
     /** 修改 */
     handleEdit(scope) {
-      this.dialogType = 'edit'
       this.dialogVisible = true
       this.user = Object.assign({}, scope.row)
     },
@@ -490,8 +548,7 @@ export default {
     },
     /** 新增或者编辑时 保存 */
     async confirmHandle() {
-      const isEdit = this.dialogType === 'edit'
-      console.log('this.user', this.user)
+      const isEdit = this.user.id
       this.$refs['user'].validate((valid) => {
         if (valid) {
           if (isEdit) {
@@ -573,10 +630,6 @@ export default {
 </script>
 
 <style scoped>
-.btn-group {
-  margin-left: 1em;
-  display: inline;
-}
 .el-row {
   margin-bottom: 1em;
 }

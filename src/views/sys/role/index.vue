@@ -1,12 +1,16 @@
 <template>
   <div class="app-container">
-    <el-form ref="roleSearch" :model="pageRequest.params" :inline="true" label-width="68px">
+    <el-form
+      ref="queryForm"
+      :model="pageRequest.params"
+      :inline="true"
+      label-width="68px"
+    >
       <el-form-item label="角色名称" prop="name">
         <el-input
           v-model="pageRequest.params.name"
           placeholder="角色名称"
           clearable
-          size="small"
           @keyup.enter.native="getPageList"
         />
       </el-form-item>
@@ -15,12 +19,15 @@
           v-model="pageRequest.params.code"
           placeholder="角色编码"
           clearable
-          size="small"
           @keyup.enter.native="getPageList"
         />
       </el-form-item>
       <el-form-item label="状态" prop="status">
-        <el-select v-model="pageRequest.params.status" placeholder="状态" clearable>
+        <el-select
+          v-model="pageRequest.params.status"
+          placeholder="状态"
+          clearable
+        >
           <el-option
             :key="''"
             :label="'全部'"
@@ -35,15 +42,41 @@
         </el-select>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" @click="getPageList">
+        <el-button
+          type="primary"
+          icon="el-icon-search"
+          @click="handleQuery"
+        >
           {{ $t('table.search') }}
         </el-button>
-        <el-button type="primary" @click="handleAdd">
-          {{ $t('table.add') }}
+        <el-button
+          icon="el-icon-refresh"
+          @click="resetQuery"
+        >
+          {{ $t('table.reset') }}
         </el-button>
       </el-form-item>
     </el-form>
-
+    <el-row :gutter="10" class="mb8">
+      <el-col :span="1.5">
+        <el-button
+          type="primary"
+          icon="el-icon-plus"
+          @click="handleAdd"
+        >
+          {{ $t('table.add') }}
+        </el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button
+          type="warning"
+          icon="el-icon-download"
+          @click="handleExport"
+        >
+          {{ $t('table.export') }}
+        </el-button>
+      </el-col>
+    </el-row>
     <div>
       <el-table
         v-loading="listLoading"
@@ -59,12 +92,28 @@
         <el-table-column align="center" label="角色名称" prop="name" />
         <el-table-column align="center" label="角色编码" prop="code" />
         <el-table-column align="center" label="状态" prop="status" :formatter="statusFormat" />
-        <el-table-column align="center" label="操作">
+        <el-table-column
+          align="center"
+          width="240"
+          label="操作"
+          class-name="small-padding fixed-width"
+        >
           <template slot-scope="scope">
-            <el-button type="primary" size="small" @click="handleEdit(scope)">
+            <el-button
+              type="primary"
+              size="mini"
+              icon="el-icon-edit"
+              @click="handleEdit(scope)"
+            >
               {{ $t('table.edit') }}
             </el-button>
-            <el-button type="danger" size="small" @click="handleDelete(scope)">
+            <el-button
+              v-if="scope.row.id !== 1"
+              size="mini"
+              type="danger"
+              icon="el-icon-delete"
+              @click="handleDelete(scope)"
+            >
               {{ $t('table.delete') }}
             </el-button>
           </template>
@@ -82,73 +131,124 @@
 
     <el-dialog
       :visible.sync="dialogVisible"
-      :title="dialogType==='edit'?'编辑':'添加'"
+      :title="role.id ? '编辑':'添加'"
+      width="800px"
+      append-to-body
     >
-      <el-form ref="role" :model="role" :rules="rules" label-width="80px">
-        <el-form-item label="名称" prop="name">
-          <el-input v-model="role.name" placeholder="名称" />
-        </el-form-item>
-        <el-form-item label="编码" prop="code">
-          <el-input v-model="role.code" placeholder="编码" />
-        </el-form-item>
-        <el-form-item label="状态" prop="status">
-          <el-radio-group v-model="role.status">
-            <el-radio v-for="(item, index) in statusList" :key="'status_'+ index" :label="item.value">{{ item.label }}</el-radio>
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="数据权限" prop="dataScope">
-          <el-select v-model="role.dataScope" placeholder="请选择">
-            <el-option
-              v-for="(item, index) in dataScopeList"
-              :key="'dataScope_'+ index"
-              :label="item.label"
-              :value="item.value"
-            />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="描述" prop="description">
-          <el-input v-model="role.description" type="textarea" placeholder="描述" />
-        </el-form-item>
-        <el-form-item label="菜单">
-          <el-tree
-            ref="menuTree"
-            :check-strictly="checkStrictly"
-            :data="menuTreeData"
-            show-checkbox
-            node-key="id"
-          >
-            <div slot-scope="{ node, data }">
-              <span>
-                {{ data.name }}
-              </span>
-              <span style="margin-left: 3em;">
-                {{ data.type | typeFormat }}
-              </span>
-            </div>
-          </el-tree>
-        </el-form-item>
-        <el-form-item v-if="role.dataScope === '5'" label="组织机构">
-          <el-tree
-            ref="deptTree"
-            :check-strictly="checkStrictly"
-            :data="deptTreeData"
-            show-checkbox
-            node-key="id"
-          >
-            <div slot-scope="{ node, data }">
-              <span>
-                {{ data.name }}
-              </span>
-            </div>
-          </el-tree>
-        </el-form-item>
+      <el-form
+        ref="role"
+        :model="role"
+        :rules="rules"
+        label-width="80px"
+      >
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="名称" prop="name">
+              <el-input
+                v-model="role.name"
+                placeholder="名称"
+              />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="编码" prop="code">
+              <el-input
+                v-model="role.code"
+                placeholder="编码"
+              />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="数据权限" prop="dataScope">
+              <el-select
+                v-model="role.dataScope"
+                placeholder="请选择"
+              >
+                <el-option
+                  v-for="(item, index) in dataScopeList"
+                  :key="'dataScope_'+ index"
+                  :label="item.label"
+                  :value="item.value"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="状态" prop="status">
+              <el-radio-group v-model="role.status">
+                <el-radio
+                  v-for="(item, index) in statusList"
+                  :key="'status_'+ index"
+                  :label="item.value"
+                >{{ item.label }}</el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="24">
+            <el-form-item label="描述" prop="description">
+              <el-input
+                v-model="role.description"
+                type="textarea"
+                placeholder="描述"
+                maxlength="500"
+              />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="菜单">
+              <el-tree
+                ref="menuTree"
+                :check-strictly="false"
+                :data="menuTreeData"
+                :props="defaultProps"
+                show-checkbox
+                node-key="id"
+              >
+                <div slot-scope="{ node, data }">
+                  <span>
+                    {{ node.label }}
+                  </span>
+                  <span style="margin-left: 3em;">
+                    {{ data.type | typeFormat }}
+                  </span>
+                </div>
+              </el-tree>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item
+              v-if="role.dataScope === '5'"
+              label="单位"
+            >
+              <el-tree
+                ref="deptTree"
+                :check-strictly="false"
+                :data="deptTreeData"
+                :props="defaultProps"
+                show-checkbox
+                node-key="id"
+              />
+            </el-form-item>
+          </el-col>
+        </el-row>
       </el-form>
-      <div style="text-align:right;">
-        <el-button type="danger" @click="closeDialog">
-          {{ $t('table.cancel') }}
-        </el-button>
-        <el-button type="primary" @click="confirmHandle">
+      <div slot="footer" class="dialog-footer">
+        <el-button
+          type="primary"
+          @click="confirmHandle"
+        >
           {{ $t('table.confirm') }}
+        </el-button>
+        <el-button
+          @click="closeDialog"
+        >
+          {{ $t('table.cancel') }}
         </el-button>
       </div>
     </el-dialog>
@@ -156,12 +256,13 @@
 </template>
 
 <script>
-import { getRoleList, saveRole, delRole } from '@/api/sys/role'
+import { getRolePageList, saveRole, delRole } from '@/api/sys/role'
 import { getMenuList, getRoleMenus } from '@/api/sys/menu'
 import { getDeptList, getRoleDepts } from '@/api/sys/dept'
 import { buildTree } from '@/utils/tree'
 import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
 
+/** 角色默认值 */
 const defaultRole = {
   id: '',
   name: '',
@@ -175,7 +276,9 @@ const defaultRole = {
 
 export default {
   name: 'Role',
+  /** 注册组件 */
   components: { Pagination },
+  /** 过滤器 */
   filters: {
     typeFormat: (cellValue) => {
       const typeMap = {
@@ -188,9 +291,11 @@ export default {
   },
   data() {
     return {
+      // 遮罩层
       listLoading: true,
+      // 弹出层
       dialogVisible: false,
-      dialogType: 'new',
+      // 分页请求
       pageRequest: {
         pageNum: 1,
         pageSize: 10,
@@ -199,9 +304,13 @@ export default {
           code: ''
         }
       },
+      // 列表集合
       list: [],
+      // 总数
       total: 0,
+      // 表单
       role: Object.assign({}, defaultRole),
+      // 表单校验
       rules: {
         name: [
           { required: true, message: '请输入角色名称', trigger: 'blur' },
@@ -220,13 +329,16 @@ export default {
           }
         ]
       },
+      // 菜单树
       menuTreeData: [],
+      // 组织机构树
       deptTreeData: [],
-      checkStrictly: false,
+      // 状态集合
       statusList: [
         { label: '正常', value: '1' },
         { label: '禁用', value: '2' }
       ],
+      // 数据权限集合
       dataScopeList: [
         { label: '全部单位', value: '1' },
         { label: '所属一级单位及以下', value: '2' },
@@ -234,8 +346,10 @@ export default {
         { label: '所属单位部门及以下', value: '4' },
         { label: '自定义', value: '5' },
         { label: '仅自己', value: '6' }
-      ]
-
+      ],
+      defaultProps: {
+        label: 'name'
+      }
     }
   },
   created() {
@@ -244,39 +358,54 @@ export default {
     this.getDeptTree()
   },
   methods: {
+    /** 查询菜单树 */
     async getMenuTree() {
       this.menuTreeData = []
       getMenuList().then(response => {
         this.menuTreeData = buildTree(response.data)
       })
     },
+    /** 查询组织机构树 */
     async getDeptTree() {
       this.deptTreeData = []
       getDeptList().then(response => {
         this.deptTreeData = buildTree(response.data)
       })
     },
+    /** 获取分页列表 */
     getPageList() {
       this.listLoading = true
-      getRoleList(this.pageRequest).then(response => {
+      getRolePageList(this.pageRequest).then(response => {
         this.list = response.data.list
         this.total = response.data.total
         this.listLoading = false
       })
     },
+    /** 关闭弹出层 */
     closeDialog() {
       this.dialogVisible = false
       this.$refs['role'].resetFields()
     },
+    /** 搜索按钮操作 */
+    handleQuery() {
+      this.pageRequest.pageNum = 1
+      this.getPageList()
+    },
+    /** 重置查询 */
+    resetQuery() {
+      this.pageRequest.params = {}
+      this.$refs['queryForm'].resetFields()
+      this.handleQuery()
+    },
+    /** 新增 */
     handleAdd() {
-      this.dialogType = 'new'
       this.resetChecked('menuTree')
       this.resetChecked('deptTree')
       this.role = Object.assign({}, defaultRole)
       this.dialogVisible = true
     },
+    /** 编辑 */
     handleEdit(scope) {
-      this.dialogType = 'edit'
       this.role = Object.assign({}, scope.row)
       this.resetChecked('menuTree')
       getRoleMenus(this.role.id)
@@ -295,6 +424,7 @@ export default {
       }
       this.dialogVisible = true
     },
+    /** 删除 */
     handleDelete({ $index, row }) {
       this.$confirm('确认删除当前角色?', 'Warning', {
         confirmButtonText: '确认',
@@ -311,9 +441,9 @@ export default {
         })
         .catch(err => { console.error(err) })
     },
+    // 提交表单
     async confirmHandle() {
-      const isEdit = this.dialogType === 'edit'
-
+      const isEdit = this.role.id
       // 设置menus
       const menus = this.getCheckedKeys('menuTree')
       this.role.menus = menus
@@ -323,7 +453,6 @@ export default {
         const depts = this.getCheckedKeys('deptTree')
         this.role.depts = depts
       }
-
       this.$refs['role'].validate((valid) => {
         if (valid) {
           saveRole(this.role).then(data => {
@@ -352,18 +481,27 @@ export default {
         }
       })
     },
+    /** 导出按钮操作 */
+    handleExport() {
+      // todo
+      console.log('导出')
+    },
+    // 获取树形选中的值
     getCheckedKeys(ref) {
       return this.$refs[ref].getCheckedKeys()
     },
+    // 重置树形
     resetChecked(ref) {
       this.$nextTick(() => {
         // 清空选择
         this.setCheckedKeys(ref, [])
       })
     },
+    // 设置树形选中
     setCheckedKeys(ref, arrayKey) {
       this.$refs[ref].setCheckedKeys(arrayKey || [], false)
     },
+    /** 状态格式化 */
     statusFormat(row, column, cellValue, index) {
       const status = {}
       this.statusList.forEach((item) => {
@@ -379,8 +517,7 @@ export default {
 </script>
 
 <style scoped>
-.btn-group {
-  margin-left: 1em;
-  display: inline;
+.el-row {
+  margin-bottom: 1em;
 }
 </style>

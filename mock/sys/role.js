@@ -6,6 +6,17 @@ const Random = Mock.Random
 
 module.exports = [
   {
+    url: sys + '/role/list',
+    type: 'get',
+    response: _ => {
+      return {
+        code: '20000',
+        data: roles
+      }
+    }
+  },
+
+  {
     url: sys + '/role/pageList',
     type: 'post',
     response: config => {

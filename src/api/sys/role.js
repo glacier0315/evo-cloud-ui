@@ -1,7 +1,14 @@
 import request from '@/utils/request'
 import { sys } from '@/common/constant'
 
-export function getRoleList(data) {
+export function getRoleList() {
+  return request({
+    url: sys + '/role/list',
+    method: 'get'
+  })
+}
+
+export function getRolePageList(data) {
   return request({
     url: sys + '/role/pageList',
     method: 'post',
