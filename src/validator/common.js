@@ -20,6 +20,7 @@ export const idCardValidator = (rule, value, callback) => {
     callback(new Error('身份证号不合法!'))
     return
   }
+  callback()
 }
 
 /**
@@ -32,7 +33,9 @@ export const emailValidator = (rule, value, callback) => {
   const reg = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
   if (!reg.test(value)) {
     callback(new Error('邮箱不合法!'))
+    return
   }
+  callback()
 }
 
 /**
@@ -45,5 +48,7 @@ export const mobileValidator = (rule, value, callback) => {
   const reg = /^((13[0-9])|(14[5|7])|(15([0-3]|[5-9]))|(18[0,5-9]))\d{8}$/
   if (!reg.test(value)) {
     callback(new Error('手机号不合法，长度为11位!'))
+    return
   }
+  callback()
 }

@@ -146,5 +146,18 @@ module.exports = [
         data: 'success'
       }
     }
+  },
+
+  {
+    url: sys + '/role/findByUserId',
+    type: 'get',
+    response: config => {
+      const { userId } = config.query
+      console.log('查询userId: ', userId)
+      return {
+        code: '20000',
+        data: roles
+      }
+    }
   }
 ]

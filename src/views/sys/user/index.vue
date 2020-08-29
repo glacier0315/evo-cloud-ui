@@ -164,10 +164,10 @@
               <treeselect
                 v-model="user.deptId"
                 name="dept"
-                :multiple="false"
-                :clearable="true"
+                placeholder="单位"
+                clearable
                 :options="deptTreeData"
-                :normalizer="normalizer"
+                :normalizer="deptNormalizer"
                 @select="selectDept"
               />
             </el-form-item>
@@ -183,19 +183,6 @@
                   {{ item.label }}
                 </el-radio>
               </el-radio-group>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="24">
-            <el-form-item label="角色" prop="roleIds">
-              <treeselect
-                v-model="user.roleIds"
-                name="role"
-                :multiple="true"
-                :clearable="true"
-                :options="roleData"
-              />
             </el-form-item>
           </el-col>
         </el-row>
@@ -354,8 +341,7 @@ export default {
       this.user = Object.assign({}, scope.row)
       getRoleByUser(this.user.id)
         .then(response => {
-          const roles = response.data || []
-          this.user.roleIds = roles.map(u => u.id)
+          this.user.roleIds = response.data || []
         })
         .catch(err => { console.error(err) })
       console.log('this.user ', this.user)
@@ -397,40 +383,41 @@ export default {
     /** 新增或者编辑时 保存 */
     async confirmHandle() {
       const isEdit = this.user.id && this.user.id.length > 0
-      console.log('isEdit ', isEdit)
-      this.$refs['user'].validate((valid) => {
-        console.log('valid ', valid)
-        if (valid) {
-          if (isEdit) {
-            updateUser(this.user).then(data => {
-              this.dialogVisible = false
-              this.reloadUserList()
+      this.$refs['user']
+        .validate((valid) => {
+          if (valid) {
+            if (isEdit) {
+              updateUser(this.user)
+                .then(data => {
+                  this.closeDialog()
+                  this.reloadUserList()
 
-              this.$notify({
-                title: '成功',
-                dangerouslyUseHTMLString: true,
-                message: '更新成功',
-                type: 'success'
-              })
-            })
+                  this.$notify({
+                    title: '成功',
+                    dangerouslyUseHTMLString: true,
+                    message: '更新成功',
+                    type: 'success'
+                  })
+                })
+            } else {
+              addUser(this.user)
+                .then(data => {
+                  this.closeDialog()
+                  this.reloadUserList()
+
+                  this.$notify({
+                    title: '成功',
+                    dangerouslyUseHTMLString: true,
+                    message: '添加成功',
+                    type: 'success'
+                  })
+                })
+            }
           } else {
-            addUser(this.user).then(data => {
-              this.dialogVisible = false
-              this.reloadUserList()
-
-              this.$notify({
-                title: '成功',
-                dangerouslyUseHTMLString: true,
-                message: '添加成功',
-                type: 'success'
-              })
-            })
+            console.log('error submit!!')
+            return false
           }
-        } else {
-          console.log('error submit!!')
-          return false
-        }
-      })
+        })
     },
     /** 导出按钮操作 */
     handleExport() {
@@ -448,7 +435,7 @@ export default {
       this.user.deptName = name
     },
     /** 处理树形数据 */
-    normalizer(node) {
+    deptNormalizer(node) {
       return {
         id: node.id,
         label: node.name,
