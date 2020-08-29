@@ -15,6 +15,7 @@ for (let i = 0; i < 10; i++) {
     'parentId': '',
     'parentName': '',
     'type': 1,
+    'status': 1,
     'visible': 1,
     'noCache': 2,
     'orderNum|+1': 1
@@ -33,6 +34,7 @@ for (let i = 0; i < 10; i++) {
       'parentId': menu1.id,
       'parentName': menu1.name,
       'type|1': [1, 2, 3],
+      'status|1': [1, 2],
       'visible|1': [1, 2],
       'isFrame|1': [1, 2],
       'noCache|1': [1, 2],
@@ -52,6 +54,7 @@ for (let i = 0; i < 10; i++) {
           'parentId': menu2.id,
           'parentName': menu2.name,
           'type|1': [2, 3],
+          'status|1': [1, 2],
           'visible|1': [1, 2],
           'isFrame|1': [1, 2],
           'noCache|1': [1, 2],

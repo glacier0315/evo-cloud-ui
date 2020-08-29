@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container">
+  <div>
     <el-form
       ref="queryForm"
       :model="pageRequest.params"
@@ -24,15 +24,6 @@
           @keyup.enter.native="handleQuery"
         />
       </el-form-item>
-      <el-form-item label="身份证号" prop="idCard">
-        <el-input
-          v-model="pageRequest.params.idCard"
-          placeholder="身份证号"
-          clearable
-          style="width:200px;"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
       <el-form-item label="性别" prop="sex">
         <el-select
           v-model="pageRequest.params.sex"
@@ -48,6 +39,15 @@
           />
         </el-select>
       </el-form-item>
+      <el-form-item label="身份证号" prop="idCard">
+        <el-input
+          v-model="pageRequest.params.idCard"
+          placeholder="身份证号"
+          clearable
+          style="width:200px;"
+          @keyup.enter.native="handleQuery"
+        />
+      </el-form-item>
       <el-form-item label="单位" prop="deptId">
         <treeselect
           v-model="pageRequest.params.deptId"
@@ -60,30 +60,17 @@
           style="width:180px;"
         />
       </el-form-item>
-      <el-form-item label="状态" prop="status">
-        <el-select
-          v-model="pageRequest.params.status"
-          placeholder="状态"
-          clearable
-          style="width:80px;"
-        >
-          <el-option
-            v-for="item in statusList"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          />
-        </el-select>
-      </el-form-item>
       <el-form-item>
         <el-button
           type="primary"
+          size="mini"
           icon="el-icon-search"
           @click="handleQuery"
         >
           {{ $t('table.search') }}
         </el-button>
         <el-button
+          size="mini"
           icon="el-icon-refresh"
           @click="resetQuery"
         >
@@ -102,9 +89,16 @@
         fit
         stripe
         highlight-current-row
+        size="mini"
         current-row-key="id"
-        style="width: 100%;margin-top: 1em;"
+        style="width: 100%;"
+        @selection-change="handleSelectionChange"
       >
+        <el-table-column
+          v-if="multipleSelected"
+          type="selection"
+          width="55"
+        />
         <el-table-column
           align="center"
           label="序号"
@@ -148,13 +142,7 @@
         />
         <el-table-column
           align="center"
-          label="状态"
-          prop="status"
-          :formatter="statusFormat"
-        />
-        <el-table-column
-          align="center"
-          :width="operationWidth"
+          width="80"
           label="操作"
           class-name="small-padding fixed-width"
         >
@@ -200,18 +188,18 @@ export default {
         return {}
       }
     },
-    // 身份证是否显示
-    idCardVisible: {
+    // 是否多选
+    multipleSelected: {
       type: Boolean,
       default: () => {
         return false
       }
     },
-    // 操作列宽度
-    operationWidth: {
-      type: Number,
+    // 身份证是否显示
+    idCardVisible: {
+      type: Boolean,
       default: () => {
-        return 80
+        return false
       }
     }
   },
@@ -229,17 +217,18 @@ export default {
       list: [],
       // 总记录数
       total: 0,
+      multipleSelection: [],
       // 性别集合
       sexList: [
         { label: '男', value: 1 },
         { label: '女', value: 2 },
         { label: '其他', value: 3 }
-      ],
-      // 状态集合
-      statusList: [
-        { label: '正常', value: '1' },
-        { label: '禁用', value: '2' }
       ]
+    }
+  },
+  watch: {
+    deptData: (val) => {
+      console.log('deptData ', val)
     }
   },
   created() {
@@ -266,15 +255,11 @@ export default {
       this.$refs['queryForm'].resetFields()
       this.handleQuery()
     },
-    /** status 格式化 */
-    statusFormat(row, column, cellValue, index) {
-      const status = {}
-      this.statusList.forEach((item) => {
-        if (cellValue && item.value === cellValue) {
-          Object.assign(status, item)
-        }
-      })
-      return status.label
+    handleSelectionChange(val) {
+      this.multipleSelection = val
+    },
+    getMultipleSelection() {
+      return this.multipleSelection
     },
     /** 性别格式化 */
     sexFormat(row, column, cellValue, index) {

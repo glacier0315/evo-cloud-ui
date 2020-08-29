@@ -6,7 +6,7 @@ const Random = Mock.Random
 
 module.exports = [
   {
-    url: sys + '/role/list',
+    url: sys + '/role/findAll',
     type: 'get',
     response: _ => {
       return {
@@ -128,6 +128,19 @@ module.exports = [
     response: config => {
       const { userId, roleId } = config.body
       console.log('删除用户 {}， 角色 {} 关联关系', userId, roleId)
+      return {
+        code: '20000',
+        data: 'success'
+      }
+    }
+  },
+
+  {
+    url: sys + '/role/user/add',
+    type: 'post',
+    response: config => {
+      const { userIds, roleId } = config.body
+      console.log('添加用户 {}， 角色 {} 关联关系', userIds, roleId)
       return {
         code: '20000',
         data: 'success'

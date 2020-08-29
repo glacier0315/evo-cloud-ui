@@ -364,9 +364,6 @@ export default {
 }
 </script>
 <style scoped>
-.table-container {
-  margin: 1em;
-}
 .el-row {
   margin-bottom: 1em;
 }

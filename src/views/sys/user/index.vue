@@ -2,7 +2,9 @@
   <div class="app-container">
     <userList
       ref="userList"
+      :id-card-visible="true"
       :dept-data="deptTreeData"
+      :operation-width="240"
     >
       <template v-slot:handle>
         <el-col :span="1.5">
@@ -73,12 +75,13 @@
         :rules="rules"
         label-width="80px"
       >
-        <el-row v-if="user.id == undefined || user.id == null">
+        <el-row>
           <el-col :span="12">
             <el-form-item label="用户名" prop="username">
               <el-input
                 v-model="user.username"
                 placeholder="用户名"
+                :disabled="user.id && user.id.length > 0"
                 maxlength="20"
                 minlength="5"
               />
@@ -185,14 +188,13 @@
         </el-row>
         <el-row>
           <el-col :span="24">
-            <el-form-item label="角色" prop="roles">
+            <el-form-item label="角色" prop="roleIds">
               <treeselect
-                v-model="user.roles"
+                v-model="user.roleIds"
                 name="role"
                 :multiple="true"
                 :clearable="true"
                 :options="roleData"
-                :normalizer="normalizer"
               />
             </el-form-item>
           </el-col>
@@ -218,11 +220,14 @@
 <script>
 import { addUser, updateUser, delUser, resetUserPwd } from '@/api/sys/user'
 import { getDeptList } from '@/api/sys/dept'
-import { getRoleList } from '@/api/sys/role'
+import { getRoleList, getRoleByUser } from '@/api/sys/role'
 import { buildTree } from '@/utils/tree'
 import UserList from './components/UserList'
 import Treeselect from '@riophae/vue-treeselect'
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
+// 自定义校验
+import { usernameValidator, nicknameValidator } from '@/validator/sys/user'
+import { idCardValidator, emailValidator, mobileValidator } from '@/validator/common'
 
 /** 用户默认值 */
 const defaultUser = {
@@ -237,7 +242,7 @@ const defaultUser = {
   mobile: null,
   deptId: null,
   deptName: null,
-  roles: []
+  roleIds: []
 }
 
 export default {
@@ -258,37 +263,23 @@ export default {
       rules: {
         username: [
           { required: true, message: '请输入用户名', trigger: 'blur' },
-          {
-            pattern: /^(?!_)(?!.*?_$)[a-zA-Z0-9_]{5,20}$/,
-            message: '用户名不合法，长度是5到20位，支持(字母，数字，下划线)，不能以下划线开头结尾',
-            trigger: 'blur'
-          }
+          { validator: usernameValidator, trigger: 'blur' }
         ],
         nickname: [
           { required: true, message: '请输入昵称', trigger: 'blur' },
-          {
-            pattern: /^(?!_)(?!.*?_$)[\u4e00-\u9fa5_a-zA-Z0-9_]{4,10}$/,
-            message: '昵称不合法，长度是4到10位，支持(中文，字母，数字，下划线)，不能以下划线开头结尾',
-            trigger: 'blur'
-          }
+          { validator: nicknameValidator, trigger: 'blur' }
         ],
         idCard: [
           { required: true, message: '请输入身份证号', trigger: 'blur' },
-          {
-            pattern: /^[1-9]\d{5}(18|19|([23]\d))\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$/,
-            message: '请输入正确的身份证号，长度18位',
-            trigger: 'blur'
-          }
+          { validator: idCardValidator, trigger: 'blur' }
         ],
         email: [
           { required: true, message: '请输入邮箱', trigger: 'blur' },
-          {
-            pattern: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/, message: '请输入正确的邮箱',
-            trigger: 'blur'
-          }
+          { validator: emailValidator, trigger: 'blur' }
         ],
         mobile: [
-          { required: true, message: '请输入手机号', trigger: 'blur' }
+          { required: true, message: '请输入手机号', trigger: 'blur' },
+          { validator: mobileValidator, trigger: 'blur' }
         ],
         deptId: [
           { required: true, message: '请选择单位', trigger: 'blur' }
@@ -332,7 +323,13 @@ export default {
     async getRoleData() {
       this.roleData = []
       getRoleList().then(response => {
-        this.roleData = response.data || []
+        const roles = response.data || []
+        this.roleData = roles.map(u => {
+          // 添加label，便于树形结构
+          u.label = u.name
+          u.children = undefined
+          return u
+        })
       })
     },
     /** 获取组织机构数 */
@@ -354,8 +351,15 @@ export default {
     },
     /** 修改 */
     handleEdit(scope) {
-      this.dialogVisible = true
       this.user = Object.assign({}, scope.row)
+      getRoleByUser(this.user.id)
+        .then(response => {
+          const roles = response.data || []
+          this.user.roleIds = roles.map(u => u.id)
+        })
+        .catch(err => { console.error(err) })
+      console.log('this.user ', this.user)
+      this.dialogVisible = true
     },
     /** 删除 */
     handleDelete({ $index, row }) {
@@ -392,8 +396,10 @@ export default {
     },
     /** 新增或者编辑时 保存 */
     async confirmHandle() {
-      const isEdit = this.user.id
+      const isEdit = this.user.id && this.user.id.length > 0
+      console.log('isEdit ', isEdit)
       this.$refs['user'].validate((valid) => {
+        console.log('valid ', valid)
         if (valid) {
           if (isEdit) {
             updateUser(this.user).then(data => {
@@ -441,7 +447,7 @@ export default {
       const { name } = data
       this.user.deptName = name
     },
-    /** 处理属性数据 */
+    /** 处理树形数据 */
     normalizer(node) {
       return {
         id: node.id,

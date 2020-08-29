@@ -25,59 +25,88 @@
         </el-button>
       </el-col>
     </el-row>
-    <div>
-      <el-table
-        :data="treeData"
-        row-key="id"
-        border
-        default-expand-all
-        :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
+    <el-table
+      :data="treeData"
+      row-key="id"
+      border
+      default-expand-all
+      :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
+      style="margin-top:1em;"
+    >
+      <el-table-column
+        type="index"
+        label="序号"
+        width="80"
+      />
+      <el-table-column
+        prop="name"
+        label="名称"
+        width="180"
+      />
+      <el-table-column
+        prop="path"
+        label="路径"
+      />
+      <el-table-column
+        prop="component"
+        label="组件"
+      />
+      <el-table-column
+        prop="icon"
+        label="图标"
+        width="80"
+      />
+      <el-table-column
+        prop="permission"
+        label="权限"
+      />
+      <el-table-column
+        prop="type"
+        label="类型"
+        :formatter="typeFormat"
+        width="80"
+      />
+      <el-table-column
+        prop="status"
+        label="状态"
+        :formatter="statusFormat"
+        width="80"
+      />
+      <el-table-column
+        align="center"
+        width="280"
+        label="操作"
+        class-name="small-padding fixed-width"
       >
-        <el-table-column type="index" label="序号" width="80" />
-        <el-table-column prop="name" label="名称" width="180" />
-        <el-table-column prop="path" label="路径" />
-        <el-table-column prop="component" label="组件" />
-        <el-table-column prop="icon" label="图标" width="80" />
-        <el-table-column prop="permission" label="权限" />
-        <el-table-column prop="type" label="类型" :formatter="typeFormat" width="80" />
-        <el-table-column prop="visible" label="显示" :formatter="visibleFormat" width="80" />
-        <el-table-column prop="isFrame" label="外链" :formatter="isFrameFormat" width="80" />
-        <el-table-column
-          align="center"
-          width="280"
-          label="操作"
-          class-name="small-padding fixed-width"
-        >
-          <template #default="scope">
-            <el-button
-              v-if="scope.row.type !== 3"
-              type="primary"
-              size="mini"
-              icon="el-icon-plus"
-              @click="handleAdd(scope)"
-            >
-              {{ $t('table.add') }}
-            </el-button>
-            <el-button
-              type="primary"
-              size="mini"
-              icon="el-icon-edit"
-              @click="handleEdit(scope)"
-            >
-              {{ $t('table.edit') }}
-            </el-button>
-            <el-button
-              size="mini"
-              type="danger"
-              icon="el-icon-delete"
-              @click="handleDelete(scope)"
-            >
-              {{ $t('table.delete') }}
-            </el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-    </div>
+        <template #default="scope">
+          <el-button
+            v-if="scope.row.type !== 3"
+            type="primary"
+            size="mini"
+            icon="el-icon-plus"
+            @click="handleAdd(scope)"
+          >
+            {{ $t('table.add') }}
+          </el-button>
+          <el-button
+            type="primary"
+            size="mini"
+            icon="el-icon-edit"
+            @click="handleEdit(scope)"
+          >
+            {{ $t('table.edit') }}
+          </el-button>
+          <el-button
+            size="mini"
+            type="danger"
+            icon="el-icon-delete"
+            @click="handleDelete(scope)"
+          >
+            {{ $t('table.delete') }}
+          </el-button>
+        </template>
+      </el-table-column>
+    </el-table>
 
     <el-dialog
       :visible.sync="dialogVisible"
@@ -104,8 +133,16 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="排序号" prop="orderNum">
-              <el-input-number v-model="menu.orderNum" :min="1" :step="1" />
+            <el-form-item label="状态" prop="status">
+              <el-radio-group v-model="menu.status">
+                <el-radio
+                  v-for="(item,index) in statusList"
+                  :key="index"
+                  :label="item.value"
+                >
+                  {{ item.label }}
+                </el-radio>
+              </el-radio-group>
             </el-form-item>
           </el-col>
         </el-row>
@@ -126,7 +163,20 @@
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item v-if="menu.type!==3" label="显示" prop="visible">
+            <el-form-item
+              v-if="menu.type!==3"
+              label="路径"
+              prop="path"
+            >
+              <el-input v-model="menu.path" placeholder="路径" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item
+              v-if="menu.type!==3"
+              label="显示"
+              prop="visible"
+            >
               <el-radio-group v-model="menu.visible">
                 <el-radio
                   v-for="(item,index) in visibleList"
@@ -138,8 +188,14 @@
               </el-radio-group>
             </el-form-item>
           </el-col>
+        </el-row>
+        <el-row>
           <el-col :span="12">
-            <el-form-item v-if="menu.type===2" label="外链" prop="isFrame">
+            <el-form-item
+              v-if="menu.type===2"
+              label="外链"
+              prop="isFrame"
+            >
               <el-radio-group v-model="menu.isFrame">
                 <el-radio
                   v-for="(item,index) in isFrameList"
@@ -151,15 +207,12 @@
               </el-radio-group>
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-row v-if="menu.type!==3">
           <el-col :span="12">
-            <el-form-item label="路径" prop="path">
-              <el-input v-model="menu.path" placeholder="相对路径" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item v-if="menu.type!==3 && menu.isFrame !== 1" label="组件" prop="component">
+            <el-form-item
+              v-if="menu.type!==3 && menu.isFrame !== 1"
+              label="组件"
+              prop="component"
+            >
               <el-input v-model="menu.component" placeholder="组件" />
             </el-form-item>
           </el-col>
@@ -170,6 +223,7 @@
               <treeselect
                 v-model="menu.parentId"
                 name="menu"
+                placeholder="父级资源"
                 :multiple="false"
                 :clearable="true"
                 :options="treeParentData"
@@ -183,30 +237,13 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <el-row v-if="menu.type!==3">
+        <el-row>
           <el-col :span="12">
-            <el-form-item label="缓存" prop="noCache">
-              <el-radio-group v-model="menu.noCache">
-                <el-radio
-                  v-for="(item,index) in noCacheList"
-                  :key="index"
-                  :label="item.value"
-                >
-                  {{ item.label }}
-                </el-radio>
-              </el-radio-group>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item
-              v-if="menu.visible === 2 && menu.isFrame === 2"
-              label="高亮资源"
-              prop="activeMenu"
-            >
-              <el-input
-                v-model="menu.activeMenu"
-                placeholder="高亮资源"
-                maxlength="100"
+            <el-form-item label="排序号" prop="orderNum">
+              <el-input-number
+                v-model="menu.orderNum"
+                :min="1"
+                :step="1"
               />
             </el-form-item>
           </el-col>
@@ -244,12 +281,11 @@ const defaultMenu = {
   icon: '',
   permission: '',
   type: 1,
+  status: 1,
   visible: 1,
   isFrame: 2,
   parentId: undefined,
   parentName: '',
-  noCache: 2,
-  activeMenu: undefined,
   orderNum: 0,
   children: []
 }
@@ -283,6 +319,11 @@ export default {
           { min: 2, max: 20, message: '长度在 2 到 20个字符', trigger: 'blur' }
         ]
       },
+      // 状态集合
+      statusList: [
+        { label: '正常', value: 1 },
+        { label: '禁用', value: 2 }
+      ],
       // 类型集合
       typeList: [
         { label: '目录', value: 1 },
@@ -296,11 +337,6 @@ export default {
       ],
       // 外链
       isFrameList: [
-        { label: '是', value: 1 },
-        { label: '否', value: 2 }
-      ],
-      // 缓存
-      noCacheList: [
         { label: '是', value: 1 },
         { label: '否', value: 2 }
       ]
@@ -415,25 +451,15 @@ export default {
       })
       return type.label
     },
-    /** 可见性 格式化 */
-    visibleFormat(row, column, cellValue, index) {
-      const visible = {}
-      this.visibleList.forEach((item) => {
+    /** 状态 格式化 */
+    statusFormat(row, column, cellValue, index) {
+      const status = {}
+      this.statusList.forEach((item) => {
         if (cellValue && item.value === cellValue) {
-          Object.assign(visible, item)
+          Object.assign(status, item)
         }
       })
-      return visible.label
-    },
-    /** 外链格式化 */
-    isFrameFormat(row, column, cellValue, index) {
-      const isFrame = {}
-      this.isFrameList.forEach((item) => {
-        if (cellValue && item.value === cellValue) {
-          Object.assign(isFrame, item)
-        }
-      })
-      return isFrame.label
+      return status.label
     },
     /** 处理属性数据 */
     normalizer(node) {
@@ -447,10 +473,4 @@ export default {
 }
 </script>
 <style scoped>
-.table-container {
-  margin: 1em;
-}
-.el-row {
-  margin-bottom: 1em;
-}
 </style>
