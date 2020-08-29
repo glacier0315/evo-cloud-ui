@@ -44,7 +44,7 @@
           label="操作"
           class-name="small-padding fixed-width"
         >
-          <template slot-scope="scope">
+          <template #default="scope">
             <el-button
               v-if="scope.row.type !== 3"
               type="primary"

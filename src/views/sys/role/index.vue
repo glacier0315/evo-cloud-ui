@@ -86,7 +86,7 @@
         stripe
         highlight-current-row
         current-row-key="id"
-        style="width: 100%"
+        style="width: 100%;"
       >
         <el-table-column align="center" label="序号" type="index" width="80px" />
         <el-table-column align="center" label="角色名称" prop="name" />
@@ -98,7 +98,15 @@
           label="操作"
           class-name="small-padding fixed-width"
         >
-          <template slot-scope="scope">
+          <template #default="scope">
+            <el-button
+              type="primary"
+              size="mini"
+              icon="el-icon-plus"
+              @click="grantRole(scope)"
+            >
+              {{ $t('role.grant') }}
+            </el-button>
             <el-button
               type="primary"
               size="mini"
@@ -396,6 +404,17 @@ export default {
       this.pageRequest.params = {}
       this.$refs['queryForm'].resetFields()
       this.handleQuery()
+    },
+    /** 授权 */
+    grantRole(scope) {
+      // 路由跳转
+      this.$router.push({
+        path: '/sys/role/user',
+        query: {
+          id: scope.row.id,
+          name: scope.row.name
+        }
+      })
     },
     /** 新增 */
     handleAdd() {

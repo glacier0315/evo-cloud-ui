@@ -31,3 +31,11 @@ export function delRole(id) {
     data: { 'id': id }
   })
 }
+
+export function delUserRole(data) {
+  return request({
+    url: sys + '/role/user/delete',
+    method: 'post',
+    data
+  })
+}

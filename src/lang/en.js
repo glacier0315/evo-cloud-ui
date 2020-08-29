@@ -46,6 +46,7 @@ export default {
     createArticle: 'Create Article',
     editArticle: 'Edit Article',
     articleList: 'Article List',
+    grantRole: 'grant role',
     errorPages: 'Error Pages',
     page401: '401',
     page404: '404',

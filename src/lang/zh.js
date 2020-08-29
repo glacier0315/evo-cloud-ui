@@ -51,6 +51,7 @@ export default {
     createArticle: '创建文章',
     editArticle: '编辑文章',
     articleList: '文章列表',
+    grantRole: '角色授权',
     errorPages: '错误页面',
     page401: '401',
     page404: '404',
@@ -140,6 +141,9 @@ export default {
     delete: '删除',
     cancel: '取 消',
     confirm: '确 定'
+  },
+  role: {
+    grant: '授权'
   },
   example: {
     warning: '创建和编辑页面是不能被 keep-alive 缓存的，因为keep-alive 的 include 目前不支持根据路由来缓存，所以目前都是基于 component name 来进行缓存的。如果你想类似的实现缓存效果，可以使用 localStorage 等浏览器缓存方案。或者不要使用 keep-alive 的 include，直接缓存所有页面。详情见'

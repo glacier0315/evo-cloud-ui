@@ -120,5 +120,18 @@ module.exports = [
         data: depts
       }
     }
+  },
+
+  {
+    url: sys + '/role/user/delete',
+    type: 'post',
+    response: config => {
+      const { userId, roleId } = config.body
+      console.log('删除用户 {}， 角色 {} 关联关系', userId, roleId)
+      return {
+        code: '20000',
+        data: 'success'
+      }
+    }
   }
 ]

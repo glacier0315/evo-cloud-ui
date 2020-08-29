@@ -48,7 +48,7 @@
           label="操作"
           class-name="small-padding fixed-width"
         >
-          <template slot-scope="scope">
+          <template #default="scope">
             <el-button
               v-if="scope.row.type !== 3"
               type="primary"
@@ -183,6 +183,34 @@
             </el-form-item>
           </el-col>
         </el-row>
+        <el-row v-if="menu.type!==3">
+          <el-col :span="12">
+            <el-form-item label="缓存" prop="noCache">
+              <el-radio-group v-model="menu.noCache">
+                <el-radio
+                  v-for="(item,index) in noCacheList"
+                  :key="index"
+                  :label="item.value"
+                >
+                  {{ item.label }}
+                </el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item
+              v-if="menu.visible === 2 && menu.isFrame === 2"
+              label="高亮资源"
+              prop="activeMenu"
+            >
+              <el-input
+                v-model="menu.activeMenu"
+                placeholder="高亮资源"
+                maxlength="100"
+              />
+            </el-form-item>
+          </el-col>
+        </el-row>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button
@@ -220,6 +248,8 @@ const defaultMenu = {
   isFrame: 2,
   parentId: undefined,
   parentName: '',
+  noCache: 2,
+  activeMenu: undefined,
   orderNum: 0,
   children: []
 }
@@ -266,6 +296,11 @@ export default {
       ],
       // 外链
       isFrameList: [
+        { label: '是', value: 1 },
+        { label: '否', value: 2 }
+      ],
+      // 缓存
+      noCacheList: [
         { label: '是', value: 1 },
         { label: '否', value: 2 }
       ]

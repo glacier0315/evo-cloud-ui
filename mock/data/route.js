@@ -23,6 +23,13 @@ const asyncRoutes = [
         meta: { title: 'sysRoleList', noCache: true, icon: 'people' }
       },
       {
+        path: '/sys/role/user',
+        component: 'sys/role/user',
+        name: '角色授权',
+        meta: { title: 'grantRole', noCache: true, activeMenu: '/sys/role' },
+        hidden: true
+      },
+      {
         path: '/sys/menu',
         component: 'sys/menu',
         name: '菜单列表',

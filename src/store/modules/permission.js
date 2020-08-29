@@ -38,7 +38,6 @@ const actions = {
       // 向后端请求路由数据
       getPermissions().then(res => {
         const permissions = res.data
-        console.log('permissions, ', permissions)
         if (permissions && permissions instanceof Array && permissions.length > 0) {
           commit('SET_PERMISSIONS', permissions)
         }

@@ -1,189 +1,65 @@
 <template>
   <div class="app-container">
-    <el-form
-      ref="queryForm"
-      :model="pageRequest.params"
-      :inline="true"
-      label-width="68px"
+    <userList
+      ref="userList"
+      :dept-data="deptTreeData"
     >
-      <el-form-item label="用户名" prop="username">
-        <el-input
-          v-model="pageRequest.params.username"
-          placeholder="请输入用户名称"
-          clearable
-          style="width:140px;"
-          @keyup.enter.native="getPageList"
-        />
-      </el-form-item>
-      <el-form-item label="昵称" prop="nickname">
-        <el-input
-          v-model="pageRequest.params.nickname"
-          placeholder="请输入昵称"
-          clearable
-          style="width:140px;"
-          @keyup.enter.native="getPageList"
-        />
-      </el-form-item>
-      <el-form-item label="身份证号" prop="idCard">
-        <el-input
-          v-model="pageRequest.params.idCard"
-          placeholder="请输入身份证号"
-          clearable
-          style="width:200px;"
-          @keyup.enter.native="getPageList"
-        />
-      </el-form-item>
-      <el-form-item label="性别" prop="sex">
-        <el-select
-          v-model="pageRequest.params.sex"
-          placeholder="性别"
-          clearable
-          style="width:80px;"
-        >
-          <el-option
-            v-for="item in sexList"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="单位" prop="deptId">
-        <treeselect
-          v-model="pageRequest.params.deptId"
-          name="deptSearch"
-          :multiple="false"
-          clearable
-          :options="deptTreeData"
-          :normalizer="normalizer"
-          style="width:180px;"
-        />
-      </el-form-item>
-      <el-form-item label="状态" prop="status">
-        <el-select
-          v-model="pageRequest.params.status"
-          placeholder="状态"
-          clearable
-          style="width:80px;"
-        >
-          <el-option
-            v-for="item in statusList"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          />
-        </el-select>
-      </el-form-item>
-      <el-form-item>
-        <el-button
-          type="primary"
-          icon="el-icon-search"
-          @click="handleQuery"
-        >
-          {{ $t('table.search') }}
-        </el-button>
-        <el-button
-          icon="el-icon-refresh"
-          @click="resetQuery"
-        >
-          {{ $t('table.reset') }}
-        </el-button>
-      </el-form-item>
-    </el-form>
-    <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5">
-        <el-button
-          type="primary"
-          icon="el-icon-plus"
-          @click="handleAdd"
-        >
-          {{ $t('table.add') }}
-        </el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="info"
-          icon="el-icon-upload2"
-          @click="handleImport"
-        >
-          {{ $t('table.import') }}
-        </el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="warning"
-          icon="el-icon-download"
-          @click="handleExport"
-        >
-          {{ $t('table.export') }}
-        </el-button>
-      </el-col>
-    </el-row>
-    <div>
-      <el-table
-        v-loading="listLoading"
-        :data="list"
-        border
-        fit
-        stripe
-        highlight-current-row
-        current-row-key="id"
-        style="width: 100%"
-      >
-        <el-table-column align="center" label="序号" type="index" width="80px" />
-        <el-table-column align="center" label="用户名" prop="username" />
-        <el-table-column align="center" label="昵称" prop="nickname" />
-        <el-table-column align="center" label="性别" prop="sex" :formatter="sexFormat" />
-        <el-table-column align="center" label="身份证号" prop="idCard" />
-        <el-table-column align="center" label="出生日期">
-          <template slot-scope="scope">
-            <span>{{ scope.row.birthday | parseTime('{y}-{m}-{d}') }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column align="center" label="单位" prop="deptName" />
-        <el-table-column align="center" label="状态" prop="status" :formatter="statusFormat" />
-        <el-table-column
-          align="center"
-          width="240"
-          label="操作"
-          class-name="small-padding fixed-width"
-        >
-          <template slot-scope="scope">
-            <el-button
-              type="primary"
-              size="mini"
-              icon="el-icon-edit"
-              @click="handleEdit(scope)"
-            >
-              {{ $t('table.edit') }}
-            </el-button>
-            <el-button
-              v-if="scope.row.id !== 1"
-              size="mini"
-              type="danger"
-              icon="el-icon-delete"
-              @click="handleDelete(scope)"
-            >
-              {{ $t('table.delete') }}
-            </el-button>
-            <el-button
-              size="mini"
-              type="warning"
-              icon="el-icon-key"
-              @click="handleResetPwd(scope.row)"
-            >{{ $t('table.reset') }}</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
+      <template v-slot:handle>
+        <el-col :span="1.5">
+          <el-button
+            type="primary"
+            icon="el-icon-plus"
+            @click="handleAdd"
+          >
+            {{ $t('table.add') }}
+          </el-button>
+        </el-col>
+        <el-col :span="1.5">
+          <el-button
+            type="info"
+            icon="el-icon-upload2"
+            @click="handleImport"
+          >
+            {{ $t('table.import') }}
+          </el-button>
+        </el-col>
+        <el-col :span="1.5">
+          <el-button
+            type="warning"
+            icon="el-icon-download"
+            @click="handleExport"
+          >
+            {{ $t('table.export') }}
+          </el-button>
+        </el-col>
+      </template>
 
-      <pagination
-        v-show="total>0"
-        :total="total"
-        :page.sync="pageRequest.pageNum"
-        :limit.sync="pageRequest.pageSize"
-        @pagination="getPageList"
-      />
-    </div>
+      <template #operation="scope">
+        <el-button
+          type="primary"
+          size="mini"
+          icon="el-icon-edit"
+          @click="handleEdit(scope)"
+        >
+          {{ $t('table.edit') }}
+        </el-button>
+        <el-button
+          v-if="scope.row.id !== 1"
+          size="mini"
+          type="danger"
+          icon="el-icon-delete"
+          @click="handleDelete(scope)"
+        >
+          {{ $t('table.delete') }}
+        </el-button>
+        <el-button
+          size="mini"
+          type="warning"
+          icon="el-icon-key"
+          @click="handleResetPwd(scope.row)"
+        >{{ $t('table.reset') }}</el-button>
+      </template>
+    </userList>
 
     <el-dialog
       :visible.sync="dialogVisible"
@@ -340,11 +216,11 @@
 </template>
 
 <script>
-import { getUserList, addUser, updateUser, delUser, resetUserPwd } from '@/api/sys/user'
+import { addUser, updateUser, delUser, resetUserPwd } from '@/api/sys/user'
 import { getDeptList } from '@/api/sys/dept'
 import { getRoleList } from '@/api/sys/role'
 import { buildTree } from '@/utils/tree'
-import Pagination from '@/components/Pagination'
+import UserList from './components/UserList'
 import Treeselect from '@riophae/vue-treeselect'
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 
@@ -367,25 +243,11 @@ const defaultUser = {
 export default {
   name: 'User',
   /** 注册组件 */
-  components: { Pagination, Treeselect },
+  components: { Treeselect, UserList },
   data() {
     return {
-      // 遮罩层
-      listLoading: true,
       // 弹出层显示
       dialogVisible: false,
-      // 分页请求
-      pageRequest: {
-        pageNum: 1,
-        pageSize: 10,
-        params: {
-          username: null
-        }
-      },
-      // 用户列表
-      list: [],
-      // 总记录数
-      total: 0,
       // 组织机构树
       deptTreeData: [],
       // 角色列表
@@ -458,50 +320,32 @@ export default {
     }
   },
   created() {
-    this.handleQuery()
     this.getDeptData()
     this.getRoleData()
   },
   methods: {
-    /** 获取用户分页 */
-    getPageList() {
-      this.listLoading = true
-      getUserList(this.pageRequest).then(response => {
-        this.list = response.data.list
-        this.total = response.data.total
-        this.listLoading = false
-      })
+    reloadUserList() {
+      // 调用子组件查询方法刷新
+      this.$refs.userList.handleQuery()
     },
     /** 获取角色列表 */
     async getRoleData() {
       this.roleData = []
       getRoleList().then(response => {
         this.roleData = response.data || []
-        console.log('this.roleData', this.roleData)
       })
     },
     /** 获取组织机构数 */
     async getDeptData() {
       this.deptTreeData = []
       getDeptList().then(response => {
-        this.deptTreeData = buildTree(response.data)
+        this.deptTreeData = buildTree(response.data || [])
       })
     },
     /** 关闭用户弹窗 */
     closeDialog() {
       this.dialogVisible = false
       this.$refs['user'].resetFields()
-    },
-    /** 搜索按钮操作 */
-    handleQuery() {
-      this.pageRequest.pageNum = 1
-      this.getPageList()
-    },
-    /** 重置查询 */
-    resetQuery() {
-      this.pageRequest.params = {}
-      this.$refs['queryForm'].resetFields()
-      this.handleQuery()
     },
     /** 新增 */
     handleAdd() {
@@ -522,7 +366,7 @@ export default {
       })
         .then(async() => {
           await delUser(row.id)
-          this.getPageList()
+          this.reloadUserList()
           this.$message({
             type: 'success',
             message: '删除成功!'
@@ -554,7 +398,7 @@ export default {
           if (isEdit) {
             updateUser(this.user).then(data => {
               this.dialogVisible = false
-              this.getPageList()
+              this.reloadUserList()
 
               this.$notify({
                 title: '成功',
@@ -566,7 +410,7 @@ export default {
           } else {
             addUser(this.user).then(data => {
               this.dialogVisible = false
-              this.getPageList()
+              this.reloadUserList()
 
               this.$notify({
                 title: '成功',
@@ -596,26 +440,6 @@ export default {
     selectDept(data) {
       const { name } = data
       this.user.deptName = name
-    },
-    /** status 格式化 */
-    statusFormat(row, column, cellValue, index) {
-      const status = {}
-      this.statusList.forEach((item) => {
-        if (cellValue && item.value === cellValue) {
-          Object.assign(status, item)
-        }
-      })
-      return status.label
-    },
-    /** 性别格式化 */
-    sexFormat(row, column, cellValue, index) {
-      const sex = {}
-      this.sexList.forEach((item) => {
-        if (cellValue && item.value === cellValue) {
-          Object.assign(sex, item)
-        }
-      })
-      return sex.label
     },
     /** 处理属性数据 */
     normalizer(node) {
