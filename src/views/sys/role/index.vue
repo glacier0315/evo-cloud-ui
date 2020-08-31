@@ -11,7 +11,7 @@
           v-model="pageRequest.params.name"
           placeholder="角色名称"
           clearable
-          @keyup.enter.native="getPageList"
+          @keyup.enter.native="handleQuery"
         />
       </el-form-item>
       <el-form-item label="角色编码" prop="code">
@@ -19,7 +19,7 @@
           v-model="pageRequest.params.code"
           placeholder="角色编码"
           clearable
-          @keyup.enter.native="getPageList"
+          @keyup.enter.native="handleQuery"
         />
       </el-form-item>
       <el-form-item label="状态" prop="status">

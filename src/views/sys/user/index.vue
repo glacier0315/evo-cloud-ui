@@ -179,11 +179,19 @@
         />
         <el-table-column
           align="center"
-          width="240"
+          width="320"
           label="操作"
           class-name="small-padding fixed-width"
         >
           <template #default="scope">
+            <el-button
+              type="warning"
+              size="mini"
+              icon="el-icon-plus"
+              @click="grantRole(scope)"
+            >
+              {{ $t('permission.grant') }}
+            </el-button>
             <el-button
               type="primary"
               size="mini"
@@ -555,6 +563,17 @@ export default {
             })
         })
         .catch(err => { console.error(err) })
+    },
+    /** 授权 */
+    grantRole(scope) {
+      // 路由跳转
+      this.$router.push({
+        path: '/sys/user/role',
+        query: {
+          id: scope.row.id,
+          name: scope.row.username
+        }
+      })
     },
     /** 新增或者编辑时 保存 */
     async confirmHandle() {

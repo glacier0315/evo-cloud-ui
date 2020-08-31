@@ -5,42 +5,42 @@
       @back="goBack"
     />
     <el-form
-      ref="queryForm"
-      :model="pageRequest.params"
+      ref="queryForm1"
+      :model="pageRequest_1.params"
       :inline="true"
       style="margin-top: 1em;"
       label-width="68px"
     >
       <el-form-item label="用户名" prop="username">
         <el-input
-          v-model="pageRequest.params.username"
+          v-model="pageRequest_1.params.username"
           placeholder="用户名"
           clearable
           style="width:90px;"
-          @keyup.enter.native="handleQuery"
+          @keyup.enter.native="handleQuery1"
         />
       </el-form-item>
       <el-form-item label="昵称" prop="nickname">
         <el-input
-          v-model="pageRequest.params.nickname"
+          v-model="pageRequest_1.params.nickname"
           placeholder="昵称"
           clearable
           style="width:90px;"
-          @keyup.enter.native="handleQuery"
+          @keyup.enter.native="handleQuery1"
         />
       </el-form-item>
       <el-form-item label="身份证号" prop="idCard">
         <el-input
-          v-model="pageRequest.params.idCard"
+          v-model="pageRequest_1.params.idCard"
           placeholder="身份证号"
           clearable
           style="width:200px;"
-          @keyup.enter.native="handleQuery"
+          @keyup.enter.native="handleQuery1"
         />
       </el-form-item>
       <el-form-item label="性别" prop="sex">
         <el-select
-          v-model="pageRequest.params.sex"
+          v-model="pageRequest_1.params.sex"
           placeholder="性别"
           clearable
           style="width:80px;"
@@ -55,7 +55,7 @@
       </el-form-item>
       <el-form-item label="单位" prop="deptId">
         <treeselect
-          v-model="pageRequest.params.deptId"
+          v-model="pageRequest_1.params.deptId"
           name="deptSearch"
           placeholder="单位"
           :multiple="false"
@@ -67,7 +67,7 @@
       </el-form-item>
       <el-form-item label="状态" prop="status">
         <el-select
-          v-model="pageRequest.params.status"
+          v-model="pageRequest_1.params.status"
           placeholder="状态"
           clearable
           style="width:80px;"
@@ -84,13 +84,13 @@
         <el-button
           type="primary"
           icon="el-icon-search"
-          @click="handleQuery"
+          @click="handleQuery1"
         >
           {{ $t('table.search') }}
         </el-button>
         <el-button
           icon="el-icon-refresh"
-          @click="resetQuery"
+          @click="resetQuery1"
         >
           {{ $t('table.reset') }}
         </el-button>
@@ -106,17 +106,28 @@
           {{ $t('table.add') }}
         </el-button>
       </el-col>
+      <el-col :span="1.5">
+        <el-button
+          type="danger"
+          icon="el-icon-delete"
+          :disabled="delUserIds.length <= 0"
+          @click="handleDelete"
+        >
+          {{ $t('table.remove') }}
+        </el-button>
+      </el-col>
     </el-row>
     <div>
       <el-table
-        v-loading="listLoading"
-        :data="list"
+        v-loading="listLoading_1"
+        :data="list_1"
         border
         fit
         stripe
         highlight-current-row
         current-row-key="id"
         style="width: 100%;margin-top: 1em;"
+        @selection-change="handleSelectionChange1"
       >
         <el-table-column
           type="selection"
@@ -169,42 +180,157 @@
           prop="status"
           :formatter="statusFormat"
         />
-        <el-table-column
-          align="center"
-          width="240"
-          label="操作"
-          class-name="small-padding fixed-width"
-        >
-          <template #default="scope">
-            <el-button
-              v-if="scope.row.id !== '1' "
-              size="mini"
-              type="danger"
-              icon="el-icon-delete"
-              @click="handleDelete(scope)"
-            >
-              {{ $t('table.remove') }}
-            </el-button>
-          </template>
-        </el-table-column>
       </el-table>
 
       <pagination
-        v-show="total>0"
-        :total="total"
-        :page.sync="pageRequest.pageNum"
-        :limit.sync="pageRequest.pageSize"
-        @pagination="getPageList"
+        v-show="total_1>0"
+        :total="total_1"
+        :page.sync="pageRequest_1.pageNum"
+        :limit.sync="pageRequest_1.pageSize"
+        @pagination="getPageList1"
       />
     </div>
 
     <el-dialog
       :visible.sync="dialogVisible"
       title="添加用户"
-      width="80%"
-      center
+      width="1000px"
+      top="10vh"
     >
-      添加用户
+      <el-form
+        ref="queryForm2"
+        :model="pageRequest_2.params"
+        :inline="true"
+        label-width="68px"
+      >
+        <el-form-item label="用户名" prop="username">
+          <el-input
+            v-model="pageRequest_2.params.username"
+            placeholder="用户名"
+            clearable
+            style="width:90px;"
+            @keyup.enter.native="handleQuery2"
+          />
+        </el-form-item>
+        <el-form-item label="昵称" prop="nickname">
+          <el-input
+            v-model="pageRequest_2.params.nickname"
+            placeholder="昵称"
+            clearable
+            style="width:90px;"
+            @keyup.enter.native="handleQuery2"
+          />
+        </el-form-item>
+        <el-form-item label="性别" prop="sex">
+          <el-select
+            v-model="pageRequest_2.params.sex"
+            placeholder="性别"
+            clearable
+            style="width:80px;"
+          >
+            <el-option
+              v-for="item in sexList"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="单位" prop="deptId">
+          <treeselect
+            v-model="pageRequest_2.params.deptId"
+            name="deptSearch"
+            placeholder="单位"
+            :multiple="false"
+            clearable
+            :options="deptTreeData"
+            :normalizer="deptNormalizer"
+            style="width:180px;"
+          />
+        </el-form-item>
+        <el-form-item>
+          <el-button
+            type="primary"
+            icon="el-icon-search"
+            @click="handleQuery2"
+          >
+            {{ $t('table.search') }}
+          </el-button>
+          <el-button
+            icon="el-icon-refresh"
+            @click="resetQuery2"
+          >
+            {{ $t('table.reset') }}
+          </el-button>
+        </el-form-item>
+      </el-form>
+      <div>
+        <el-table
+          v-loading="listLoading_2"
+          :data="list_2"
+          border
+          fit
+          stripe
+          highlight-current-row
+          current-row-key="id"
+          style="width: 100%;margin-top: 1em;"
+          @selection-change="handleSelectionChange2"
+        >
+          <el-table-column
+            type="selection"
+            width="50"
+          />
+          <el-table-column
+            align="center"
+            label="序号"
+            type="index"
+            width="55"
+          />
+          <el-table-column
+            align="center"
+            label="用户名"
+            prop="username"
+          />
+          <el-table-column
+            align="center"
+            label="昵称"
+            prop="nickname"
+          />
+          <el-table-column
+            align="center"
+            label="性别"
+            prop="sex"
+            :formatter="sexFormat"
+          />
+          <el-table-column
+            align="center"
+            label="单位"
+            prop="deptName"
+          />
+        </el-table>
+
+        <pagination
+          v-show="total_2>0"
+          :total="total_2"
+          :page.sync="pageRequest_2.pageNum"
+          :limit.sync="pageRequest_2.pageSize"
+          @pagination="getPageList2"
+        />
+      </div>
+      <div slot="footer" class="dialog-footer">
+        <el-button
+          type="primary"
+          :disabled="addUserIds.length <= 0"
+          @click="confirmHandle"
+        >
+          {{ $t('table.confirm') }}
+        </el-button>
+        <el-button
+          @click="closeDialog"
+        >
+          {{ $t('table.cancel') }}
+        </el-button>
+      </div>
     </el-dialog>
   </div>
 </template>
@@ -217,16 +343,6 @@ import Pagination from '@/components/Pagination'
 import Treeselect from '@riophae/vue-treeselect'
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 
-/** 查询默认值 */
-const defaultParams = {
-  username: null,
-  nickname: null,
-  sex: null,
-  idCard: null,
-  status: null,
-  deptId: null
-}
-
 export default {
   name: 'RoleUser',
   /** 注册组件 */
@@ -234,7 +350,9 @@ export default {
   data() {
     return {
       // 遮罩层
-      listLoading: true,
+      listLoading_1: true,
+      // 遮罩层
+      listLoading_2: true,
       // 弹出层显示
       dialogVisible: false,
       // 角色id，从路由中获取
@@ -242,15 +360,29 @@ export default {
       // 角色名称，从路由中获取
       roleName: this.$route.query.name,
       // 分页请求
-      pageRequest: {
+      pageRequest_1: {
         pageNum: 1,
         pageSize: 10,
-        params: Object.assign({}, defaultParams)
+        params: {}
       },
       // 用户列表
-      list: [],
+      list_1: [],
       // 总记录数
-      total: 0,
+      total_1: 0,
+      // 待移除用户
+      delUserIds: [],
+      // 分页请求
+      pageRequest_2: {
+        pageNum: 1,
+        pageSize: 10,
+        params: {}
+      },
+      // 用户列表
+      list_2: [],
+      // 总记录数
+      total_2: 0,
+      // 待添加用户
+      addUserIds: [],
       // 组织机构树
       deptTreeData: [],
       // 性别集合
@@ -270,30 +402,37 @@ export default {
 
   },
   created() {
-    this.handleQuery()
+    this.handleQuery1()
     this.getDeptData()
   },
   methods: {
+    /** 返回 */
+    goBack() {
+      // 路由跳转
+      this.$router.push({
+        path: '/sys/role'
+      })
+    },
     /** 获取用户分页 */
-    getPageList() {
-      this.listLoading = true
+    getPageList1() {
+      this.listLoading_1 = true
       // 设置roleId
-      this.pageRequest.params.roleId = this.roleId
-      getUserList(this.pageRequest).then(response => {
-        this.list = response.data.list
-        this.total = response.data.total
-        this.listLoading = false
+      this.pageRequest_1.params.roleId = this.roleId
+      getUserList(this.pageRequest_1).then(response => {
+        this.list_1 = response.data.list
+        this.total_1 = response.data.total
+        this.listLoading_1 = false
       })
     },
     /** 搜索按钮操作 */
-    handleQuery() {
-      this.pageRequest.pageNum = 1
-      this.getPageList()
+    handleQuery1() {
+      this.pageRequest_1.pageNum = 1
+      this.getPageList1()
     },
     /** 重置查询 */
-    resetQuery() {
-      this.pageRequest.params = Object.assign({}, defaultParams)
-      this.handleQuery()
+    resetQuery1() {
+      this.pageRequest_1.params = {}
+      this.handleQuery1()
     },
     /** 获取组织机构数 */
     async getDeptData() {
@@ -304,11 +443,12 @@ export default {
     },
     /** 新增 */
     handleAdd() {
+      this.resetQuery2()
       this.dialogVisible = true
     },
     /** 删除 */
-    handleDelete({ $index, row }) {
-      this.$confirm('确认移除当前用户?', 'Warning', {
+    handleDelete() {
+      this.$confirm('确认移除当前选中用户?', '确认', {
         confirmButtonText: '确认',
         cancelButtonText: '关闭',
         type: 'warning'
@@ -316,10 +456,10 @@ export default {
         .then(async() => {
           const data = {
             roleId: this.roleId,
-            userIds: [row.id]
+            userIds: this.delUserIds
           }
           await deleteUserRole(data)
-          this.handleQuery()
+          this.handleQuery1()
           this.$message({
             type: 'success',
             message: '删除成功!'
@@ -327,67 +467,64 @@ export default {
         })
         .catch(err => { console.error(err) })
     },
-    /** 返回 */
-    goBack() {
-      // 路由跳转
-      this.$router.push({
-        path: '/sys/role'
-      })
+    handleSelectionChange1(rows) {
+      this.delUserIds = rows.map(row => row.id) || []
     },
     /** 关闭用户弹窗 */
     closeDialog() {
       this.dialogVisible = false
     },
-    /** 添加用户 */
-    handleAddUser(scope) {
-      // 保存用户角色关系
-      const data = {
-        roleId: this.roleId,
-        userIds: [scope.row.id]
-      }
-      console.log('data ', data)
-      addUserRole(data)
-        .then(async() => {
-          this.closeDialog()
-          // 刷新
-          this.handleQuery()
-          this.$message({
-            type: 'success',
-            message: '添加成功!'
-          })
-        })
-        .catch(err => { console.error(err) })
+    /** 获取用户分页 */
+    getPageList2() {
+      this.listLoading_2 = true
+      // 设置roleId, 排除
+      this.pageRequest_2.params.notEqRoleId = this.roleId
+      // 设置状态
+      this.pageRequest_2.params.status = '1'
+      getUserList(this.pageRequest_2).then(response => {
+        this.list_2 = response.data.list
+        this.total_2 = response.data.total
+        this.listLoading_2 = false
+      })
+    },
+    /** 搜索按钮操作 */
+    handleQuery2() {
+      this.pageRequest_2.pageNum = 1
+      this.getPageList2()
+    },
+    /** 重置查询 */
+    resetQuery2() {
+      this.pageRequest_2.params = {}
+      this.handleQuery2()
+    },
+    handleSelectionChange2(rows) {
+      this.addUserIds = rows.map(row => row.id) || []
     },
     /** 新增或者编辑时 保存 */
     async confirmHandle() {
-      // 调用子组件方法获取选择的用户
-      const users = this.$refs.userAddList.getMultipleSelection()
-      // 保存用户角色关系
-      if (users &&
-      users instanceof Array &&
-      users.length > 0) {
-        const userIds = users.map(u => u.id)
-        const data = {
-          roleId: this.roleId,
-          userIds: userIds
-        }
-        addUserRole(data)
-          .then(async() => {
-            this.closeDialog()
-            // 刷新
-            this.handleQuery()
-            this.$message({
-              type: 'success',
-              message: '添加成功!'
+      this.$confirm('确认将角色[ ' + this.roleName + ' ]授予当前选中用户?', '确认', {
+        confirmButtonText: '确认',
+        cancelButtonText: '关闭',
+        type: 'warning'
+      })
+        .then(async() => {
+          const data = {
+            roleId: this.roleId,
+            userIds: this.addUserIds
+          }
+          addUserRole(data)
+            .then(async() => {
+              this.closeDialog()
+              // 刷新
+              this.handleQuery1()
+              this.$message({
+                type: 'success',
+                message: '添加成功!'
+              })
             })
-          })
-          .catch(err => { console.error(err) })
-      } else {
-        this.$message({
-          type: 'warning',
-          message: '请选择要授权用户!'
+            .catch(err => { console.error(err) })
         })
-      }
+        .catch(err => { console.error(err) })
     },
     /** status 格式化 */
     statusFormat(row, column, cellValue, index) {
@@ -421,5 +558,4 @@ export default {
 }
 </script>
 <style scoped>
-
 </style>
