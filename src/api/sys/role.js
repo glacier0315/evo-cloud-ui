@@ -31,27 +31,3 @@ export function delRole(id) {
     data: { 'id': id }
   })
 }
-
-export function getRoleByUser(userId) {
-  return request({
-    url: sys + '/role/findByUserId',
-    method: 'get',
-    params: { userId: userId }
-  })
-}
-
-export function delUserRole(data) {
-  return request({
-    url: sys + '/role/user/delete',
-    method: 'post',
-    data
-  })
-}
-
-export function addUserRole(data) {
-  return request({
-    url: sys + '/role/user/add',
-    method: 'post',
-    data
-  })
-}

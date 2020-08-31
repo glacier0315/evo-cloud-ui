@@ -100,12 +100,12 @@
         >
           <template #default="scope">
             <el-button
-              type="warning"
+              type="primary"
               size="mini"
               icon="el-icon-plus"
               @click="grantRole(scope)"
             >
-              {{ $t('permission.grant') }}
+              {{ $t('role.grant') }}
             </el-button>
             <el-button
               type="primary"

@@ -4,6 +4,7 @@ const { param2Obj } = require('./utils')
 const login = require('./login')
 const user = require('./sys/user')
 const role = require('./sys/role')
+const userRole = require('./sys/userRole')
 const menu = require('./sys/menu')
 const dept = require('./sys/dept')
 const file = require('./common/file')
@@ -17,6 +18,7 @@ const mocks = [
   ...menu,
   ...dept,
   ...role,
+  ...userRole,
   ...file,
   ...search,
   ...article,

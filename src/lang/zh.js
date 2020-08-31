@@ -43,11 +43,6 @@ export default {
     complexTable: '综合 Table',
     tab: 'Tab',
     form: '表单',
-    sysConfig: '系统设置',
-    sysUserList: '用户列表',
-    sysRoleList: '角色列表',
-    sysMenuList: '菜单列表',
-    sysDeptList: '组织机构',
     createArticle: '创建文章',
     editArticle: '编辑文章',
     articleList: '文章列表',
@@ -68,7 +63,14 @@ export default {
     clipboardDemo: 'Clipboard',
     i18n: '国际化',
     externalLink: '外链',
-    profile: '个人中心'
+    profile: '个人中心',
+    sysConfig: '系统设置',
+    sysUserList: '用户列表',
+    sysRoleList: '角色列表',
+    sysMenuList: '菜单列表',
+    sysDeptList: '组织机构',
+    grantRoleUser: '角色授权',
+    grantUserRole: '用户授权'
   },
   navbar: {
     dashboard: '首页',
@@ -99,7 +101,8 @@ export default {
     tips: '在某些情况下，不适合使用 v-permission。例如：Element-UI 的 el-tab 或 el-table-column 以及其它动态渲染 dom 的场景。你只能通过手动设置 v-if 来实现。',
     delete: '删除',
     confirm: '确定',
-    cancel: '取消'
+    cancel: '取消',
+    grant: '分配'
   },
   guide: {
     description: '引导页对于一些第一次进入项目的人很有用，你可以简单介绍下项目的功能。本 Demo 是基于',
@@ -140,10 +143,8 @@ export default {
     draft: '草稿',
     delete: '删除',
     cancel: '取 消',
-    confirm: '确 定'
-  },
-  role: {
-    grant: '分配'
+    confirm: '确 定',
+    remove: '移除'
   },
   example: {
     warning: '创建和编辑页面是不能被 keep-alive 缓存的，因为keep-alive 的 include 目前不支持根据路由来缓存，所以目前都是基于 component name 来进行缓存的。如果你想类似的实现缓存效果，可以使用 localStorage 等浏览器缓存方案。或者不要使用 keep-alive 的 include，直接缓存所有页面。详情见'

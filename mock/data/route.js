@@ -26,7 +26,14 @@ const asyncRoutes = [
         path: '/sys/role/user',
         component: 'sys/role/user',
         name: '角色授权',
-        meta: { title: 'grantRole', noCache: true },
+        meta: { title: 'grantRoleUser', noCache: true },
+        hidden: true
+      },
+      {
+        path: '/sys/user/role',
+        component: 'sys/user/role',
+        name: '用户授权',
+        meta: { title: 'grantUserRole', noCache: true },
         hidden: true
       },
       {

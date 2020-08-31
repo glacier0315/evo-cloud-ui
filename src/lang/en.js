@@ -63,7 +63,14 @@ export default {
     clipboardDemo: 'Clipboard',
     i18n: 'I18n',
     externalLink: 'External Link',
-    profile: 'Profile'
+    profile: 'Profile',
+    sysConfig: 'sysConfig',
+    sysUserList: 'sysUserList',
+    sysRoleList: 'sysRoleList',
+    sysMenuList: 'sysMenuList',
+    sysDeptList: 'sysDeptList',
+    grantRoleUser: 'grantRoleUser',
+    grantUserRole: 'grantUserRole'
   },
   navbar: {
     dashboard: 'Dashboard',
@@ -94,7 +101,8 @@ export default {
     tips: 'In some cases, using v-permission will have no effect. For example: Element-UI  el-tab or el-table-column and other scenes that dynamically render dom. You can only do this with v-if.',
     delete: 'Delete',
     confirm: 'Confirm',
-    cancel: 'Cancel'
+    cancel: 'Cancel',
+    grant: 'grant'
   },
   guide: {
     description: 'The guide page is useful for some people who entered the project for the first time. You can briefly introduce the features of the project. Demo is based on ',
@@ -135,7 +143,8 @@ export default {
     draft: 'Draft',
     delete: 'Delete',
     cancel: 'Cancel',
-    confirm: 'Confirm'
+    confirm: 'Confirm',
+    remove: 'remove'
   },
   example: {
     warning: 'Creating and editing pages cannot be cached by keep-alive because keep-alive include does not currently support caching based on routes, so it is currently cached based on component name. If you want to achieve a similar caching effect, you can use a browser caching scheme such as localStorage. Or do not use keep-alive include to cache all pages directly. See details'
