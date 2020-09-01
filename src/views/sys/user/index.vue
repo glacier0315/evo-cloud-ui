@@ -211,7 +211,7 @@
             </el-button>
             <el-button
               size="mini"
-              type="warning"
+              type="info"
               icon="el-icon-key"
               @click="handleResetPwd(scope)"
             >
@@ -397,16 +397,6 @@ const defaultUser = {
   deptName: null
 }
 
-/** 查询默认值 */
-const defaultParams = {
-  username: null,
-  nickname: null,
-  sex: null,
-  idCard: null,
-  status: null,
-  deptId: null
-}
-
 export default {
   name: 'User',
   /** 注册组件 */
@@ -421,7 +411,7 @@ export default {
       pageRequest: {
         pageNum: 1,
         pageSize: 10,
-        params: Object.assign({}, defaultParams)
+        params: {}
       },
       // 用户列表
       list: [],
@@ -503,7 +493,7 @@ export default {
     },
     /** 重置查询 */
     resetQuery() {
-      this.pageRequest.params = Object.assign({}, defaultParams)
+      this.pageRequest.params = {}
       this.handleQuery()
     },
     /** 获取组织机构数 */

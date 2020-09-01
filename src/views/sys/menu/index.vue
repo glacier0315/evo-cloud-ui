@@ -36,7 +36,7 @@
       <el-table-column
         type="index"
         label="序号"
-        width="80"
+        width="50"
       />
       <el-table-column
         prop="name"
@@ -157,7 +157,10 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="权限标识" prop="permission">
-              <el-input v-model="menu.permission" placeholder="权限标识" />
+              <el-input
+                v-model="menu.permission"
+                placeholder="权限标识"
+              />
             </el-form-item>
           </el-col>
         </el-row>
@@ -168,7 +171,10 @@
               label="路径"
               prop="path"
             >
-              <el-input v-model="menu.path" placeholder="路径" />
+              <el-input
+                v-model="menu.path"
+                placeholder="路径"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -213,7 +219,10 @@
               label="组件"
               prop="component"
             >
-              <el-input v-model="menu.component" placeholder="组件" />
+              <el-input
+                v-model="menu.component"
+                placeholder="组件"
+              />
             </el-form-item>
           </el-col>
         </el-row>
@@ -233,7 +242,10 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="图标" prop="icon">
-              <el-input v-model="menu.icon" placeholder="图标" />
+              <el-input
+                v-model="menu.icon"
+                placeholder="图标"
+              />
             </el-form-item>
           </el-col>
         </el-row>

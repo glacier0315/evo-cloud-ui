@@ -33,11 +33,32 @@
         default-expand-all
         :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
       >
-        <el-table-column type="index" label="序号" width="80" />
-        <el-table-column prop="name" label="名称" width="180" />
-        <el-table-column prop="code" label="编码" />
-        <el-table-column prop="type" label="类型" :formatter="typeFormat" width="80" />
-        <el-table-column prop="status" label="显示" :formatter="statusFormat" width="80" />
+        <el-table-column
+          type="index"
+          label="序号"
+          width="50"
+        />
+        <el-table-column
+          prop="name"
+          label="名称"
+          width="180"
+        />
+        <el-table-column
+          prop="code"
+          label="编码"
+        />
+        <el-table-column
+          prop="type"
+          label="类型"
+          :formatter="typeFormat"
+          width="80"
+        />
+        <el-table-column
+          prop="status"
+          label="显示"
+          :formatter="statusFormat"
+          width="80"
+        />
         <el-table-column
           align="center"
           width="280"
