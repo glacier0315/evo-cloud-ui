@@ -98,6 +98,7 @@
         <el-table-column
           type="selection"
           width="50"
+          :selectable="selectable"
         />
         <el-table-column
           align="center"
@@ -300,6 +301,10 @@ export default {
         path: '/sys/user'
       })
     },
+    /** 排除超级管理员用户和角色 */
+    selectable(row, index) {
+      return !(this.userId === '1' && row.id === '1')
+    },
     /** 获取分页列表 */
     getPageList1() {
       this.listLoading_1 = true
@@ -390,7 +395,7 @@ export default {
         .then(async() => {
           const data = {
             roleIds: this.addRoleIds,
-            userId: this.username
+            userId: this.userId
           }
           addRoleUser(data)
             .then(async() => {

@@ -132,7 +132,7 @@
         <el-table-column
           type="selection"
           width="55"
-          :selectable="(row, index) => {return row.id !== '1'}"
+          :selectable="selectable"
         />
         <el-table-column
           align="center"
@@ -412,6 +412,10 @@ export default {
       this.$router.push({
         path: '/sys/role'
       })
+    },
+    /** 排除超级管理员用户和角色 */
+    selectable(row, index) {
+      return !(this.roleId === '1' && row.id === '1')
     },
     /** 获取用户分页 */
     getPageList1() {

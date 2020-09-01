@@ -201,7 +201,7 @@
               {{ $t('table.edit') }}
             </el-button>
             <el-button
-              v-if="scope.row.id !== 1"
+              v-if="scope.row.id !== '1'"
               size="mini"
               type="danger"
               icon="el-icon-delete"
