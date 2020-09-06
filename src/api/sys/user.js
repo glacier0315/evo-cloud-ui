@@ -113,3 +113,40 @@ export function uploadAvatar(data) {
     data: data
   })
 }
+
+/**
+ * 检验用户身份证信息
+ * @param {*} data
+ */
+export function checkUsername(data) {
+  return request({
+    url: sys + '/user/checkUsername',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ * 检验用户身份证信息
+ * @param {*} data
+ */
+export function checkIdCard(data) {
+  return request({
+    url: sys + '/user/checkIdCard',
+    method: 'post',
+    data: data
+  })
+}
+
+/**
+ * 导出
+ * @param {*} data
+ */
+export function exportExcel(data) {
+  return request({
+    url: sys + '/user/export',
+    method: 'post',
+    responseType: 'blob', // 表明返回服务器返回的数据类型
+    data: data
+  })
+}

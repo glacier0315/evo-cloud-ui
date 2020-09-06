@@ -475,6 +475,10 @@ export default {
     },
     /** 处理属性数据 */
     normalizer(node) {
+      // 将里面children=[]为空的时候去掉（如果不加的这句的话 如果里面children属性值为空 数状选择器里就给他默认有下一层  可里面没有所以显示空数据）
+      if (node.children && !node.children.length) {
+        delete node.children
+      }
       return {
         id: node.id,
         label: node.name,

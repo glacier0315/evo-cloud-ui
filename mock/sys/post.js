@@ -1,30 +1,30 @@
 const Mock = require('mockjs')
-const { roles } = require('./data/role')
+const { posts } = require('./data/post')
 const { sys } = require('../constant')
 
 const Random = Mock.Random
 
 module.exports = [
   {
-    url: sys + '/role/findAll',
+    url: sys + '/post/findAll',
     type: 'get',
     response: _ => {
       return {
         code: '20000',
-        data: roles
+        data: posts
       }
     }
   },
 
   {
-    url: sys + '/role/pageList',
+    url: sys + '/post/pageList',
     type: 'post',
     response: config => {
       const { params, pageNum = 1, pageSize = 20 } = config.body
 
       const { name, code, status } = params
 
-      const mockList = roles.filter(item => {
+      const mockList = posts.filter(item => {
         if (name && item.name !== name) return false
         if (code && item.code !== code) return false
         if (status && item.status !== status) return false
@@ -46,21 +46,21 @@ module.exports = [
   },
 
   {
-    url: sys + '/role/save',
+    url: sys + '/post/save',
     type: 'post',
     response: config => {
-      const role = config.body
-      if (role.id) {
+      const post = config.body
+      if (post.id) {
         // 更新
-        roles.forEach((item, index) => {
-          if (role && role.id && item.id === role.id) {
-            roles.splice(index, 1, role)
+        posts.forEach((item, index) => {
+          if (post && post.id && item.id === post.id) {
+            posts.splice(index, 1, post)
           }
         })
       } else {
         // 新增
-        role.id = Random.id()
-        roles.push(role)
+        post.id = Random.id()
+        posts.push(post)
       }
       return {
         code: '20000',
@@ -70,13 +70,13 @@ module.exports = [
   },
 
   {
-    url: sys + '/role/delete',
+    url: sys + '/post/delete',
     type: 'post',
     response: config => {
       const { id } = config.body
-      roles.forEach((item, index) => {
+      posts.forEach((item, index) => {
         if (id && item.id === id) {
-          roles.splice(index, 1)
+          posts.splice(index, 1)
         }
       })
       return {
@@ -87,43 +87,7 @@ module.exports = [
   },
 
   {
-    url: sys + '/menu/findByRole',
-    type: 'get',
-    response: config => {
-      const id = config.query.roleId
-      let menus = []
-      roles.forEach(item => {
-        if (id && item.id === id) {
-          menus = item.menus
-        }
-      })
-      return {
-        code: '20000',
-        data: menus
-      }
-    }
-  },
-
-  {
-    url: sys + '/dept/findByRole',
-    type: 'get',
-    response: config => {
-      const id = config.query.roleId
-      let depts = []
-      roles.forEach(item => {
-        if (id && item.id === id) {
-          depts = item.depts
-        }
-      })
-      return {
-        code: '20000',
-        data: depts
-      }
-    }
-  },
-
-  {
-    url: sys + '/role/checkCode',
+    url: sys + '/post/checkCode',
     type: 'post',
     response: config => {
       return {

@@ -340,6 +340,25 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
+            <el-form-item label="岗位" prop="postId">
+              <el-select
+                v-model="user.postId"
+                filterable
+                placeholder="岗位"
+              >
+                <el-option
+                  v-for="item in postList"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
+                  :disabled="item.status === 2"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
             <el-form-item label="状态" prop="status">
               <el-radio-group v-model="user.status">
                 <el-radio
@@ -372,9 +391,11 @@
 </template>
 
 <script>
-import { getUserList, addUser, updateUser, delUser, resetUserPwd } from '@/api/sys/user'
+import { getUserList, addUser, updateUser, delUser, resetUserPwd, checkUsername, exportExcel } from '@/api/sys/user'
+import { getPostList } from '@/api/sys/post'
 import { getDeptList } from '@/api/sys/dept'
 import { buildTree } from '@/utils/tree'
+import { downloadFile } from '@/utils'
 import Pagination from '@/components/Pagination'
 import Treeselect from '@riophae/vue-treeselect'
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
@@ -393,6 +414,7 @@ const defaultUser = {
   status: '1',
   email: null,
   mobile: null,
+  postId: null,
   deptId: null,
   deptName: null
 }
@@ -419,13 +441,41 @@ export default {
       total: 0,
       // 组织机构树
       deptTreeData: [],
+      // 岗位
+      postList: [],
       // 用户表单
       user: Object.assign({}, defaultUser),
       // 表单校验
       rules: {
         username: [
           { required: true, message: '请输入用户名', trigger: 'blur' },
-          { validator: usernameValidator, trigger: 'blur' }
+          { validator: usernameValidator, trigger: 'blur' },
+          {
+            validator: (rule, value, callback) => {
+              const data = {
+                id: this.user.id,
+                username: value
+              }
+              let exist = false
+              if (!this.user.id) {
+                checkUsername(data)
+                  .then((response) => {
+                    exist = response.data
+                  })
+                  .catch(err => {
+                    console.error(err)
+                  })
+              }
+              setTimeout(() => {
+                if (exist) {
+                  callback(new Error('用户名已存在!'))
+                  return
+                }
+                callback()
+              }, 1000)
+            },
+            trigger: 'blur'
+          }
         ],
         nickname: [
           { required: true, message: '请输入昵称', trigger: 'blur' },
@@ -475,6 +525,7 @@ export default {
   created() {
     this.handleQuery()
     this.getDeptData()
+    this.getPosstData()
   },
   methods: {
     /** 获取用户分页 */
@@ -496,11 +547,18 @@ export default {
       this.pageRequest.params = {}
       this.handleQuery()
     },
-    /** 获取组织机构数 */
+    /** 获取组织机构树 */
     async getDeptData() {
       this.deptTreeData = []
       getDeptList().then(response => {
         this.deptTreeData = buildTree(response.data || [])
+      })
+    },
+    /** 获取岗位 */
+    async getPosstData() {
+      this.deptTreeData = []
+      getPostList().then(response => {
+        this.postList = response.data || []
       })
     },
     /** 关闭用户弹窗 */
@@ -607,7 +665,18 @@ export default {
     /** 导出按钮操作 */
     handleExport() {
       // todo
-      console.log('导出')
+      this.$confirm('是否确认导出用户数据项?', '警告', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(() => {
+          exportExcel(this.pageRequest.params)
+            .then((res) => {
+              downloadFile(res, '用户', 'xlsx')
+            })
+        })
+        .catch(err => { console.error(err) })
     },
     /** 导入按钮操作 */
     handleImport() {
@@ -641,6 +710,10 @@ export default {
     },
     /** 处理树形数据 */
     deptNormalizer(node) {
+      // 将里面children=[]为空的时候去掉（如果不加的这句的话 如果里面children属性值为空 数状选择器里就给他默认有下一层  可里面没有所以显示空数据）
+      if (node.children && !node.children.length) {
+        delete node.children
+      }
       return {
         id: node.id,
         label: node.name,

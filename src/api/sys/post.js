@@ -1,32 +1,32 @@
 import request from '@/utils/request'
 import { sys } from '@/common/constant'
 
-export function getRoleList() {
+export function getPostList() {
   return request({
-    url: sys + '/role/findAll',
+    url: sys + '/post/findAll',
     method: 'get'
   })
 }
 
-export function getRolePageList(data) {
+export function getPostPageList(data) {
   return request({
-    url: sys + '/role/pageList',
+    url: sys + '/post/pageList',
     method: 'post',
     data
   })
 }
 
-export function saveRole(data) {
+export function savePost(data) {
   return request({
-    url: sys + '/role/save',
+    url: sys + '/post/save',
     method: 'post',
     data
   })
 }
 
-export function delRole(id) {
+export function delPost(id) {
   return request({
-    url: sys + '/role/delete',
+    url: sys + '/post/delete',
     method: 'post',
     data: { 'id': id }
   })
@@ -38,7 +38,7 @@ export function delRole(id) {
  */
 export function checkCode(data) {
   return request({
-    url: sys + '/role/checkCode',
+    url: sys + '/post/checkCode',
     method: 'post',
     data: data
   })

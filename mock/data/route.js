@@ -6,7 +6,7 @@ const asyncRoutes = [
     redirect: 'noRedirect',
     name: '系统设置',
     meta: {
-      title: 'sysConfig',
+      title: '系统设置',
       icon: 'el-icon-setting'
     },
     children: [
@@ -14,39 +14,45 @@ const asyncRoutes = [
         path: '/sys/user',
         component: 'sys/user',
         name: '用户列表',
-        meta: { title: 'sysUserList', noCache: true, icon: 'user' }
+        meta: { title: '用户列表', noCache: true, icon: 'user' }
       },
       {
         path: '/sys/role',
         component: 'sys/role',
         name: '角色列表',
-        meta: { title: 'sysRoleList', noCache: true, icon: 'people' }
+        meta: { title: '角色列表', noCache: true, icon: 'people' }
       },
       {
         path: '/sys/role/user',
         component: 'sys/role/user',
         name: '角色授权',
-        meta: { title: 'grantRoleUser', noCache: true },
+        meta: { title: '角色授权', noCache: true },
         hidden: true
       },
       {
         path: '/sys/user/role',
         component: 'sys/user/role',
         name: '用户授权',
-        meta: { title: 'grantUserRole', noCache: true },
+        meta: { title: '用户授权', noCache: true },
         hidden: true
+      },
+      {
+        path: '/sys/post',
+        component: 'sys/post',
+        name: '岗位列表',
+        meta: { title: '岗位列表', noCache: true, icon: 'people' }
       },
       {
         path: '/sys/menu',
         component: 'sys/menu',
         name: '菜单列表',
-        meta: { title: 'sysMenuList', noCache: true, icon: 'tree' }
+        meta: { title: '菜单列表', noCache: true, icon: 'tree' }
       },
       {
         path: '/sys/dept',
         component: 'sys/dept',
         name: '组织机构',
-        meta: { title: 'sysDeptList', noCache: true, icon: 'tree' }
+        meta: { title: '组织机构', noCache: true, icon: 'tree' }
       }
     ]
   },

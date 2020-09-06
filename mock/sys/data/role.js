@@ -37,7 +37,7 @@ const roles = [
 for (let i = 0; i < 97; i++) {
   roles.push(Mock.mock({
     'id': Random.id(),
-    'name': Random.string('lower', 5),
+    'name': Random.ctitle(5),
     'code': Random.string('lower', 6),
     'status|1': ['1', '2'],
     'dataScope|1': ['1', '2', '3', '4', '5', '6'],

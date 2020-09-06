@@ -59,7 +59,7 @@
 <script>
 import { mapState } from 'vuex'
 import { VueCropper } from 'vue-cropper'
-import { uploadFile } from '@/api/common/file'
+import { uploadFile } from '@/api/fdfs/dfs'
 
 export default {
   components: { VueCropper },

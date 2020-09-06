@@ -2,27 +2,17 @@ const Mock = require('mockjs')
 const { param2Obj } = require('./utils')
 
 const login = require('./login')
-const user = require('./sys/user')
-const role = require('./sys/role')
-const userRole = require('./sys/userRole')
-const menu = require('./sys/menu')
-const dept = require('./sys/dept')
-const file = require('./common/file')
-const article = require('./example/article')
-const exampleRole = require('./example/role')
 const search = require('./remote-search')
+const sys = require('./sys')
+const fdfs = require('./fdfs')
+const example = require('./example')
 
 const mocks = [
   ...login,
-  ...user,
-  ...menu,
-  ...dept,
-  ...role,
-  ...userRole,
-  ...file,
   ...search,
-  ...article,
-  ...exampleRole
+  ...sys,
+  ...fdfs,
+  ...example
 ]
 
 // for front mock

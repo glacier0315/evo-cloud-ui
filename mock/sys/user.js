@@ -141,6 +141,28 @@ module.exports = [
         data: 'success'
       }
     }
+  },
+
+  {
+    url: sys + '/user/checkUsername',
+    type: 'post',
+    response: config => {
+      return {
+        code: '20000',
+        data: false
+      }
+    }
+  },
+
+  {
+    url: sys + '/user/checkIdCard',
+    type: 'post',
+    response: config => {
+      return {
+        code: '20000',
+        data: false
+      }
+    }
   }
 ]
 
