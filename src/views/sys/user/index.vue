@@ -673,10 +673,12 @@ export default {
         .then(() => {
           exportExcel(this.pageRequest.params)
             .then((res) => {
-              downloadFile(res, '用户', 'xlsx')
+              downloadFile(
+                '用户.xlsx',
+                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                res)
             })
         })
-        .catch(err => { console.error(err) })
     },
     /** 导入按钮操作 */
     handleImport() {

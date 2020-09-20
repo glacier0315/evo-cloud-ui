@@ -1,4 +1,5 @@
 import request from '@/utils/request'
+import requestFile from '@/utils/requestFile'
 import { sys } from '@/common/constant'
 
 /**
@@ -143,10 +144,10 @@ export function checkIdCard(data) {
  * @param {*} data
  */
 export function exportExcel(data) {
-  return request({
+  return requestFile({
     url: sys + '/user/export',
     method: 'post',
-    responseType: 'blob', // 表明返回服务器返回的数据类型
+    responseType: 'blob', // 表明返回服务器返回的数据类型Y
     data: data
   })
 }

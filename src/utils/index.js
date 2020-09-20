@@ -357,20 +357,30 @@ export function removeClass(ele, cls) {
 }
 
 /**
- * 下载文件
- * @param {*} obj
- * @param {*} name
- * @param {*} suffix
+ * 字节流转换成文件下载
+ * @param {*} inputFileName 文件名
+ * @param {*} response 后台取得数据
  */
-export function downloadFile(obj, name, suffix) {
-  console.log('obj', obj)
-  const url = window.URL.createObjectURL(new Blob([obj]))
-  const link = document.createElement('a')
-  link.style.display = 'none'
-  link.href = url
-  const fileName = parseTime(new Date()) + '-' + name + '.' + suffix
-  link.setAttribute('download', fileName)
-  document.body.appendChild(link)
-  link.click()
-  document.body.removeChild(link)
+export function downloadFile(inputFileName, type, response) {
+  console.log('data', response)
+  response.headers['content-disposition']
+  // 文件名
+  const fileName = inputFileName
+  const blob = new Blob([response.data], {
+    type: type
+  })
+  console.log('blob, ', blob)
+  if (window.navigator.msSaveOrOpenBlob) {
+    console.log('下载1')
+    navigator.msSaveBlob(blob)
+  } else {
+    console.log('下载2')
+    const elink = document.createElement('a')
+    elink.download = fileName
+    elink.style.display = 'none'
+    elink.href = URL.createObjectURL(blob)
+    document.body.appendChild(elink)
+    elink.click()
+    document.body.removeChild(elink)
+  }
 }
