@@ -7,7 +7,7 @@ import { sys } from '@/common/constant'
  */
 export function getUserList(data) {
   return request({
-    url: sys + '/user/pageList',
+    url: sys + '/user/findPage',
     method: 'post',
     data
   })

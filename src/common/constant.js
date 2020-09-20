@@ -17,6 +17,12 @@ module.exports = {
 
   /**
    * @type {string}
+   * @description 代码生成服务器前缀
+   */
+  gen: '/gen',
+
+  /**
+   * @type {string}
    * @description 公共文件服务器前缀
    */
   fdfs: '/fdfs'

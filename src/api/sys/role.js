@@ -10,7 +10,7 @@ export function getRoleList() {
 
 export function getRolePageList(data) {
   return request({
-    url: sys + '/role/pageList',
+    url: sys + '/role/findPage',
     method: 'post',
     data
   })

@@ -10,7 +10,7 @@ export function getPostList() {
 
 export function getPostPageList(data) {
   return request({
-    url: sys + '/post/pageList',
+    url: sys + '/post/findPage',
     method: 'post',
     data
   })
