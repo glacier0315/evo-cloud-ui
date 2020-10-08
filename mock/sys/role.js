@@ -17,7 +17,7 @@ module.exports = [
   },
 
   {
-    url: sys + '/role/pageList',
+    url: sys + '/role/findPage',
     type: 'post',
     response: config => {
       const { params, pageNum = 1, pageSize = 20 } = config.body

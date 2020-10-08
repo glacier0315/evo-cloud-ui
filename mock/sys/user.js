@@ -6,7 +6,7 @@ const Random = Mock.Random
 
 module.exports = [
   {
-    url: sys + '/user/pageList',
+    url: sys + '/user/findPage',
     type: 'post',
     response: config => {
       const { params, pageNum = 1, pageSize = 20 } = config.body

@@ -17,7 +17,7 @@ module.exports = [
   },
 
   {
-    url: sys + '/post/pageList',
+    url: sys + '/post/findPage',
     type: 'post',
     response: config => {
       const { params, pageNum = 1, pageSize = 20 } = config.body
