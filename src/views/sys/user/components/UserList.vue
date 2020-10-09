@@ -1,14 +1,9 @@
 <template>
   <div class="app-container">
-    <el-page-header
-      :content="'当前角色 [' + roleName + '] '"
-      @back="goBack"
-    />
     <el-form
       ref="queryForm"
       :model="pageRequest.params"
       :inline="true"
-      style="margin-top: 1em;"
       label-width="68px"
     >
       <el-form-item label="用户名" prop="username">
@@ -60,7 +55,7 @@
           placeholder="单位"
           :multiple="false"
           clearable
-          :options="deptTreeData"
+          :options="deptData"
           :normalizer="normalizer"
           style="width:180px;"
         />
@@ -97,25 +92,7 @@
       </el-form-item>
     </el-form>
     <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5">
-        <el-button
-          type="primary"
-          icon="el-icon-plus"
-          @click="handleAdd"
-        >
-          {{ $t('table.add') }}
-        </el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="danger"
-          icon="el-icon-delete"
-          :disabled="delUserIds.length <= 0"
-          @click="handleDelete"
-        >
-          {{ $t('table.remove') }}
-        </el-button>
-      </el-col>
+      <slot name="handle" />
     </el-row>
     <div>
       <el-table
@@ -127,13 +104,7 @@
         highlight-current-row
         current-row-key="id"
         style="width: 100%;margin-top: 1em;"
-        @selection-change="handleSelectionChange"
       >
-        <el-table-column
-          type="selection"
-          width="55"
-          :selectable="selectable"
-        />
         <el-table-column
           align="center"
           label="序号"
@@ -157,6 +128,7 @@
           :formatter="sexFormat"
         />
         <el-table-column
+          v-if="idCardVisible"
           align="center"
           label="身份证号"
           prop="idCard"
@@ -166,7 +138,7 @@
           label="出生日期"
         >
           <template #default="scope">
-            {{ scope.row.birthday | parseTime('{y}-{m}-{d}') }}
+            <span>{{ scope.row.birthday | parseTime('{y}-{m}-{d}') }}</span>
           </template>
         </el-table-column>
         <el-table-column
@@ -180,6 +152,16 @@
           prop="status"
           :formatter="statusFormat"
         />
+        <el-table-column
+          align="center"
+          :width="operationWidth"
+          label="操作"
+          class-name="small-padding fixed-width"
+        >
+          <template #default="scope">
+            <slot name="operation" :row="scope.row" />
+          </template>
+        </el-table-column>
       </el-table>
 
       <pagination
@@ -190,78 +172,63 @@
         @pagination="getPageList"
       />
     </div>
-
-    <el-dialog
-      :visible.sync="dialogVisible"
-      title="添加用户"
-      width="70%"
-      top="10vh"
-    >
-      <user-search-list
-        ref="userAddList"
-        :multiple-selected="true"
-        :dept-data="deptTreeData"
-        :default-params="{roleId: roleId}"
-        @handleSelected="handleSelection"
-        @handleSingleSelected="handleSingleSelection"
-      />
-      <div slot="footer" class="dialog-footer">
-        <el-button
-          type="primary"
-          :disabled="addUserIds.length <= 0"
-          @click="confirmHandle"
-        >
-          {{ $t('table.confirm') }}
-        </el-button>
-        <el-button
-          @click="closeDialog"
-        >
-          {{ $t('table.cancel') }}
-        </el-button>
-      </div>
-    </el-dialog>
   </div>
 </template>
+
 <script>
 import { getUserList } from '@/api/sys/user'
-import { addUserRole, deleteUserRole } from '@/api/sys/userRole'
-import { getDeptList } from '@/api/sys/dept'
-import { buildTree } from '@/utils/tree'
 import Pagination from '@/components/Pagination'
 import Treeselect from '@riophae/vue-treeselect'
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
-import UserSearchList from '@/views/sys/user/components/UserSearchList'
 
 export default {
-  name: 'RoleUser',
+  name: 'UserList',
   /** 注册组件 */
-  components: { Pagination, Treeselect, UserSearchList },
+  components: { Pagination, Treeselect },
+  props: {
+    // 组织机构树
+    deptData: {
+      type: Array,
+      default: () => {
+        return []
+      }
+    },
+    // 分页查询默认参数
+    defaultParams: {
+      type: Object,
+      default: () => {
+        return {}
+      }
+    },
+    // 身份证是否显示
+    idCardVisible: {
+      type: Boolean,
+      default: () => {
+        return false
+      }
+    },
+    // 操作列宽度
+    operationWidth: {
+      type: Number,
+      default: () => {
+        return 80
+      }
+    }
+  },
   data() {
     return {
       // 遮罩层
       listLoading: true,
-      // 弹出层显示
-      dialogVisible: false,
-      // 角色id，从路由中获取
-      roleId: this.$route.query.id,
-      // 角色名称，从路由中获取
-      roleName: this.$route.query.name,
       // 分页请求
       pageRequest: {
         pageNum: 1,
         pageSize: 10,
-        params: {}
+        params: this.defaultParams
       },
       // 用户列表
       list: [],
       // 总记录数
       total: 0,
-      // 待移除用户
-      delUserIds: [],
-      // 待添加用户
-      addUserIds: [],
-      // 组织机构树
-      deptTreeData: [],
       // 性别集合
       sexList: [
         { label: '男', value: 1 },
@@ -275,30 +242,13 @@ export default {
       ]
     }
   },
-  watch: {
-
-  },
   created() {
     this.handleQuery()
-    this.getDeptData()
   },
   methods: {
-    /** 返回 */
-    goBack() {
-      // 路由跳转
-      this.$router.push({
-        path: '/sys/role'
-      })
-    },
-    /** 排除超级管理员用户和角色 */
-    selectable(row, index) {
-      return !(this.roleId === '1' && row.id === '1')
-    },
     /** 获取用户分页 */
     getPageList() {
       this.listLoading = true
-      // 设置roleId
-      this.pageRequest.params.roleId = this.roleId
       getUserList(this.pageRequest).then(response => {
         this.list = response.data.list
         this.total = response.data.total
@@ -312,93 +262,9 @@ export default {
     },
     /** 重置查询 */
     resetQuery() {
-      this.pageRequest.params = {}
+      this.pageRequest.params = this.defaultParams
+      this.$refs['queryForm'].resetFields()
       this.handleQuery()
-    },
-    /** 获取组织机构数 */
-    async getDeptData() {
-      this.deptTreeData = []
-      getDeptList().then(response => {
-        this.deptTreeData = buildTree(response.data)
-      })
-    },
-    /** 新增 */
-    handleAdd() {
-      this.dialogVisible = true
-      // 初始化
-      this.handleRefresh()
-    },
-    /** 删除 */
-    handleDelete() {
-      this.$confirm('确认移除当前选中用户?', '确认', {
-        confirmButtonText: '确认',
-        cancelButtonText: '关闭',
-        type: 'warning'
-      })
-        .then(async() => {
-          const data = {
-            roleId: this.roleId,
-            userIds: this.delUserIds
-          }
-          await deleteUserRole(data)
-          this.handleQuery()
-          this.$message({
-            type: 'success',
-            message: '删除成功!'
-          })
-        })
-        .catch(err => { console.error(err) })
-    },
-    handleSelectionChange(rows) {
-      this.delUserIds = rows.map(row => row.id) || []
-    },
-    /** 关闭用户弹窗 */
-    closeDialog() {
-      this.dialogVisible = false
-      // 清空添加的元素
-      this.addUserIds = []
-    },
-    /** 获取子组件选中元素 */
-    handleSelection(addUserIds) {
-      this.addUserIds = addUserIds || []
-    },
-    handleSingleSelection(addUserIds) {
-      this.addUserIds = addUserIds || []
-      // 保存
-      this.confirmHandle()
-    },
-    /** 刷新子组件 */
-    handleRefresh() {
-      this.$nextTick(() => {
-        this.$refs['userAddList'].resetQuery()
-      })
-    },
-    /** 新增或者编辑时 保存 */
-    async confirmHandle() {
-      this.$confirm('确认将角色[ ' + this.roleName + ' ]授予当前选中用户?', '确认', {
-        confirmButtonText: '确认',
-        cancelButtonText: '关闭',
-        type: 'warning'
-      })
-        .then(async() => {
-          this.handleSelection()
-          const data = {
-            roleId: this.roleId,
-            userIds: this.addUserIds
-          }
-          addUserRole(data)
-            .then(async() => {
-              this.closeDialog()
-              // 刷新
-              this.handleQuery()
-              this.$message({
-                type: 'success',
-                message: '添加成功!'
-              })
-            })
-            .catch(err => { console.error(err) })
-        })
-        .catch(err => { console.error(err) })
     },
     /** status 格式化 */
     statusFormat(row, column, cellValue, index) {
@@ -420,12 +286,8 @@ export default {
       })
       return sex.label
     },
-    /** 处理树形数据 */
+    /** 处理属性数据 */
     normalizer(node) {
-      // 将里面children=[]为空的时候去掉（如果不加的这句的话 如果里面children属性值为空 数状选择器里就给他默认有下一层  可里面没有所以显示空数据）
-      if (node.children && !node.children.length) {
-        delete node.children
-      }
       return {
         id: node.id,
         label: node.name,
@@ -435,5 +297,7 @@ export default {
   }
 }
 </script>
+
 <style scoped>
+
 </style>
