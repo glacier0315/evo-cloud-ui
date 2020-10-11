@@ -79,7 +79,7 @@
       </el-form-item>
     </el-form>
     <el-row :gutter="10" class="mb8">
-      <slot name="handle" />
+      <slot name="toolbars" />
     </el-row>
     <div>
       <el-table
@@ -90,14 +90,15 @@
         stripe
         highlight-current-row
         size="mini"
+        style="width: 100%; margin-top:1em;"
         current-row-key="id"
-        style="width: 100%;"
         @selection-change="handleSelectionChange"
       >
         <el-table-column
           v-if="multipleSelected"
           type="selection"
           width="55"
+          :selectable="selectableCallback"
         />
         <el-table-column
           align="center"
@@ -207,6 +208,13 @@ export default {
       default: () => {
         return false
       }
+    },
+    // 可选择回调函数
+    selectableCallback: {
+      type: Function,
+      default: (row, index) => {
+        return true
+      }
     }
   },
   data() {
@@ -262,10 +270,12 @@ export default {
       this.$refs['queryForm'].resetFields()
       this.handleQuery()
     },
+    /** 多选 */
     handleSelectionChange(val) {
       this.multipleSelection = val || []
       this.$emit('handleSelected', this.multipleSelection)
     },
+    /** 单选 */
     singleSelect(row) {
       this.multipleSelection = [row.id]
       this.$emit('handleSingleSelected', this.multipleSelection)

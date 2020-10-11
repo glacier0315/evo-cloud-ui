@@ -92,7 +92,7 @@
       </el-form-item>
     </el-form>
     <el-row :gutter="10" class="mb8">
-      <slot name="handle" />
+      <slot name="toolbars" />
     </el-row>
     <div>
       <el-table
@@ -103,8 +103,15 @@
         stripe
         highlight-current-row
         current-row-key="id"
-        style="width: 100%;margin-top: 1em;"
+        style="width: 100%; margin-top:1em;"
+        @selection-change="handleSelectionChange"
       >
+        <el-table-column
+          v-if="multipleSelected"
+          type="selection"
+          width="55"
+          :selectable="selectableCallback"
+        />
         <el-table-column
           align="center"
           label="序号"
@@ -154,12 +161,11 @@
         />
         <el-table-column
           align="center"
-          :width="operationWidth"
           label="操作"
           class-name="small-padding fixed-width"
         >
           <template #default="scope">
-            <slot name="operation" :row="scope.row" />
+            <slot name="row-btns" :row="scope.row" />
           </template>
         </el-table-column>
       </el-table>
@@ -200,6 +206,13 @@ export default {
         return {}
       }
     },
+    // 是否多选
+    multipleSelected: {
+      type: Boolean,
+      default: () => {
+        return false
+      }
+    },
     // 身份证是否显示
     idCardVisible: {
       type: Boolean,
@@ -207,11 +220,11 @@ export default {
         return false
       }
     },
-    // 操作列宽度
-    operationWidth: {
-      type: Number,
-      default: () => {
-        return 80
+    // 可选择回调函数
+    selectableCallback: {
+      type: Function,
+      default: (row, index) => {
+        return true
       }
     }
   },
@@ -266,6 +279,19 @@ export default {
       this.$refs['queryForm'].resetFields()
       this.handleQuery()
     },
+    /** 多选 */
+    handleSelectionChange(val) {
+      this.multipleSelection = val || []
+      this.$emit('handleSelected', this.multipleSelection)
+    },
+    /** 单选 */
+    singleSelect(row) {
+      this.multipleSelection = [row.id]
+      this.$emit('handleSingleSelected', this.multipleSelection)
+    },
+    getMultipleSelection() {
+      return this.multipleSelection
+    },
     /** status 格式化 */
     statusFormat(row, column, cellValue, index) {
       const status = {}
@@ -288,6 +314,10 @@ export default {
     },
     /** 处理属性数据 */
     normalizer(node) {
+      // 将里面children=[]为空的时候去掉（如果不加的这句的话 如果里面children属性值为空 数状选择器里就给他默认有下一层  可里面没有所以显示空数据）
+      if (node.children && !node.children.length) {
+        delete node.children
+      }
       return {
         id: node.id,
         label: node.name,
