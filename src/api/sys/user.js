@@ -148,6 +148,18 @@ export function exportExcel(data) {
     url: sys + '/user/export',
     method: 'post',
     responseType: 'blob', // 表明返回服务器返回的数据类型Y
+    data
+  })
+}
+
+/**
+ * 导入
+ * @param {*} data
+ */
+export function importExcel(data) {
+  return requestFile({
+    url: sys + '/user/import',
+    method: 'post',
     data: data
   })
 }

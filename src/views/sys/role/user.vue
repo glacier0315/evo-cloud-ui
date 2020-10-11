@@ -40,11 +40,10 @@
           size="mini"
           icon="el-icon-delete"
           :disabled="(roleId === '1' && scope.row.id === '1')"
-          @click="singleRemoveUser(scope.row.id)"
+          @click="singleRemoveUser([scope.row])"
         >
           {{ $t('table.remove') }}
         </el-button>
-
       </template>
     </user-list>
 
@@ -54,14 +53,19 @@
       width="70%"
       top="10vh"
     >
-      <user-search-list
+      <user-list
         ref="userAddList"
         :multiple-selected="true"
         :dept-data="deptTreeData"
         :default-params="{notEqRoleId: roleId, status: '1'}"
         @handleSelected="addUser"
         @handleSingleSelected="singleAddUser"
-      />
+      >
+        <template v-slot:queryParams>
+          <el-form-item />
+        </template>
+      </user-list>
+
       <div slot="footer" class="dialog-footer">
         <el-button
           type="primary"
@@ -85,12 +89,11 @@ import { getDeptList } from '@/api/sys/dept'
 import { buildTree } from '@/utils/tree'
 
 import UserList from '@/views/sys/user/components/UserList'
-import UserSearchList from '@/views/sys/user/components/UserSearchList'
 
 export default {
   name: 'RoleUser',
   /** 注册组件 */
-  components: { UserList, UserSearchList },
+  components: { UserList },
   data() {
     return {
       // 弹出层显示
@@ -202,24 +205,29 @@ export default {
       })
     },
     /** 选择要移除的用户 多选 */
-    removeUser(delUserIds) {
-      this.delUserIds = delUserIds || []
+    removeUser(users) {
+      this.delUserIds = this.getUserIds(users)
     },
     /** 选择要移除的用户 单选 */
-    singleRemoveUser(delUserId) {
-      this.delUserIds = [delUserId]
+    singleRemoveUser(users) {
+      this.delUserIds = this.getUserIds(users)
       // 保存
       this.handleDelete()
     },
     /** 选择要添加的用户 多选 */
-    addUser(addUserIds) {
-      this.addUserIds = addUserIds || []
+    addUser(users) {
+      this.addUserIds = this.getUserIds(users)
+      console.log('addUserIds', this.addUserIds)
     },
     /** 选择要添加的用户 单选 */
-    singleAddUser(addUserIds) {
-      this.addUserIds = addUserIds || []
+    singleAddUser(users) {
+      this.addUserIds = this.getUserIds(users)
       // 保存
       this.confirmHandle()
+    },
+    // 将元素集合转为id集合
+    getUserIds(users) {
+      return (users || []).map(user => user.id)
     },
     /** 排除超级管理员用户和角色 */
     selectable(row, index) {

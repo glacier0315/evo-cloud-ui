@@ -1,234 +1,80 @@
 <template>
   <div class="app-container">
-    <el-form
-      ref="queryForm"
-      :model="pageRequest.params"
-      :inline="true"
-      label-width="68px"
+    <user-list
+      ref="userList"
+      :id-card-visible="true"
+      :dept-data="deptTreeData"
+      :row-btn-width="320"
     >
-      <el-form-item label="用户名" prop="username">
-        <el-input
-          v-model="pageRequest.params.username"
-          placeholder="用户名"
-          clearable
-          style="width:90px;"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="昵称" prop="nickname">
-        <el-input
-          v-model="pageRequest.params.nickname"
-          placeholder="昵称"
-          clearable
-          style="width:90px;"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="身份证号" prop="idCard">
-        <el-input
-          v-model="pageRequest.params.idCard"
-          placeholder="身份证号"
-          clearable
-          style="width:200px;"
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="性别" prop="sex">
-        <el-select
-          v-model="pageRequest.params.sex"
-          placeholder="性别"
-          clearable
-          style="width:80px;"
-        >
-          <el-option
-            v-for="item in sexList"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          />
-        </el-select>
-      </el-form-item>
-      <el-form-item label="单位" prop="deptId">
-        <treeselect
-          v-model="pageRequest.params.deptId"
-          name="deptSearch"
-          placeholder="单位"
-          :multiple="false"
-          clearable
-          :options="deptTreeData"
-          :normalizer="deptNormalizer"
-          style="width:180px;"
-        />
-      </el-form-item>
-      <el-form-item label="状态" prop="status">
-        <el-select
-          v-model="pageRequest.params.status"
-          placeholder="状态"
-          clearable
-          style="width:80px;"
-        >
-          <el-option
-            v-for="item in statusList"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          />
-        </el-select>
-      </el-form-item>
-      <el-form-item>
+      <template v-slot:queryParams>
+        <el-form-item />
+      </template>
+
+      <template v-slot:toolbars="pageRequest">
+        <el-col :span="1.5">
+          <el-button
+            type="primary"
+            icon="el-icon-plus"
+            @click="handleAdd"
+          >
+            {{ $t('table.add') }}
+          </el-button>
+        </el-col>
+        <el-col :span="1.5">
+          <el-button
+            type="info"
+            icon="el-icon-upload2"
+            @click="handleImport"
+          >
+            {{ $t('table.import') }}
+          </el-button>
+        </el-col>
+        <el-col :span="1.5">
+          <el-button
+            type="warning"
+            icon="el-icon-download"
+            @click="handleExport(pageRequest)"
+          >
+            {{ $t('table.export') }}
+          </el-button>
+        </el-col>
+      </template>
+      <template v-slot:row-btns="scope">
         <el-button
-          type="primary"
-          icon="el-icon-search"
-          @click="handleQuery"
+          type="warning"
+          size="mini"
+          icon="el-icon-plus"
+          @click="grantRole(scope)"
         >
-          {{ $t('table.search') }}
+          {{ $t('permission.grant') }}
         </el-button>
         <el-button
-          icon="el-icon-refresh"
-          @click="resetQuery"
+          type="primary"
+          size="mini"
+          icon="el-icon-edit"
+          @click="handleEdit(scope)"
+        >
+          {{ $t('table.edit') }}
+        </el-button>
+        <el-button
+          v-if="scope.row.id !== '1'"
+          size="mini"
+          type="danger"
+          icon="el-icon-delete"
+          @click="handleDelete(scope)"
+        >
+          {{ $t('table.delete') }}
+        </el-button>
+        <el-button
+          size="mini"
+          type="info"
+          icon="el-icon-key"
+          @click="handleResetPwd(scope)"
         >
           {{ $t('table.reset') }}
         </el-button>
-      </el-form-item>
-    </el-form>
-    <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5">
-        <el-button
-          type="primary"
-          icon="el-icon-plus"
-          @click="handleAdd"
-        >
-          {{ $t('table.add') }}
-        </el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="info"
-          icon="el-icon-upload2"
-          @click="handleImport"
-        >
-          {{ $t('table.import') }}
-        </el-button>
-      </el-col>
-      <el-col :span="1.5">
-        <el-button
-          type="warning"
-          icon="el-icon-download"
-          @click="handleExport"
-        >
-          {{ $t('table.export') }}
-        </el-button>
-      </el-col>
-    </el-row>
-    <div>
-      <el-table
-        v-loading="listLoading"
-        :data="list"
-        border
-        fit
-        stripe
-        highlight-current-row
-        current-row-key="id"
-        style="width: 100%;margin-top: 1em;"
-      >
-        <el-table-column
-          align="center"
-          label="序号"
-          type="index"
-          width="80px"
-        />
-        <el-table-column
-          align="center"
-          label="用户名"
-          prop="username"
-        />
-        <el-table-column
-          align="center"
-          label="昵称"
-          prop="nickname"
-        />
-        <el-table-column
-          align="center"
-          label="性别"
-          prop="sex"
-          :formatter="sexFormat"
-        />
-        <el-table-column
-          align="center"
-          label="身份证号"
-          prop="idCard"
-        />
-        <el-table-column
-          align="center"
-          label="出生日期"
-        >
-          <template #default="scope">
-            {{ scope.row.birthday | parseTime('{y}-{m}-{d}') }}
-          </template>
-        </el-table-column>
-        <el-table-column
-          align="center"
-          label="单位"
-          prop="deptName"
-        />
-        <el-table-column
-          align="center"
-          label="状态"
-          prop="status"
-          :formatter="statusFormat"
-        />
-        <el-table-column
-          align="center"
-          width="320"
-          label="操作"
-          class-name="small-padding fixed-width"
-        >
-          <template #default="scope">
-            <el-button
-              type="warning"
-              size="mini"
-              icon="el-icon-plus"
-              @click="grantRole(scope)"
-            >
-              {{ $t('permission.grant') }}
-            </el-button>
-            <el-button
-              type="primary"
-              size="mini"
-              icon="el-icon-edit"
-              @click="handleEdit(scope)"
-            >
-              {{ $t('table.edit') }}
-            </el-button>
-            <el-button
-              v-if="scope.row.id !== '1'"
-              size="mini"
-              type="danger"
-              icon="el-icon-delete"
-              @click="handleDelete(scope)"
-            >
-              {{ $t('table.delete') }}
-            </el-button>
-            <el-button
-              size="mini"
-              type="info"
-              icon="el-icon-key"
-              @click="handleResetPwd(scope)"
-            >
-              {{ $t('table.reset') }}
-            </el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-
-      <pagination
-        v-show="total>0"
-        :total="total"
-        :page.sync="pageRequest.pageNum"
-        :limit.sync="pageRequest.pageSize"
-        @pagination="getPageList"
-      />
-    </div>
+      </template>
+    </user-list>
 
     <el-dialog
       :visible.sync="dialogVisible"
@@ -391,14 +237,15 @@
 </template>
 
 <script>
-import { getUserList, addUser, updateUser, delUser, resetUserPwd, checkUsername, exportExcel } from '@/api/sys/user'
+import { addUser, updateUser, delUser, resetUserPwd, checkUsername, exportExcel } from '@/api/sys/user'
 import { getPostList } from '@/api/sys/post'
 import { getDeptList } from '@/api/sys/dept'
 import { buildTree } from '@/utils/tree'
 import { downloadFile } from '@/utils'
-import Pagination from '@/components/Pagination'
 import Treeselect from '@riophae/vue-treeselect'
 import '@riophae/vue-treeselect/dist/vue-treeselect.css'
+
+import UserList from '@/views/sys/user/components/UserList'
 // 自定义校验
 import { usernameValidator, nicknameValidator } from '@/validator/sys/user'
 import { idCardValidator, emailValidator, mobileValidator } from '@/validator/common'
@@ -422,23 +269,11 @@ const defaultUser = {
 export default {
   name: 'User',
   /** 注册组件 */
-  components: { Pagination, Treeselect },
+  components: { Treeselect, UserList },
   data() {
     return {
-      // 遮罩层
-      listLoading: true,
       // 弹出层显示
       dialogVisible: false,
-      // 分页请求
-      pageRequest: {
-        pageNum: 1,
-        pageSize: 10,
-        params: {}
-      },
-      // 用户列表
-      list: [],
-      // 总记录数
-      total: 0,
       // 组织机构树
       deptTreeData: [],
       // 岗位
@@ -523,30 +358,10 @@ export default {
     }
   },
   created() {
-    this.handleQuery()
     this.getDeptData()
     this.getPosstData()
   },
   methods: {
-    /** 获取用户分页 */
-    getPageList() {
-      this.listLoading = true
-      getUserList(this.pageRequest).then(response => {
-        this.list = response.data.list
-        this.total = response.data.total
-        this.listLoading = false
-      })
-    },
-    /** 搜索按钮操作 */
-    handleQuery() {
-      this.pageRequest.pageNum = 1
-      this.getPageList()
-    },
-    /** 重置查询 */
-    resetQuery() {
-      this.pageRequest.params = {}
-      this.handleQuery()
-    },
     /** 获取组织机构树 */
     async getDeptData() {
       this.deptTreeData = []
@@ -564,7 +379,8 @@ export default {
     /** 关闭用户弹窗 */
     closeDialog() {
       this.dialogVisible = false
-      this.user = Object.assign({}, defaultUser)
+      // 重置表单
+      this.resetForm()
     },
     /** 新增 */
     handleAdd() {
@@ -585,7 +401,7 @@ export default {
       })
         .then(async() => {
           await delUser(row.id)
-          this.handleQuery()
+          this.handleRefresh()
           this.$message({
             type: 'success',
             message: '删除成功!'
@@ -633,7 +449,7 @@ export default {
               updateUser(this.user)
                 .then(data => {
                   this.closeDialog()
-                  this.handleQuery()
+                  this.handleRefresh()
 
                   this.$notify({
                     title: '成功',
@@ -646,7 +462,7 @@ export default {
               addUser(this.user)
                 .then(data => {
                   this.closeDialog()
-                  this.handleQuery()
+                  this.handleRefresh()
 
                   this.$notify({
                     title: '成功',
@@ -663,7 +479,7 @@ export default {
         })
     },
     /** 导出按钮操作 */
-    handleExport() {
+    handleExport(pageRequest) {
       // todo
       this.$confirm('是否确认导出用户数据项?', '警告', {
         confirmButtonText: '确定',
@@ -671,7 +487,7 @@ export default {
         type: 'warning'
       })
         .then(() => {
-          exportExcel(this.pageRequest.params)
+          exportExcel(pageRequest.params || {})
             .then((res) => {
               downloadFile(
                 '用户.xlsx',
@@ -685,30 +501,23 @@ export default {
       // todo
       console.log('导入')
     },
+    /** 刷新子组件 */
+    handleRefresh() {
+      this.$nextTick(() => {
+        this.$refs['userList'].resetQuery()
+      })
+    },
+    /** 重置表单 */
+    resetForm() {
+      this.$nextTick(() => {
+        this.$refs['user'].resetFields()
+      })
+      this.user = Object.assign({}, defaultUser)
+    },
     /** 选择单位时更新 用户单位名称 */
     selectDept(data) {
       const { name } = data
       this.user.deptName = name
-    },
-    /** status 格式化 */
-    statusFormat(row, column, cellValue, index) {
-      const status = {}
-      this.statusList.forEach((item) => {
-        if (cellValue && item.value === cellValue) {
-          Object.assign(status, item)
-        }
-      })
-      return status.label
-    },
-    /** 性别格式化 */
-    sexFormat(row, column, cellValue, index) {
-      const sex = {}
-      this.sexList.forEach((item) => {
-        if (cellValue && item.value === cellValue) {
-          Object.assign(sex, item)
-        }
-      })
-      return sex.label
     },
     /** 处理树形数据 */
     deptNormalizer(node) {

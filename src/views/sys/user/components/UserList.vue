@@ -60,21 +60,23 @@
           style="width:180px;"
         />
       </el-form-item>
-      <el-form-item label="状态" prop="status">
-        <el-select
-          v-model="pageRequest.params.status"
-          placeholder="状态"
-          clearable
-          style="width:80px;"
-        >
-          <el-option
-            v-for="item in statusList"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          />
-        </el-select>
-      </el-form-item>
+      <slot name="queryParams" :pageRequest="pageRequest">
+        <el-form-item label="状态" prop="status">
+          <el-select
+            v-model="pageRequest.params.status"
+            placeholder="状态"
+            clearable
+            style="width:80px;"
+          >
+            <el-option
+              v-for="item in statusList"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+          </el-select>
+        </el-form-item>
+      </slot>
       <el-form-item>
         <el-button
           type="primary"
@@ -92,7 +94,7 @@
       </el-form-item>
     </el-form>
     <el-row :gutter="10" class="mb8">
-      <slot name="toolbars" />
+      <slot name="toolbars" :pageRequest="pageRequest" />
     </el-row>
     <div>
       <el-table
@@ -116,7 +118,7 @@
           align="center"
           label="序号"
           type="index"
-          width="80px"
+          width="55"
         />
         <el-table-column
           align="center"
@@ -162,10 +164,18 @@
         <el-table-column
           align="center"
           label="操作"
+          :width="rowBtnWidth"
           class-name="small-padding fixed-width"
         >
           <template #default="scope">
-            <slot name="row-btns" :row="scope.row" />
+            <slot name="row-btns" :row="scope.row">
+              <el-button
+                size="mini"
+                @click="singleSelect"
+              >
+                {{ $t('table.confirm') }}
+              </el-button>
+            </slot>
           </template>
         </el-table-column>
       </el-table>
@@ -204,6 +214,13 @@ export default {
       type: Object,
       default: () => {
         return {}
+      }
+    },
+    // 操作列宽度
+    rowBtnWidth: {
+      type: Number,
+      default: () => {
+        return 85
       }
     },
     // 是否多选
@@ -286,7 +303,7 @@ export default {
     },
     /** 单选 */
     singleSelect(row) {
-      this.multipleSelection = [row.id]
+      this.multipleSelection = [row]
       this.$emit('handleSingleSelected', this.multipleSelection)
     },
     getMultipleSelection() {

@@ -163,6 +163,25 @@ module.exports = [
         data: false
       }
     }
+  },
+
+  {
+    url: sys + '/user/export',
+    type: 'post',
+    response: config => {
+      return {}
+    }
+  },
+
+  {
+    url: sys + '/user/import',
+    type: 'post',
+    response: config => {
+      return {
+        code: '20000',
+        data: false
+      }
+    }
   }
 ]
 
