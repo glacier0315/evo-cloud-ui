@@ -1,159 +1,59 @@
 <template>
   <div class="app-container">
-    <el-form
-      ref="queryForm"
-      :model="pageRequest.params"
-      :inline="true"
-      label-width="68px"
+    <role-list
+      ref="roleList"
+      :id-card-visible="true"
+      :dept-data="deptTreeData"
+      :row-btn-width="320"
     >
-      <el-form-item label="角色名称" prop="name">
-        <el-input
-          v-model="pageRequest.params.name"
-          placeholder="角色名称"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="角色编码" prop="code">
-        <el-input
-          v-model="pageRequest.params.code"
-          placeholder="角色编码"
-          clearable
-          @keyup.enter.native="handleQuery"
-        />
-      </el-form-item>
-      <el-form-item label="状态" prop="status">
-        <el-select
-          v-model="pageRequest.params.status"
-          placeholder="状态"
-          clearable
-        >
-          <el-option
-            :key="''"
-            :label="'全部'"
-            :value="null"
-          />
-          <el-option
-            v-for="item in statusList"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          />
-        </el-select>
-      </el-form-item>
-      <el-form-item>
-        <el-button
-          type="primary"
-          icon="el-icon-search"
-          @click="handleQuery"
-        >
-          {{ $t('table.search') }}
-        </el-button>
-        <el-button
-          icon="el-icon-refresh"
-          @click="resetQuery"
-        >
-          {{ $t('table.reset') }}
-        </el-button>
-      </el-form-item>
-    </el-form>
-    <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5">
-        <el-button
-          type="primary"
-          icon="el-icon-plus"
-          @click="handleAdd"
-        >
-          {{ $t('table.add') }}
-        </el-button>
-      </el-col>
-      <el-col :span="1.5">
+      <template v-slot:toolbars="pageRequest">
+        <el-col :span="1.5">
+          <el-button
+            type="primary"
+            icon="el-icon-plus"
+            @click="handleAdd"
+          >
+            {{ $t('table.add') }}
+          </el-button>
+        </el-col>
+        <el-col :span="1.5">
+          <el-button
+            type="warning"
+            icon="el-icon-download"
+            @click="handleExport(pageRequest)"
+          >
+            {{ $t('table.export') }}
+          </el-button>
+        </el-col>
+      </template>
+      <template v-slot:row-btns="scope">
         <el-button
           type="warning"
-          icon="el-icon-download"
-          @click="handleExport"
+          size="mini"
+          icon="el-icon-plus"
+          @click="grantRole(scope)"
         >
-          {{ $t('table.export') }}
+          {{ $t('permission.grant') }}
         </el-button>
-      </el-col>
-    </el-row>
-    <div>
-      <el-table
-        v-loading="listLoading"
-        :data="list"
-        border
-        fit
-        stripe
-        highlight-current-row
-        current-row-key="id"
-        style="width: 100%;"
-      >
-        <el-table-column
-          align="center"
-          label="序号"
-          type="index"
-          width="50"
-        />
-        <el-table-column
-          align="center"
-          label="角色名称"
-          prop="name"
-        />
-        <el-table-column
-          align="center"
-          label="角色编码"
-          prop="code"
-        />
-        <el-table-column
-          align="center"
-          label="状态"
-          prop="status"
-          :formatter="statusFormat"
-        />
-        <el-table-column
-          align="center"
-          width="240"
-          label="操作"
-          class-name="small-padding fixed-width"
+        <el-button
+          type="primary"
+          size="mini"
+          icon="el-icon-edit"
+          @click="handleEdit(scope)"
         >
-          <template #default="scope">
-            <el-button
-              type="warning"
-              size="mini"
-              icon="el-icon-plus"
-              @click="grantRole(scope)"
-            >
-              {{ $t('permission.grant') }}
-            </el-button>
-            <el-button
-              type="primary"
-              size="mini"
-              icon="el-icon-edit"
-              @click="handleEdit(scope)"
-            >
-              {{ $t('table.edit') }}
-            </el-button>
-            <el-button
-              v-if="scope.row.id !== '1'"
-              size="mini"
-              type="danger"
-              icon="el-icon-delete"
-              @click="handleDelete(scope)"
-            >
-              {{ $t('table.delete') }}
-            </el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-
-      <pagination
-        v-show="total>0"
-        :total="total"
-        :page.sync="pageRequest.pageNum"
-        :limit.sync="pageRequest.pageSize"
-        @pagination="getPageList"
-      />
-    </div>
+          {{ $t('table.edit') }}
+        </el-button>
+        <el-button
+          v-if="scope.row.id !== '1'"
+          size="mini"
+          type="danger"
+          icon="el-icon-delete"
+          @click="handleDelete(scope)"
+        >
+          {{ $t('table.delete') }}
+        </el-button>
+      </template>
+    </role-list>
 
     <el-dialog
       :visible.sync="dialogVisible"
@@ -282,11 +182,12 @@
 </template>
 
 <script>
-import { getRolePageList, saveRole, delRole, checkCode } from '@/api/sys/role'
+import { saveRole, delRole, checkCode } from '@/api/sys/role'
 import { getMenuList, getRoleMenus } from '@/api/sys/menu'
 import { getDeptList, getRoleDepts } from '@/api/sys/dept'
 import { buildTree } from '@/utils/tree'
-import Pagination from '@/components/Pagination' // Secondary package based on el-pagination
+
+import RoleList from '@/views/sys/role/components/RoleList'
 
 /** 角色默认值 */
 const defaultRole = {
@@ -303,7 +204,7 @@ const defaultRole = {
 export default {
   name: 'Role',
   /** 注册组件 */
-  components: { Pagination },
+  components: { RoleList },
   /** 过滤器 */
   filters: {
     typeFormat: (cellValue) => {
@@ -317,23 +218,8 @@ export default {
   },
   data() {
     return {
-      // 遮罩层
-      listLoading: true,
       // 弹出层
       dialogVisible: false,
-      // 分页请求
-      pageRequest: {
-        pageNum: 1,
-        pageSize: 10,
-        params: {
-          name: '',
-          code: ''
-        }
-      },
-      // 列表集合
-      list: [],
-      // 总数
-      total: 0,
       // 表单
       role: Object.assign({}, defaultRole),
       // 表单校验
@@ -403,7 +289,6 @@ export default {
     }
   },
   created() {
-    this.getPageList()
     this.getMenuTree()
     this.getDeptTree()
   },
@@ -422,31 +307,10 @@ export default {
         this.deptTreeData = buildTree(response.data)
       })
     },
-    /** 获取分页列表 */
-    getPageList() {
-      this.listLoading = true
-      getRolePageList(this.pageRequest)
-        .then(response => {
-          this.list = response.data.list
-          this.total = response.data.total
-          this.listLoading = false
-        })
-    },
     /** 关闭弹出层 */
     closeDialog() {
       this.dialogVisible = false
-      this.$refs['role'].resetFields()
-    },
-    /** 搜索按钮操作 */
-    handleQuery() {
-      this.pageRequest.pageNum = 1
-      this.getPageList()
-    },
-    /** 重置查询 */
-    resetQuery() {
-      this.pageRequest.params = {}
-      this.$refs['queryForm'].resetFields()
-      this.handleQuery()
+      this.resetForm()
     },
     /** 授权 */
     grantRole(scope) {
@@ -461,30 +325,38 @@ export default {
     },
     /** 新增 */
     handleAdd() {
-      this.resetChecked('menuTree')
-      this.resetChecked('deptTree')
       this.role = Object.assign({}, defaultRole)
       this.dialogVisible = true
+      this.$nextTick(() => {
+        // 清空选择
+        this.setCheckedKeys('menuTree')
+      })
     },
     /** 编辑 */
     handleEdit(scope) {
       this.role = Object.assign({}, scope.row)
-      this.resetChecked('menuTree')
+      this.dialogVisible = true
+      this.$nextTick(() => {
+        // 清空选择
+        this.setCheckedKeys('menuTree')
+      })
       getRoleMenus(this.role.id)
         .then(res => {
           this.role.menus = res.data
           this.setCheckedKeys('menuTree', res.data)
         })
       if (this.role.dataScope === '5') {
+        this.$nextTick(() => {
+          // 清空选择
+          this.setCheckedKeys('deptTree')
+        })
         // 自定义
-        this.resetChecked('deptTree')
         getRoleDepts(this.role.id)
           .then(res => {
             this.role.depts = res.data
             this.setCheckedKeys('deptTree', res.data)
           })
       }
-      this.dialogVisible = true
     },
     /** 删除 */
     handleDelete({ $index, row }) {
@@ -495,7 +367,7 @@ export default {
       })
         .then(async() => {
           await delRole(row.id)
-          this.getPageList()
+          this.handleRefresh()
           this.$message({
             type: 'success',
             message: '删除成功!'
@@ -507,19 +379,16 @@ export default {
     async confirmHandle() {
       const isEdit = this.role.id
       // 设置menus
-      const menus = this.getCheckedKeys('menuTree')
-      this.role.menus = menus
+      this.role.menus = this.getCheckedKeys('menuTree')
       // 设置组织机构
       if (this.role.dataScope === '5') {
-        // 自定义
-        const depts = this.getCheckedKeys('deptTree')
-        this.role.depts = depts
+        this.role.depts = this.getCheckedKeys('deptTree')
       }
       this.$refs['role'].validate((valid) => {
         if (valid) {
           saveRole(this.role).then(data => {
             this.dialogVisible = false
-            this.getPageList()
+            this.handleRefresh()
 
             if (isEdit) {
               this.$notify({
@@ -548,20 +417,23 @@ export default {
       // todo
       console.log('导出')
     },
+    /** 重置表单 */
+    resetForm() {
+      this.$refs['role'].resetFields()
+    },
     // 获取树形选中的值
     getCheckedKeys(ref) {
       return this.$refs[ref].getCheckedKeys()
     },
-    // 重置树形
-    resetChecked(ref) {
-      this.$nextTick(() => {
-        // 清空选择
-        this.setCheckedKeys(ref, [])
-      })
-    },
     // 设置树形选中
     setCheckedKeys(ref, arrayKey) {
       this.$refs[ref].setCheckedKeys(arrayKey || [], false)
+    },
+    /** 刷新子组件 */
+    handleRefresh() {
+      this.$nextTick(() => {
+        this.$refs['roleList'].resetQuery()
+      })
     },
     /** 状态格式化 */
     statusFormat(row, column, cellValue, index) {
@@ -579,7 +451,5 @@ export default {
 </script>
 
 <style scoped>
-.el-row {
-  margin-bottom: 1em;
-}
+
 </style>
