@@ -217,7 +217,6 @@ export default {
     /** 选择要添加的用户 多选 */
     addUser(users) {
       this.addUserIds = this.getUserIds(users)
-      console.log('addUserIds', this.addUserIds)
     },
     /** 选择要添加的用户 单选 */
     singleAddUser(users) {

@@ -171,7 +171,7 @@
             <slot name="row-btns" :row="scope.row">
               <el-button
                 size="mini"
-                @click="singleSelect"
+                @click="singleSelect(scope.row)"
               >
                 {{ $t('table.confirm') }}
               </el-button>
@@ -259,6 +259,8 @@ export default {
       list: [],
       // 总记录数
       total: 0,
+      // 记录选中元素
+      multipleSelection: [],
       // 性别集合
       sexList: [
         { label: '男', value: 1 },
