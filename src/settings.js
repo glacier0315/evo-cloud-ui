@@ -1,5 +1,5 @@
 module.exports = {
-  title: 'eboot',
+  title: 'evo-cloud-ui',
 
   /**
    * @type {boolean} true | false
